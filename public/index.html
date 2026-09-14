@@ -1389,6 +1389,46 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   width: 100%;
   height: 100%;
 }
+
+/* Guided kana writer: same interaction model as HanziWriter, but backed by
+   kana-svg-data medians so every accepted stroke advances automatically. */
+.kana-writer {
+  width:100%; height:100%; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:8px; padding:10px; box-sizing:border-box;
+  background:linear-gradient(145deg,#202033,#171b2b); color:#dbe4ff;
+}
+.kana-guide-wrap { width:min(100%,300px); aspect-ratio:1; position:relative; display:grid; place-items:center; }
+.kana-guide-svg { width:100%; height:100%; overflow:visible; }
+.kana-guide-svg .kana-shadow { fill:#64748b; opacity:.20; }
+.kana-guide-svg .kana-complete { fill:none; stroke:#7c6db0; stroke-width:34; stroke-linecap:round; stroke-linejoin:round; opacity:.22; }
+.kana-guide-svg .kana-current { fill:none; stroke:#8b5cf6; stroke-width:42; stroke-linecap:round; stroke-linejoin:round; opacity:.95; }
+.kana-guide-svg .kana-current.animate { stroke-dasharray:1400; stroke-dashoffset:1400; animation:kanaStrokeDraw .85s ease-out forwards; }
+@keyframes kanaStrokeDraw { to { stroke-dashoffset:0; } }
+.kana-guide-label { font-size:.82rem; font-weight:800; color:#9d8bcf; text-align:center; min-height:1.15em; }
+.kana-stroke-no { position:absolute; top:7px; left:7px; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; background:#8b5cf6; color:white; font-size:.8rem; font-weight:900; box-shadow:0 3px 10px rgba(0,0,0,.25); }
+.kana-draw-wrap { width:min(100%,280px); aspect-ratio:1; position:relative; border:2px dashed #718096; border-radius:18px; background:#101827; overflow:hidden; touch-action:none; }
+.kana-draw-wrap canvas { width:100%; height:100%; display:block; touch-action:none; cursor:crosshair; }
+.kana-draw-guide { position:absolute; inset:0; pointer-events:none; display:grid; place-items:center; font-size:clamp(5rem,22vw,8rem); font-weight:900; color:rgba(148,163,184,.08); font-family:"Yu Gothic","Noto Sans JP",sans-serif; }
+.kana-status { min-height:1.2em; font-size:.76rem; font-weight:800; text-align:center; color:#94a3b8; }
+.kana-status.good { color:#34d399; }
+.kana-status.bad { color:#fb7185; }
+.kana-writer.kana-success .kana-draw-wrap { border-color:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,.14); }
+.kana-writer.kana-error .kana-draw-wrap { animation:kanaShake .22s linear 1; border-color:#fb7185; }
+@keyframes kanaShake { 25%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
+.kana-guide-wrap { max-width:300px; }
+.kana-guide-wrap > .kana-draw-wrap { position:absolute; inset:0; width:100%; height:100%; aspect-ratio:auto; border:0; border-radius:0; background:transparent; overflow:hidden; }
+.kana-guide-wrap > .kana-draw-wrap canvas { position:absolute; inset:0; width:100%; height:100%; }
+.kana-guide-wrap > .kana-draw-wrap .kana-draw-guide { color:rgba(148,163,184,.10); font-size:clamp(7rem,24vw,10rem); }
+.kana-guide-wrap .kana-guide-svg { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.kana-guide-wrap > .kana-draw-wrap { z-index:2; }
+.kana-stroke-no { z-index:5; }
+
+@media(max-width:430px){
+  .kana-writer { padding:6px; gap:5px; }
+  .kana-guide-wrap { width:min(100%,230px); }
+  .kana-draw-wrap { width:min(100%,220px); }
+  .kana-guide-label { font-size:.72rem; }
+}
 .practice-modal-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1433,7 +1473,8 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   letter-spacing: 0.08em;
 }
 .practice-slots {
-  display: flex;
+  display: flex; flex-wrap:wrap; gap:6px; max-width:100%; overflow-x:auto; padding:2px 0;
+
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -2457,213 +2498,6 @@ html[data-theme="dark"] .study-level-btn.active {
   .study-level-filter { width: 100%; margin: 4px 0 0; }
   .study-level-btn { flex: 1 1 auto; min-width: 0; }
 }
-
-/* Vocabulary flashcards — illustrated card layout */
-.words-search-wrap {
-  position: relative;
-  width: 100%;
-  margin: 8px 0 12px;
-}
-.words-search {
-  width: 100%;
-  min-height: 52px;
-  box-sizing: border-box;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 16px;
-  background: var(--card);
-  color: var(--text);
-  padding: 0 48px 0 48px;
-  font-size: 1rem;
-  outline: none;
-  box-shadow: 0 3px 12px rgba(15,23,42,.05);
-}
-.words-search::placeholder { color: #7890b5; }
-.words-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.words-search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-53%);
-  color: #6883ad;
-  font-size: 1.65rem;
-  line-height: 1;
-  pointer-events: none;
-}
-.words-search-clear {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 50%;
-  background: #e2e8f0;
-  color: #64748b;
-  font-size: 1.35rem;
-  line-height: 1;
-  cursor: pointer;
-}
-.words-toolbar { align-items: center; gap: 10px; }
-.word-level-filter { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-.word-level-btn { border:1px solid #d7dce7; background:var(--card); color:var(--text); padding:9px 17px; border-radius:999px; font-weight:850; min-height:42px; min-width:54px; cursor:pointer; transition:.15s ease; }
-.word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 4px 10px rgba(185,28,74,.18); }
-.word-level-btn:active { transform:scale(.97); }
-.word-flashcard {
-  position:relative;
-  width:100%;
-  min-height:190px;
-  display:grid;
-  grid-template-columns:96px minmax(0,1fr);
-  grid-template-rows:auto 1fr auto;
-  align-items:center;
-  column-gap:14px;
-  row-gap:6px;
-  padding:14px 14px 12px;
-  text-align:left;
-  border:1px solid rgba(185,28,74,.12);
-  border-radius:18px;
-  background:linear-gradient(145deg,#fff 0%,#fffafd 100%);
-  box-shadow:0 5px 18px rgba(39,24,70,.07);
-  cursor:pointer;
-  overflow:hidden;
-  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
-}
-.word-flashcard:hover {
-  transform:translateY(-2px);
-  border-color:rgba(185,28,74,.24);
-  box-shadow:0 10px 24px rgba(39,24,70,.11);
-}
-.word-flashcard:active { transform:translateY(0) scale(.995); }
-.word-flashcard .word-art {
-  grid-column:1;
-  grid-row:1 / span 2;
-  width:96px;
-  height:96px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  background:#fff3f7;
-  overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(185,28,74,.06);
-}
-.word-flashcard .word-art img { width:100%; height:100%; display:block; object-fit:cover; }
-.word-flashcard .word-head {
-  grid-column:2; grid-row:1;
-  display:flex; align-items:center; gap:8px; min-width:0; padding-right:26px;
-}
-.word-flashcard .word-level-badge { flex:0 0 auto; margin:0; }
-.word-flashcard .word-favorite {
-  position:absolute; top:12px; right:12px;
-  width:28px; height:28px; border-radius:50%;
-  display:grid; place-items:center;
-  color:#aab5d1; background:transparent;
-  font-size:1.1rem; line-height:1;
-  transition:.15s ease; z-index:2;
-}
-.word-flashcard .word-favorite.active { color:#c2185b; background:#fff0f6; }
-.word-flashcard .word-content { grid-column:2; grid-row:2; min-width:0; align-self:start; }
-.word-flashcard .pt-kanji {
-  display:block;
-  font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
-  font-size:clamp(1.7rem,2.5vw,2.25rem);
-  font-weight:900; line-height:1.12; letter-spacing:.01em;
-  color:#18244b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.word-flashcard .pt-meta {
-  display:block; margin-top:4px;
-  font-size:.9rem; font-weight:700; color:#786ba1;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.word-flashcard .word-meaning {
-  display:block; margin-top:2px;
-  font-size:.84rem; color:#61759e;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.word-flashcard .word-footer {
-  grid-column:1 / -1; grid-row:3;
-  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center; gap:9px;
-  min-width:0; margin-top:3px;
-}
-.word-action {
-  width:34px; height:34px; border-radius:50%;
-  display:grid; place-items:center;
-  background:#fff0f6; color:#bd1457;
-  font-size:1rem; font-weight:900;
-  cursor:pointer; user-select:none;
-}
-.word-action:hover { background:#ffe3ef; transform:scale(1.04); }
-.word-progress-wrap { min-width:0; margin-left:2px; }
-.word-progress-label { display:flex; justify-content:space-between; gap:8px; font-size:.7rem; color:#7183a9; margin-bottom:4px; }
-.word-progress-track { height:7px; width:100%; border-radius:999px; background:#ece9f7; overflow:hidden; }
-.word-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#c2185b,#7c3aed); }
-
-/* Kana guided writing practice — centered, responsive, with real stroke-order guide */
-.practice-hw-box.is-kana{display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}
-.practice-hw-box.is-kana #hanziTarget{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0}
-.kana-practice-panel{box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:16px;background:linear-gradient(145deg,#fff8fb,#f7f5ff);border:1px solid rgba(185,28,74,.12);overflow:hidden}
-.kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(2.5rem,9vw,3.6rem);font-weight:900;line-height:1;color:#18244b;display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
-.kana-reference small{display:block;font-size:.68rem;font-weight:800;color:#786ba1;text-align:center;margin-top:3px;line-height:1.1}
-.kana-guide-stage{position:relative;width:min(170px,54vw);height:min(170px,54vw);max-width:170px;max-height:170px;aspect-ratio:1;flex:0 0 auto;border:2px solid #d9d4e8;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(185,28,74,.04);overflow:hidden}
-.kana-guide-svg,.kana-writing-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.kana-guide-svg{pointer-events:none}
-.kana-guide-fill{fill:#e8e5ef;opacity:.42}
-.kana-guide-line{fill:none;stroke:#b7accf;stroke-width:34;stroke-linecap:round;stroke-linejoin:round;opacity:.82;transition:stroke .18s ease,opacity .18s ease}
-.kana-guide-line.is-current{stroke:#7c3aed;opacity:.95}
-.kana-guide-line.is-completed{stroke:#16a34a;opacity:.92}
-.kana-stroke-number.is-current-number{fill:#7c3aed;font-size:34px}
-.kana-guide-line.is-hidden{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
-.kana-guide-line.is-animated{animation:kanaStrokeGuide .65s ease forwards;animation-delay:var(--delay,0s)}
-@keyframes kanaStrokeGuide{to{stroke-dashoffset:0;opacity:.95}}
-.kana-stroke-number{font:700 30px/1 Arial,sans-serif;fill:#7c3aed;opacity:.9}
-.kana-writing-canvas{z-index:2;background:transparent;border:0;touch-action:none;cursor:crosshair}
-.kana-guide-label{position:absolute;left:8px;top:7px;z-index:3;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.9);color:#786ba1;font-size:.62rem;font-weight:800;pointer-events:none}
-.kana-pad-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:0 0 auto}
-.kana-pad-actions .btn{min-height:34px;padding:6px 10px;font-size:.76rem}
-.kana-pad-hint{font-size:.64rem;color:#7183a9;text-align:center;line-height:1.15;max-width:245px;flex:0 0 auto}
-@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(152px,48vw);height:min(152px,48vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
-html[data-theme="dark"] .kana-practice-panel{background:linear-gradient(145deg,#202033,#1a2030);border-color:var(--border)}
-html[data-theme="dark"] .kana-reference{color:#eef2ff}
-html[data-theme="dark"] .kana-guide-stage{background:#111827;border-color:#66708c}
-html[data-theme="dark"] .kana-guide-fill{fill:#475069;opacity:.5}
-html[data-theme="dark"] .kana-guide-line{stroke:#8f84ad}
-html[data-theme="dark"] .kana-guide-label{background:rgba(17,24,39,.9);color:#b9a9e5}
-html[data-theme="dark"] .kana-pad-hint{color:#a9b8d8}
-html[data-theme="dark"] .word-flashcard { background:linear-gradient(145deg,#172033,#141a2b); border-color:var(--border); }
-html[data-theme="dark"] .word-flashcard .word-art { background:#20263a; }
-html[data-theme="dark"] .word-flashcard .pt-kanji { color:#eef2ff; }
-html[data-theme="dark"] .word-flashcard .pt-meta { color:#b9a9e5; }
-html[data-theme="dark"] .word-flashcard .word-meaning,
-html[data-theme="dark"] .word-progress-label { color:#a9b8d8; }
-html[data-theme="dark"] .word-flashcard .word-favorite.active { background:#352037; color:#ff79ad; }
-html[data-theme="dark"] .word-action { background:#2d2031; color:#ff76a8; }
-html[data-theme="dark"] .word-progress-track { background:#30374d; }
-@media (min-width:641px) and (max-width:1100px){
-  #wordsGrid.practice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-@media (max-width:640px){
-  .words-search { min-height:50px; border-radius:15px; font-size:.96rem; }
-  .word-level-filter { width:100%; display:grid; grid-template-columns:repeat(5,1fr); gap:7px; }
-  .word-level-btn { min-width:0; width:100%; padding:8px 4px; }
-  .words-toolbar .spacer { display:none; }
-  .words-toolbar { display:grid; grid-template-columns:1fr auto; }
-  #wordsGrid.practice-grid { grid-template-columns:1fr; gap:10px; }
-  #wordsGrid .word-flashcard { min-height:126px; grid-template-columns:76px minmax(0,1fr); column-gap:11px; padding:12px; border-radius:16px; }
-  #wordsGrid .word-flashcard .word-art { width:76px; height:76px; border-radius:15px; }
-  #wordsGrid .word-flashcard .pt-kanji { font-size:clamp(1.55rem,8vw,2.1rem); }
-  #wordsGrid .word-flashcard .word-footer { gap:7px; }
-  #wordsGrid .word-flashcard .word-action { width:31px; height:31px; font-size:.9rem; }
-  #wordsGrid .word-flashcard .word-progress-label { font-size:.65rem; }
-}
-@media (max-width:380px){
-  .words-search { padding-left:43px; padding-right:42px; }
-  .words-search-icon { left:13px; }
-  #wordsGrid .word-flashcard { grid-template-columns:66px minmax(0,1fr); column-gap:9px; padding:10px; }
-  #wordsGrid .word-flashcard .word-art { width:66px; height:66px; }
-  #wordsGrid .word-flashcard .word-footer { gap:5px; }
-  #wordsGrid .word-flashcard .word-action { width:29px; height:29px; }
-}
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
@@ -2860,25 +2694,30 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
   <section id="wordsMode" class="hidden">
     <h1>Write Words</h1>
     <p class="subtitle">Study vocabulary for the Jōyō kanji. Words are served from your vocabulary database — search and practice without loading everything at once.</p>
-    <div class="words-search-wrap">
-      <span class="words-search-icon" aria-hidden="true">⌕</span>
-      <input class="words-search" id="wordsSearch" type="search" placeholder="Search words, kanji, reading or meaning…" autocomplete="off" enterkeyhint="search" aria-label="Search vocabulary">
-      <button class="words-search-clear hidden" id="wordsSearchClear" type="button" aria-label="Clear vocabulary search">×</button>
-    </div>
-    <div class="toolbar words-toolbar">
-      <div class="word-level-filter" id="wordLevelFilter" role="group" aria-label="Vocabulary JLPT level">
-        <button type="button" class="word-level-btn active" data-word-level="N5">N5</button>
-        <button type="button" class="word-level-btn" data-word-level="N4">N4</button>
-        <button type="button" class="word-level-btn" data-word-level="N3">N3</button>
-        <button type="button" class="word-level-btn" data-word-level="N2">N2</button>
-        <button type="button" class="word-level-btn" data-word-level="N1">N1</button>
-      </div>
+    <div class="toolbar">
+      <button class="btn primary" id="wordsChooseSets">Choose sets</button>
+      <button class="btn" id="vocabBankShow" type="button">Show Vocabulary Bank</button>
       <div class="spacer"></div>
-      <span class="badge" id="wordsSetSummary">N5</span>
-      <span class="badge" id="wordsCount">0 words</span>
+      <span class="badge" id="wordsSetSummary"></span>
+      <span class="badge" id="wordsCount"></span>
     </div>
-    <div class="progress" id="wordsProgress">Vocabulary is loaded from the database and cached on this device for instant future opens.</div>
     <div class="practice-grid" id="wordsGrid"></div>
+    <div class="progress" id="wordsProgress"></div>
+    <div class="vocab-bank hidden" id="vocabBank">
+      <div class="vocab-bank-head">
+        <h2>Jōyō Vocabulary Bank</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input class="vocab-bank-search" id="vocabSearch" type="search" placeholder="Search word, reading, meaning, or kanji…" autocomplete="off">
+          <button class="btn" id="vocabBankHide" type="button" title="Hide the vocabulary list">Hide</button>
+        </div>
+      </div>
+      <div class="vocab-bank-status" id="vocabBankStatus">Loading vocabulary from database…</div>
+      <div class="vocab-bank-grid" id="vocabBankGrid"></div>
+      <div class="vocab-bank-pages">
+        <button class="btn" id="vocabPrevPage">← Previous</button>
+        <button class="btn" id="vocabNextPage">Next →</button>
+      </div>
+    </div>
   </section>
 
 </main>
@@ -3051,7 +2890,7 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
       <button type="button" class="modal-close-x" id="practiceModalClose" aria-label="Close">×</button>
       <h2 id="practiceModalTitle">Write the missing Kanji</h2>
       <p class="practice-reading" id="practiceReading"></p>
-      <div class="practice-slots" id="practiceSlots" aria-label="Word character slots"></div>
+      <div class="practice-slots" id="practiceSlots" aria-label="Character slots"></div>
       <p class="practice-modal-meta" id="practiceModalMeta"></p>
       <p class="practice-modal-kanji" id="practiceModalKanji" style="display:none"></p>
     </div>
@@ -3128,7 +2967,7 @@ let quitTarget = null;
 const state = {
   study: { sets: [1], cards: [], allCards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '', levelFilter: 'N5' },
   practice: { sets: [1], items: [], i: 0 },
-  words: { sets: [], items: [], allItems: [], i: 0, levelFilter: 'N5', searchQuery: '', vocabLoading: false },
+  words: { sets: [1], items: [], i: 0 },
   // stubs so leftover quiz/games helpers do not crash if called
   quiz:  { sets: [1], cards: [], i: 0, reverse: false, score: 0, answered: false, playing: false,
            timerSeconds: 0, timer: null, endAt: 0, results: [], lastMsg: '', settingsConfigured: false },
@@ -3138,6 +2977,7 @@ const state = {
 let hanziWriter = null;
 let hanziDataCache = new Map();
 let practiceResizeObserver = null;
+let kanaPractice = { char:'', data:null, groups:[], current:0, canvas:null, ctx:null, points:[], drawing:false, busy:false, free:false, writerEl:null };
 
 // Auth: optional login (admin / student). Guest mode still works offline via localStorage.
 let currentUser = null;
@@ -3266,6 +3106,25 @@ function isKanjiChar(ch) {
     (code >= 0xf900 && code <= 0xfaff);
 }
 
+function isHiraganaChar(ch) {
+  if (!ch) return false;
+  const code = ch.codePointAt(0);
+  return code >= 0x3041 && code <= 0x3096;
+}
+function isKatakanaChar(ch) {
+  if (!ch) return false;
+  const code = ch.codePointAt(0);
+  return code >= 0x30a1 && code <= 0x30fa;
+}
+function isKanaChar(ch) { return isHiraganaChar(ch) || isKatakanaChar(ch); }
+function isJapaneseWritingChar(ch) { return isKanjiChar(ch) || isKanaChar(ch); }
+function practiceCharKind(ch) {
+  if (isKanjiChar(ch)) return 'Kanji';
+  if (isHiraganaChar(ch)) return 'Hiragana';
+  if (isKatakanaChar(ch)) return 'Katakana';
+  return 'Character';
+}
+
 /** Single-character items for Practice tab */
 function getPracticeItems(ids) {
   return ids.map(id => {
@@ -3293,7 +3152,7 @@ function getWordPracticeItems(ids) {
     if (!set) continue;
     for (const card of set.cards) {
       const word = card[0] || '';
-      const chars = [...word].filter(isKanjiChar);
+      const chars = [...word].filter(isJapaneseWritingChar);
       if (chars.length < 2) continue;
       if (seen.has(word)) continue;
       seen.add(word);
@@ -3323,666 +3182,66 @@ function setupPractice(ids) {
 function setupWords(ids) {
   const s = state.words;
   s.sets = [...ids];
-  s.items = [];
+  s.items = getWordPracticeItems(ids);
   s.i = 0;
   closePracticeModal();
   renderWords();
-  ensureVocabularyLoaded();
-}
-
-function normalizeVocabRow(r) {
-  if (!r) return null;
-  const word = String(r.word ?? r[0] ?? '').trim();
-  if (!word) return null;
-  const reading = String(r.reading ?? r[1] ?? '').trim();
-  const meaning = String(r.meaning ?? r[2] ?? '').trim();
-  const rawLevel = r.level ?? r.jlpt_level ?? r.jlpt ?? r.jlptLevel ?? '';
-  const levelText = String(rawLevel).trim().toUpperCase();
-  const numericLevel = Number(rawLevel);
-  const level = /^N[1-5]$/.test(levelText) ? levelText : (Number.isInteger(numericLevel) && numericLevel >= 1 && numericLevel <= 5 ? `N${numericLevel}` : '');
-  return { word, reading, meaning, level: level || vocabLevelOf(word) };
-}
-
-function vocabLevelOf(word) {
-  const chars = [...String(word || '')].filter(isKanjiChar);
-  if (!chars.length) return 'N5';
-  // JLPT_LEVELS explicitly lists N5–N2. Any remaining Jōyō kanji are treated
-  // as N1 so the N1 filter is never empty simply because N1 is the catch-all level.
-  const ranks = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[JLPT_LEVEL_MAP[k] || 'N1']));
-  const hardest = Math.min(...ranks);
-  return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N1';
-}
-
-function getWordLevelFilter() {
-  return state.words.levelFilter || 'N5';
-}
-
-function getWordSearchQuery() {
-  return String(state.words.searchQuery || '').trim().toLocaleLowerCase();
-}
-
-function filteredVocabularyItems() {
-  const all = Array.isArray(state.words.allItems) ? state.words.allItems : [];
-  const level = getWordLevelFilter();
-  const q = getWordSearchQuery();
-  return all.filter(x => {
-    if (level && (x.level || vocabLevelOf(x.word)) !== level) return false;
-    if (!q) return true;
-    return [x.word, x.reading, x.meaning].some(v => String(v || '').toLocaleLowerCase().includes(q));
-  });
-}
-
-function wordVisualEmoji(item) {
-  const text = `${item?.word || ''} ${item?.meaning || ''} ${item?.reading || ''}`.toLocaleLowerCase();
-  const rules = [
-    [/school|student|study|university|college|学校|学生|勉強|大学|学校/, '🏫'],
-    [/eat|food|meal|rice|noodle|bread|drink|cook|食|飯|米|料理|飲|食べ|ラーメン/, '🍜'],
-    [/friend|family|person|people|mother|father|parent|child|brother|sister|友達|家族|人|母|父|親|子供|兄|姉|弟|妹/, '👨‍👩‍👧'],
-    [/tokyo|japan|city|station|country|travel|place|東京|日本|都市|駅|旅行/, '🗼'],
-    [/house|home|room|building|hotel|家|部屋|建物|ホテル/, '🏠'],
-    [/money|economy|business|company|work|job|office|bank|経済|お金|会社|仕事|銀行|仕事/, '💼'],
-    [/experience|science|medicine|hospital|doctor|chemical|experiment|経験|病院|医者|科学/, '🧪'],
-    [/book|read|word|language|japanese|kanji|本|読む|言葉|日本語|漢字/, '📚'],
-    [/write|writing|letter|document|paper|書|手紙|文書|紙/, '✍️'],
-    [/car|train|bus|bike|bicycle|airplane|ship|車|電車|バス|自転車|飛行機|船/, '🚆'],
-    [/weather|rain|snow|sun|cloud|wind|天気|雨|雪|太陽|雲|風/, '🌤️'],
-    [/morning|night|day|today|tomorrow|time|clock|朝|夜|日|今日|明日|時間|時計/, '🕐'],
-    [/love|heart|happy|sad|fun|laugh|emotion|love|愛|幸せ|悲しい|楽しい|気持ち/, '💗'],
-    [/music|song|movie|game|play|sport|music|音楽|歌|映画|ゲーム|スポーツ/, '🎮'],
-    [/flower|tree|mountain|river|sea|nature|animal|plant|花|木|山|川|海|自然|動物|植物/, '🌸'],
-    [/dog|cat|bird|fish|犬|猫|鳥|魚/, '🐾'],
-    [/shop|store|buy|sell|market|shopping|店|買|売|市場/, '🛍️'],
-    [/phone|computer|internet|technology|telephone|スマホ|電話|コンピューター|インターネット/, '📱'],
-    [/health|body|head|hand|eye|ear|foot|health|健康|体|頭|手|目|耳|足/, '❤️'],
-    [/important|big|small|new|old|good|bad|easy|difficult|important|大|小|新|古|良|悪|簡単|難しい/, '✨']
-  ];
-  for (const [re, emoji] of rules) if (re.test(text)) return emoji;
-  return '🈳';
-}
-
-function makeWordArt(item) {
-  const emoji = wordVisualEmoji(item);
-  const word = String(item?.word || '').slice(0, 8);
-  const palettes = [
-    ['#fff1f6','#ffd4e4'], ['#eef4ff','#dce8ff'], ['#f2efff','#e3dbff'],
-    ['#effaf4','#d8f2e3'], ['#fff7e8','#ffe7bd']
-  ];
-  let hash = 0;
-  for (const ch of word) hash = ((hash << 5) - hash + ch.codePointAt(0)) | 0;
-  const [a,b] = palettes[Math.abs(hash) % palettes.length];
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="160" height="160" rx="28" fill="url(#g)"/><circle cx="125" cy="32" r="16" fill="#fff" opacity=".55"/><circle cx="30" cy="132" r="23" fill="#fff" opacity=".42"/><text x="80" y="91" text-anchor="middle" dominant-baseline="middle" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif" font-size="66">${emoji}</text></svg>`;
-  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-}
-
-function wordFavoriteKey(word) { return `kanjiPathWordFavorite:${word}`; }
-function isWordFavorite(word) {
-  try { return localStorage.getItem(wordFavoriteKey(word)) === '1'; } catch (_) { return false; }
-}
-function toggleWordFavorite(word) {
-  try {
-    const key = wordFavoriteKey(word);
-    if (localStorage.getItem(key) === '1') localStorage.removeItem(key);
-    else localStorage.setItem(key, '1');
-  } catch (_) {}
 }
 
 function renderWords() {
   const s = state.words;
   const grid = $('wordsGrid');
   if (!grid) return;
-  const all = Array.isArray(s.allItems) ? s.allItems : [];
-  const filtered = filteredVocabularyItems();
-  s.items = filtered;
   grid.innerHTML = '';
-  if (!all.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Vocabulary is loading. Your 40,000-word database will appear here automatically.</div>';
+  if (!s.items.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Choose sets that include compound words (2+ kanji), e.g. 富士山, 登山, 火山.</div>';
+    if ($('wordsProgress')) $('wordsProgress').textContent = '';
+    if ($('wordsSetSummary')) $('wordsSetSummary').textContent = 'No sets';
     if ($('wordsCount')) $('wordsCount').textContent = '0 words';
     return;
   }
-  const maxVisible = 120;
-  filtered.slice(0, maxVisible).forEach((item, idx) => {
+  s.items.forEach((item, idx) => {
     const tile = document.createElement('button');
     tile.type = 'button';
-    tile.className = 'practice-tile word-flashcard';
-    const chars = [...String(item.word || '')].filter(isJapanesePracticeChar);
-    const count = chars.length ? Math.min(...chars.map(ch => getKanjiWriteCount(ch))) : 0;
-    const percent = chars.length ? Math.min(100, Math.round((count / PRACTICE_GOAL) * 100)) : 0;
-    if (count >= PRACTICE_GOAL && chars.length) tile.classList.add('practice-complete');
-    tile.setAttribute('aria-label', `${item.word}, ${item.reading}, ${item.meaning}. Tap to practice writing.`);
-    const fav = isWordFavorite(item.word);
-    tile.innerHTML = `
-      <span class="word-art"><img src="${makeWordArt(item)}" alt="" loading="lazy" decoding="async"></span>
-      <span class="word-favorite ${fav ? 'active' : ''}" title="Favorite" aria-label="${fav ? 'Remove favorite' : 'Add favorite'}">${fav ? '★' : '☆'}</span>
-      <span class="word-head"><span class="badge word-level-badge">${esc(item.level || 'N5')}</span></span>
-      <span class="word-content">
-        <span class="pt-kanji">${esc(item.word)}</span>
-        <span class="pt-meta">${esc(item.reading || '')}</span>
-        <span class="word-meaning">${esc(item.meaning || 'Japanese vocabulary')}</span>
-      </span>
-      <span class="word-footer">
-        <span class="word-action word-speak" title="Listen" aria-label="Listen to ${esc(item.word)}">🔊</span>
-        <span class="word-action word-write" title="Practice writing" aria-label="Practice writing ${esc(item.word)}">✎</span>
-        <span class="word-progress-wrap">
-          <span class="word-progress-label"><span>${chars.length ? 'Writing progress' : 'Kana word'}</span><span>${chars.length ? `${count}/${PRACTICE_GOAL}` : 'Ready'}</span></span>
-          <span class="word-progress-track"><span class="word-progress-fill" style="width:${percent}%"></span></span>
-        </span>
-      </span>`;
+    tile.className = 'practice-tile';
+    const counts = item.chars.map(ch => getKanjiWriteCount(ch));
+    const count = Math.min(...counts);
+    const percent = Math.round((count / PRACTICE_GOAL) * 100);
+    if (count >= PRACTICE_GOAL) tile.classList.add('practice-complete');
+    tile.style.setProperty('--practice-fill', percent + '%');
+    tile.setAttribute('aria-label', `${item.word}, ${practiceProgressLabel(count)}`);
+    tile.innerHTML =
+      '<span class="pt-kanji">' + esc(item.word) + '</span>' +
+      '<span class="pt-meta">' + esc(item.reading || '') + (item.english ? ' · ' + esc(item.english) : '') + '</span>' +
+      '<span class="pt-progress">' + esc(practiceProgressLabel(count)) + '</span>';
     tile.onclick = () => openWordWrite(idx);
-    const favEl = tile.querySelector('.word-favorite');
-    favEl.onclick = e => {
-      e.stopPropagation();
-      toggleWordFavorite(item.word);
-      renderWords();
-    };
-    favEl.onkeydown = e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); favEl.click(); }
-    };
-    const speakEl = tile.querySelector('.word-speak');
-    speakEl.onclick = e => { e.stopPropagation(); speak(item.word, 'ja-JP'); };
-    const writeEl = tile.querySelector('.word-write');
-    writeEl.onclick = e => { e.stopPropagation(); openWordWrite(idx); };
     grid.appendChild(tile);
   });
-  const hidden = Math.max(0, filtered.length - maxVisible);
-  const levelLabel = getWordLevelFilter();
-  const search = getWordSearchQuery();
-  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} ${levelLabel} vocabulary${search ? ` matching “${String(state.words.searchQuery || '').trim()}”` : ''} · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} illustrated flashcards${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to practice writing.`;
-  if ($('wordsCount')) $('wordsCount').textContent = `${filtered.length.toLocaleString()} words`;
-  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = getWordLevelFilter();
-}
-
-async function ensureVocabularyLoaded(force = false) {
-  if (state.words.vocabLoading && !force) return state.words.vocabLoading;
-  state.words.vocabLoading = true;
-  // V4 forces one clean rebuild after the JLPT classification fix.
-  const cacheKey = 'kanjiPathVocabulary40kV5';
-  const readCache = () => new Promise(resolve => {
-    try {
-      const req = indexedDB.open('kanjiPathVocabularyDB', 1);
-      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains('vocab')) req.result.createObjectStore('vocab'); };
-      req.onsuccess = () => {
-        const db = req.result;
-        const tx = db.transaction('vocab','readonly');
-        const get = tx.objectStore('vocab').get(cacheKey);
-        get.onsuccess = () => { resolve(get.result || null); db.close(); };
-        get.onerror = () => { resolve(null); db.close(); };
-      };
-      req.onerror = () => resolve(null);
-    } catch (_) { resolve(null); }
-  });
-  const writeCache = data => new Promise(resolve => {
-    try {
-      const req = indexedDB.open('kanjiPathVocabularyDB', 1);
-      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains('vocab')) req.result.createObjectStore('vocab'); };
-      req.onsuccess = () => {
-        const db = req.result;
-        const tx = db.transaction('vocab','readwrite');
-        tx.objectStore('vocab').put(data, cacheKey);
-        tx.oncomplete = () => { db.close(); resolve(); };
-        tx.onerror = () => { db.close(); resolve(); };
-      };
-      req.onerror = () => resolve();
-    } catch (_) { resolve(); }
-  });
-  try {
-    const cached = await readCache();
-    if (cached && Array.isArray(cached.items) && cached.items.length) {
-      state.words.allItems = cached.items.map(normalizeVocabRow).filter(Boolean);
-      renderWords();
-      state.words.vocabLoading = false;
-      // Refresh in the background only when the cache is older than 24h.
-      if (!force && cached.ts && Date.now() - cached.ts < 86400000) return state.words.allItems;
-    }
-
-    const first = await fetch('/api/vocab?page=0&limit=300', { credentials:'include', cache:'no-store' });
-    if (!first.ok) throw new Error('Vocabulary API ' + first.status);
-    const firstData = await first.json();
-    const total = Number(firstData.total || 0);
-    let items = (firstData.items || []).map(normalizeVocabRow).filter(Boolean);
-    state.words.allItems = items;
-    renderWords();
-
-    // Fetch the remaining database pages without blocking the Word tab.
-    const pageSize = Math.max(1, Number(firstData.items?.length || 300));
-    const pages = Math.ceil(total / pageSize);
-    for (let page = 1; page < pages && items.length < 40000; page++) {
-      try {
-        const res = await fetch(`/api/vocab?page=${page}&limit=${pageSize}`, { credentials:'include', cache:'no-store' });
-        if (!res.ok) break;
-        const data = await res.json();
-        const batch = (data.items || []).map(normalizeVocabRow).filter(Boolean);
-        if (!batch.length) break;
-        items.push(...batch);
-        if (page % 3 === 0 || items.length >= 40000) {
-          state.words.allItems = items.slice(0,40000);
-          renderWords();
-          if ($('wordsProgress')) $('wordsProgress').textContent = `Loading vocabulary: ${Math.min(items.length,40000).toLocaleString()} / ${Math.min(total || 40000,40000).toLocaleString()}…`;
-        }
-      } catch (e) { console.warn('Vocabulary page failed', page, e); break; }
-    }
-    state.words.allItems = items.slice(0,40000);
-    await writeCache({ ts:Date.now(), total:Math.max(total,state.words.allItems.length), items:state.words.allItems });
-    renderWords();
-    if ($('wordsProgress')) $('wordsProgress').textContent = `${state.words.allItems.length.toLocaleString()} vocabulary entries ready and cached on this device. Filters are instant.`;
-  } catch (e) {
-    console.error('Vocabulary load failed:', e);
-    if ($('wordsProgress')) $('wordsProgress').textContent = 'Could not load vocabulary. Make sure /api/vocab is deployed and the database contains the vocabulary table.';
-  } finally {
-    state.words.vocabLoading = false;
-  }
-  return state.words.allItems || [];
-}
-
-function isKanaChar(ch) {
-  if (!ch) return false;
-  const cp = ch.codePointAt(0);
-  return (cp >= 0x3040 && cp <= 0x309f) || (cp >= 0x30a0 && cp <= 0x30ff) || (cp >= 0x31f0 && cp <= 0x31ff);
-}
-
-function isKatakanaChar(ch) {
-  if (!ch) return false;
-  const cp = ch.codePointAt(0);
-  return (cp >= 0x30a0 && cp <= 0x30ff) || (cp >= 0x31f0 && cp <= 0x31ff);
-}
-
-function isJapanesePracticeChar(ch) {
-  return isKanjiChar(ch) || isKanaChar(ch);
-}
-
-function currentPracticeIsKana(item) {
-  return !!item && isKanaChar(getCurrentPracticeChar(item));
-}
-
-function kanaPracticeCanvas() { return $('kanaPracticeCanvas'); }
-
-function clearKanaCanvas() {
-  const canvas = kanaPracticeCanvas();
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
-function setupKanaCanvas(char, options = {}) {
-  const target = $('hanziTarget');
-  const box = $('practiceHwBox');
-  if (!target || !box) return;
-  const animate = options.animate !== false;
-  const showGuide = options.showGuide !== false;
-  box.classList.add('is-kana');
-
-  target.innerHTML = `
-    <div class="kana-practice-panel">
-      <div class="kana-reference">${esc(char)}<small>${showGuide ? 'Write each stroke in order' : 'Free write'}</small></div>
-      <div class="kana-guide-stage" id="kanaGuideStage">
-        <div class="kana-guide-label" id="kanaGuideLabel">Loading stroke guide…</div>
-        <svg class="kana-guide-svg" id="kanaGuideSvg" viewBox="0 0 1024 1024" aria-hidden="true"></svg>
-        <canvas id="kanaPracticeCanvas" class="kana-writing-canvas" width="600" height="600" aria-label="Write kana ${esc(char)}"></canvas>
-      </div>
-      <div class="kana-pad-actions">
-        <button type="button" class="btn subtle" id="kanaAnimateBtn">▶ Guide</button>
-        <button type="button" class="btn subtle" id="kanaShowBtn">Show</button>
-        <button type="button" class="btn subtle" id="kanaClearBtn">Clear</button>
-        ${showGuide ? '' : '<button type="button" class="btn primary" id="kanaDoneBtn">✓ Check writing</button>'}
-      </div>
-      <div class="kana-pad-hint" id="kanaPadHint">Follow the highlighted stroke from the start point to the end point. A correct stroke advances automatically.</div>
-    </div>`;
-
-  const canvas = kanaPracticeCanvas();
-  const ctx = canvas.getContext('2d');
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = 18;
-  ctx.strokeStyle = '#c2185b';
-  ctx.fillStyle = '#c2185b';
-
-  const guideSvg = $('kanaGuideSvg');
-  const guideLabel = $('kanaGuideLabel');
-  const hint = $('kanaPadHint');
-  let guideData = null;
-  let medians = [];
-  let currentStroke = 0;
-  let drawing = false;
-  let hasInk = false;
-  let points = [];
-  let checking = false;
-  let completed = [];
-
-  const pos = e => {
-    const r = canvas.getBoundingClientRect();
-    return {
-      x: (e.clientX - r.left) * (canvas.width / r.width) * (1024 / canvas.width),
-      y: (e.clientY - r.top) * (canvas.height / r.height) * (1024 / canvas.height)
-    };
-  };
-
-  function clearInk() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    hasInk = false;
-    points = [];
-  }
-
-  function normalizeMedian(m) {
-    const pts = Array.isArray(m?.value) ? m.value : [];
-    return pts.filter(p => Array.isArray(p) && p.length >= 2 && Number.isFinite(+p[0]) && Number.isFinite(+p[1]))
-      .map(p => [Number(p[0]), Number(p[1])]);
-  }
-
-  function pathLength(pts) {
-    let n = 0;
-    for (let i = 1; i < pts.length; i++) n += Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]);
-    return n;
-  }
-
-  function pointSegmentDistance(p, a, b) {
-    const dx = b[0] - a[0], dy = b[1] - a[1];
-    const len2 = dx * dx + dy * dy;
-    if (!len2) return Math.hypot(p[0] - a[0], p[1] - a[1]);
-    let t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2;
-    t = Math.max(0, Math.min(1, t));
-    return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy));
-  }
-
-  function nearestOnPolyline(p, line) {
-    let best = { dist: Infinity, progress: 0 };
-    let total = pathLength(line) || 1;
-    let travelled = 0;
-    for (let i = 1; i < line.length; i++) {
-      const a = line[i-1], b = line[i];
-      const dx = b[0] - a[0], dy = b[1] - a[1];
-      const len2 = dx*dx + dy*dy;
-      const segLen = Math.sqrt(len2);
-      let t = len2 ? ((p[0]-a[0])*dx + (p[1]-a[1])*dy) / len2 : 0;
-      t = Math.max(0, Math.min(1, t));
-      const q = [a[0] + t*dx, a[1] + t*dy];
-      const d = Math.hypot(p[0]-q[0], p[1]-q[1]);
-      if (d < best.dist) best = { dist:d, progress:(travelled + segLen*t) / total };
-      travelled += segLen;
-    }
-    return best;
-  }
-
-  function evaluateStroke(user, expected) {
-    if (!expected || expected.length < 2 || user.length < 3) return { ok:false, reason:'too-short' };
-    const expectedLen = pathLength(expected);
-    const userLen = pathLength(user);
-    if (expectedLen < 25 || userLen < expectedLen * 0.35) return { ok:false, reason:'too-short' };
-
-    const tolerance = Math.max(72, Math.min(125, expectedLen * 0.18));
-    const startDist = Math.hypot(user[0][0]-expected[0][0], user[0][1]-expected[0][1]);
-    const endDist = Math.hypot(user[user.length-1][0]-expected[expected.length-1][0], user[user.length-1][1]-expected[expected.length-1][1]);
-    if (startDist > tolerance * 1.45) return { ok:false, reason:'start' };
-    if (endDist > tolerance * 1.55) return { ok:false, reason:'end' };
-
-    let maxDist = 0;
-    let lastProgress = 0;
-    let maxProgress = 0;
-    let backtrack = 0;
-    let goodSamples = 0;
-    for (let i = 0; i < user.length; i++) {
-      const near = nearestOnPolyline(user[i], expected);
-      maxDist = Math.max(maxDist, near.dist);
-      if (near.dist <= tolerance) goodSamples++;
-      if (near.progress + 0.10 < lastProgress) backtrack += lastProgress - near.progress;
-      lastProgress = Math.max(lastProgress, near.progress);
-      maxProgress = Math.max(maxProgress, near.progress);
-    }
-    const coverage = goodSamples / user.length;
-    const lengthRatio = userLen / expectedLen;
-    const ok = maxDist <= tolerance * 1.35 && coverage >= 0.62 && maxProgress >= 0.82 && backtrack <= 0.55 && lengthRatio >= 0.42 && lengthRatio <= 2.6;
-    return { ok, reason: ok ? 'ok' : 'shape', tolerance, maxDist, coverage, maxProgress };
-  }
-
-  function drawGuide(mode='current') {
-    if (!guideSvg) return;
-    const fills = Array.isArray(guideData?.strokes) ? guideData.strokes : [];
-    const lines = [];
-    medians.forEach((pts, i) => {
-      if (!pts.length) return;
-      const pointsAttr = pts.map(p => `${p[0]},${p[1]}`).join(' ');
-      const isDone = completed.includes(i);
-      const isCurrent = i === currentStroke && !isDone;
-      const isFuture = i > currentStroke && !isDone;
-      let cls = 'kana-guide-line';
-      if (isDone) cls += ' is-completed';
-      else if (isCurrent) cls += ' is-current';
-      else if (isFuture) cls += ' is-hidden';
-      const delay = (i === currentStroke && mode === 'animate') ? '0s' : '0s';
-      lines.push(`<polyline class="${cls}" style="--delay:${delay}" pathLength="1" points="${pointsAttr}"></polyline>`);
-      if (mode === 'show' || isCurrent) {
-        const first = pts[0];
-        lines.push(`<text class="kana-stroke-number ${isCurrent ? 'is-current-number' : ''}" x="${first[0]+18}" y="${first[1]-12}">${i+1}</text>`);
-      }
-    });
-    const fillsHtml = fills.map((st, i) => {
-      const opacity = i <= currentStroke || mode === 'show' ? '.20' : '.045';
-      return `<path class="kana-guide-fill" style="opacity:${opacity}" d="${st.value||''}"></path>`;
-    }).join('');
-    guideSvg.innerHTML = fillsHtml + lines.join('');
-    if (guideLabel) guideLabel.textContent = mode === 'show' ? 'Full character' : `Stroke ${Math.min(currentStroke+1, Math.max(1, medians.length))} of ${medians.length}`;
-  }
-
-  function setHint(text, good=false) {
-    if (hint) hint.textContent = text;
-    if (guideLabel) guideLabel.textContent = good ? '✓ Correct — next stroke' : guideLabel.textContent;
-  }
-
-  function resetCurrentStroke() {
-    clearInk();
-    checking = false;
-    canvas.style.pointerEvents = 'auto';
-  }
-
-  async function finishKanaCharacter() {
-    if (checking) return;
-    checking = true;
-    canvas.style.pointerEvents = 'none';
-    const s = state.practice, item = s.items[s.i];
-    if (!item) return;
-    const writtenChar = getCurrentPracticeChar(item);
-    const count = await recordKanjiWrite(writtenChar, item.setId);
-    savePracticeHistory({...item, kanji:writtenChar});
-    try { renderPractice(); } catch (_) {}
-    try { renderWords(); } catch (_) {}
-    setHint(`✓ ${writtenChar} complete.`, true);
-    if ($('practiceProgress')) $('practiceProgress').textContent = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
-    if ($('wordsProgress')) $('wordsProgress').textContent = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
-    setTimeout(() => {
-      if (!state.practice.items[state.practice.i]) return;
-      advanceWordPracticeCharacter();
-    }, 260);
-  }
-
-  async function acceptStroke() {
-    if (checking) return;
-    const expected = medians[currentStroke];
-    const result = evaluateStroke(points, expected);
-    if (!result.ok) {
-      clearInk();
-      setHint(result.reason === 'start' ? 'Start closer to the numbered start point, then follow the stroke.' : 'Not quite. Follow the highlighted stroke from start to finish and try again.');
-      if (guideLabel) guideLabel.textContent = 'Try again';
-      setTimeout(() => { if (guideLabel) guideLabel.textContent = `Stroke ${currentStroke+1} of ${medians.length}`; }, 850);
-      return;
-    }
-    completed.push(currentStroke);
-    clearInk();
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    const doneStroke = currentStroke;
-    currentStroke++;
-    drawGuide('current');
-    if (currentStroke < medians.length) {
-      setHint(`✓ Stroke ${doneStroke+1} correct. Now write stroke ${currentStroke+1}.`, true);
-      if (guideLabel) guideLabel.textContent = `Stroke ${currentStroke+1} of ${medians.length}`;
-      return;
-    }
-    await finishKanaCharacter();
-  }
-
-  canvas.addEventListener('pointerdown', e => {
-    if (checking || !medians.length || currentStroke >= medians.length) return;
-    e.preventDefault();
-    drawing = true;
-    hasInk = true;
-    points = [pos(e)];
-    canvas.setPointerCapture?.(e.pointerId);
-    ctx.beginPath();
-    const p = points[0];
-    ctx.moveTo(p[0] * canvas.width / 1024, p[1] * canvas.height / 1024);
-  });
-  canvas.addEventListener('pointermove', e => {
-    if (!drawing || checking) return;
-    e.preventDefault();
-    const p = pos(e);
-    points.push(p);
-    ctx.lineTo(p[0] * canvas.width / 1024, p[1] * canvas.height / 1024);
-    ctx.stroke();
-  });
-  const endStroke = async e => {
-    if (!drawing) return;
-    drawing = false;
-    try { canvas.releasePointerCapture?.(e.pointerId); } catch (_) {}
-    if (points.length >= 3 && showGuide) await acceptStroke();
-  };
-  canvas.addEventListener('pointerup', endStroke);
-  canvas.addEventListener('pointercancel', endStroke);
-
-  const clear = () => {
-    if (checking) return;
-    clearInk();
-    setHint(showGuide ? `Stroke ${currentStroke+1} of ${medians.length || '?'} — try again.` : 'Free write: draw the kana, then check it.');
-    drawGuide('current');
-  };
-
-  const animateGuide = async () => {
-    if (!guideData) return;
-    completed = [];
-    currentStroke = 0;
-    clearInk();
-    drawGuide('animate');
-    if (guideLabel) guideLabel.textContent = `Stroke 1 of ${medians.length}`;
-    setHint('Watch the stroke order, then write the highlighted stroke.');
-  };
-
-  const showAll = () => {
-    if (!guideData) return;
-    clearInk();
-    drawGuide('show');
-    if (guideLabel) guideLabel.textContent = 'Full character';
-    setHint('Stroke numbers show the correct order. Press Guide to practice one stroke at a time.');
-  };
-
-  const clearBtn = $('kanaClearBtn');
-  if (clearBtn) clearBtn.onclick = clear;
-  const animBtn = $('kanaAnimateBtn');
-  if (animBtn) animBtn.onclick = animateGuide;
-  const showBtn = $('kanaShowBtn');
-  if (showBtn) showBtn.onclick = showAll;
-  const doneBtn = $('kanaDoneBtn');
-  if (doneBtn) doneBtn.onclick = async () => {
-    if (!hasInk) {
-      setHint('Write the kana first.');
-      return;
-    }
-    const s = state.practice, item = s.items[s.i];
-    if (!item) return;
-    const writtenChar = getCurrentPracticeChar(item);
-    const count = await recordKanjiWrite(writtenChar, item.setId);
-    savePracticeHistory({...item, kanji:writtenChar});
-    advanceWordPracticeCharacter();
-    const msg = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
-    if ($('practiceProgress')) $('practiceProgress').textContent = msg;
-    if ($('wordsProgress')) $('wordsProgress').textContent = msg;
-  };
-
-  async function loadGuide() {
-    try {
-      const dir = isKatakanaChar(char) ? 'katakana' : 'hiragana';
-      const url = 'https://cdn.jsdelivr.net/npm/kana-svg-data/dist/' + dir + '/' + encodeURIComponent(char) + '.json';
-      const res = await fetch(url, {cache:'force-cache'});
-      if (!res.ok) throw new Error('Kana stroke data unavailable');
-      guideData = await res.json();
-      medians = (Array.isArray(guideData.medians) ? guideData.medians : []).map(normalizeMedian).filter(x => x.length >= 2);
-      if (!medians.length) throw new Error('No usable kana stroke medians');
-      currentStroke = 0;
-      completed = [];
-      drawGuide('current');
-      canvas.style.pointerEvents = showGuide ? 'auto' : 'auto';
-      if (showGuide) {
-        setHint('Follow the highlighted stroke. Release your finger/mouse when you reach the end — the next stroke starts automatically.');
-        if (animate) {
-          // Animate only the current stroke so the learner knows exactly what to write next.
-          const line = guideSvg?.querySelector('.kana-guide-line.is-current');
-          if (line) {
-            line.classList.add('is-animated');
-            line.style.setProperty('--delay','0s');
-          }
-        }
-      } else {
-        setHint('Free write: draw the kana, then press Check writing.');
-      }
-    } catch (err) {
-      console.warn('Kana stroke guide failed for', char, err);
-      if (guideLabel) guideLabel.textContent = 'Guide unavailable';
-      if (guideSvg) guideSvg.innerHTML = '';
-      setHint('Stroke data could not be loaded. You can still use Free write.');
-      if (showGuide) canvas.style.pointerEvents = 'none';
-    }
-  }
-
-  loadGuide();
-}
-
-function loadPracticeCharacter(char) {
-  const s=state.practice, item=s.items[s.i];
-  if(isKanaChar(char)) { destroyHanzi(); setupKanaCanvas(char); return; }
-  loadHanzi(char);
-}
-
-function advanceWordPracticeCharacter() {
-  const s=state.practice, item=s.items[s.i];
-  if(!item || !item.word || !item.chars) return;
-  const chars=item.chars;
-  if(item.charIndex < chars.length-1) {
-    item.charIndex++; item.kanji=chars[item.charIndex]; updatePracticeModalHeader(item);
-    requestAnimationFrame(()=>loadPracticeCharacter(item.kanji));
-  } else {
-    item.charIndex=chars.length; renderPracticeSlots(item);
-    const slotsEl=$('practiceSlots'); if(slotsEl) slotsEl.querySelectorAll('.practice-slot').forEach((el,i)=>{el.classList.remove('current');el.classList.add('filled');el.textContent=chars[i]||'';});
-  }
-}
-
-function getWordWritingCharacters(word) {
-  // Practice EVERY written Japanese character in the vocabulary word:
-  // Kanji + Hiragana + Katakana. Ignore punctuation/spaces only.
-  return [...String(word || '')].filter(isJapanesePracticeChar);
+  if ($('wordsProgress')) $('wordsProgress').textContent = 'Tap a word → write each kanji in order with stroke guidance.';
+  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = setSummary(s.sets);
+  if ($('wordsCount')) $('wordsCount').textContent = JOYO_VOCAB_TOTAL ? JOYO_VOCAB_TOTAL.toLocaleString() + ' vocabulary' : (s.items.length + ' words');
 }
 
 function openWordWrite(idx) {
-  // Vocabulary writing must include kana that are part of the written word.
-  // Example: 食べ物屋 becomes [食, べ, 物, 屋], so べ gets its own writing box.
+  // Reuse the shared writing modal + practice state for the selected word list
   const w = state.words;
-  const v = w.items[idx];
-  if (!v) return;
-  const practiceChars = getWordWritingCharacters(v.word);
-  const item = {
-    setId: 'Vocabulary',
-    word: v.word,
-    kanji: practiceChars[0] || v.word,
-    chars: practiceChars,
-    charIndex: 0,
-    reading: v.reading || '',
-    english: v.meaning || '',
-    vocabularyWord: true
-  };
-  if (!item.chars.length) return;
-  state.practice.items = [item];
-  state.practice.sets = [];
-  state.practice.i = 0;
-  openPracticeModal(0);
+  const item = w.items[idx];
+  if (!item) return;
+  state.practice.items = w.items;
+  state.practice.sets = w.sets;
+  state.practice.i = idx;
+  openPracticeModal(idx);
+}
+
+function destroyKana() {
+  if (kanaPractice && kanaPractice.canvas) {
+    try { kanaPractice.canvas.onpointerdown = null; kanaPractice.canvas.onpointermove = null; kanaPractice.canvas.onpointerup = null; kanaPractice.canvas.onpointercancel = null; } catch (_) {}
+  }
+  kanaPractice = { char:'', data:null, groups:[], current:0, canvas:null, ctx:null, points:[], drawing:false, busy:false, free:false, writerEl:null };
 }
 
 function destroyHanzi() {
-  const box = $('practiceHwBox');
-  if (box) box.classList.remove('is-kana');
+  destroyKana();
   if (practiceResizeObserver) {
     try { practiceResizeObserver.disconnect(); } catch (_) {}
     practiceResizeObserver = null;
@@ -4057,7 +3316,182 @@ function loadJapaneseHanziData(char, onLoad, onError) {
     });
 }
 
+
+function kanaDataUrl(ch) {
+  const folder = isHiraganaChar(ch) ? 'hiragana' : 'katakana';
+  return 'https://cdn.jsdelivr.net/npm/kana-svg-data@latest/dist/' + folder + '/' + encodeURIComponent(ch) + '.json';
+}
+function kanaStrokeGroups(data) {
+  const groups = new Map();
+  const medians = Array.isArray(data && data.medians) ? data.medians : [];
+  for (const m of medians) {
+    const id = String(m.id || '');
+    const key = (id.match(/^\d+/) || [id])[0];
+    const pts = Array.isArray(m.value) ? m.value.map(p => [Number(p[0]), Number(p[1])]).filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1])) : [];
+    if (!pts.length) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(...pts);
+  }
+  return [...groups.entries()].sort((a,b) => Number(a[0]) - Number(b[0])).map(([id,points]) => ({id,points}));
+}
+function kanaPointToCanvas(pt, rect, pad=24) {
+  return [pad + (pt[0] / 1024) * (rect.w - pad*2), pad + (pt[1] / 1024) * (rect.h - pad*2)];
+}
+function resamplePolyline(points, n) {
+  if (!points || points.length < 2) return points || [];
+  const lengths=[0]; let total=0;
+  for(let i=1;i<points.length;i++){ total += Math.hypot(points[i][0]-points[i-1][0], points[i][1]-points[i-1][1]); lengths.push(total); }
+  if (!total) return Array.from({length:n},()=>points[0]);
+  const out=[]; let seg=1;
+  for(let k=0;k<n;k++){
+    const target=(k/(n-1))*total;
+    while(seg<lengths.length-1 && lengths[seg]<target) seg++;
+    const a=points[seg-1], b=points[seg], span=lengths[seg]-lengths[seg-1] || 1;
+    const t=(target-lengths[seg-1])/span;
+    out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);
+  }
+  return out;
+}
+function bbox(points){
+  const xs=points.map(p=>p[0]), ys=points.map(p=>p[1]);
+  return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+}
+function normalizeForCompare(points, target){
+  const a=bbox(points), b=bbox(target);
+  const aw=Math.max(1,a.maxX-a.minX), ah=Math.max(1,a.maxY-a.minY);
+  const bw=Math.max(1,b.maxX-b.minX), bh=Math.max(1,b.maxY-b.minY);
+  const sx=bw/aw, sy=bh/ah, scale=Math.min(sx,sy);
+  const ax=(a.minX+a.maxX)/2, ay=(a.minY+a.maxY)/2, bx=(b.minX+b.maxX)/2, by=(b.minY+b.maxY)/2;
+  return points.map(p=>[bx+(p[0]-ax)*scale, by+(p[1]-ay)*scale]);
+}
+function avgPointError(a,b){ let sum=0; const n=Math.min(a.length,b.length); for(let i=0;i<n;i++) sum+=Math.hypot(a[i][0]-b[i][0],a[i][1]-b[i][1]); return n?sum/n:999; }
+function drawKanaGuide() {
+  const kp=kanaPractice, el=kp.writerEl;
+  if (!el || !kp.data) return;
+  const wrap=el.querySelector('.kana-guide-wrap');
+  const svg=el.querySelector('.kana-guide-svg');
+  if(!wrap || !svg) return;
+  const groups=kp.groups;
+  const allStrokes=Array.isArray(kp.data.strokes)?kp.data.strokes:[];
+  let html='';
+  // Soft completed character silhouette.
+  for(const st of allStrokes){ if(st && st.value) html += `<path class="kana-shadow" d="${st.value}"></path>`; }
+  // Current median is the stroke the learner must copy.
+  if(groups[kp.current]){
+    const pts=groups[kp.current].points;
+    const d=pts.map((p,i)=>(i?'L':'M')+' '+p[0]+' '+p[1]).join(' ');
+    html += `<path class="kana-current" d="${d}"></path>`;
+  }
+  svg.innerHTML=html;
+  if(groups[kp.current]){
+    const current=svg.querySelector('.kana-current');
+    if(current && !kp.free){ current.classList.remove('animate'); void current.getBoundingClientRect(); current.classList.add('animate'); }
+  }
+  const no=el.querySelector('.kana-stroke-no'); if(no) no.textContent=String(Math.min(kp.current+1,groups.length));
+  const label=el.querySelector('.kana-guide-label'); if(label) label.textContent=kp.free?'Free write':'Trace stroke '+(kp.current+1)+' of '+groups.length+', then write it';
+}
+function kanaCanvasSize(){
+  const c=kanaPractice.canvas; if(!c) return 280;
+  const r=c.getBoundingClientRect(); return {w:r.width||280,h:r.height||280,dpr:window.devicePixelRatio||1};
+}
+function clearKanaCanvas(){
+  const c=kanaPractice.canvas; if(!c) return;
+  const sz=kanaCanvasSize(); c.width=Math.round(sz.w*sz.dpr); c.height=Math.round(sz.h*sz.dpr);
+  const ctx=c.getContext('2d'); kanaPractice.ctx=ctx; ctx.setTransform(sz.dpr,0,0,sz.dpr,0,0); ctx.clearRect(0,0,sz.w,sz.h);
+}
+function drawKanaUserStroke(points){
+  const ctx=kanaPractice.ctx; if(!ctx || points.length<2) return;
+  ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#ec4899'; ctx.lineWidth=8; ctx.beginPath();
+  points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.restore();
+}
+function kanaStrokeIsCorrect(userPoints){
+  const kp=kanaPractice, g=kp.groups[kp.current]; if(!g || userPoints.length<8) return false;
+  const rect=kp.canvas.getBoundingClientRect();
+  const expected=g.points.map(p=>kanaPointToCanvas(p,{w:rect.width,h:rect.height},24));
+  const u=resamplePolyline(userPoints,28);
+  const e=resamplePolyline(expected,28);
+  const nu=normalizeForCompare(u,e);
+  const err=avgPointError(nu,e);
+  const startErr=Math.hypot(nu[0][0]-e[0][0],nu[0][1]-e[0][1]);
+  const endErr=Math.hypot(nu[nu.length-1][0]-e[e.length-1][0],nu[nu.length-1][1]-e[e.length-1][1]);
+  // Shape is primary; start/end direction prevents drawing the stroke backwards.
+  return err < Math.max(24, rect.width*0.115) && startErr < rect.width*0.28 && endErr < rect.width*0.28;
+}
+function kanaPointerPos(ev){ const r=kanaPractice.canvas.getBoundingClientRect(); return [ev.clientX-r.left,ev.clientY-r.top]; }
+function kanaStartPointer(ev){
+  if(kanaPractice.busy || kanaPractice.free && !kanaPractice.canvas) return;
+  kanaPractice.drawing=true; kanaPractice.points=[kanaPointerPos(ev)]; kanaPractice.canvas.setPointerCapture?.(ev.pointerId); drawKanaUserStroke(kanaPractice.points);
+}
+function kanaMovePointer(ev){ if(!kanaPractice.drawing) return; const p=kanaPointerPos(ev), a=kanaPractice.points; if(!a.length || Math.hypot(p[0]-a[a.length-1][0],p[1]-a[a.length-1][1])>=2){a.push(p); drawKanaUserStroke(a.slice(-2));} }
+function kanaEndPointer(){
+  if(!kanaPractice.drawing) return; kanaPractice.drawing=false;
+  if(kanaPractice.free) return;
+  const pts=kanaPractice.points.slice();
+  if(pts.length<8){ kanaShowKanaStatus('Keep drawing the stroke','bad'); clearKanaCanvas(); return; }
+  if(kanaStrokeIsCorrect(pts)) kanaAcceptStroke();
+  else { kanaShowKanaStatus('Try that stroke again','bad'); const w=kanaPractice.writerEl; w?.classList.add('kana-error'); setTimeout(()=>w?.classList.remove('kana-error'),250); setTimeout(clearKanaCanvas,180); }
+}
+function kanaShowKanaStatus(text,kind){ const el=kanaPractice.writerEl?.querySelector('.kana-status'); if(!el)return; el.textContent=text; el.className='kana-status'+(kind?' '+kind:''); }
+function kanaAcceptStroke(){
+  const kp=kanaPractice; if(kp.busy) return; kp.busy=true; kanaShowKanaStatus('✓ Correct stroke','good');
+  const w=kp.writerEl; w?.classList.add('kana-success');
+  setTimeout(async()=>{
+    w?.classList.remove('kana-success');
+    const item=state.practice.items[state.practice.i]; if(!item){kp.busy=false;return;}
+    kp.current++;
+    if(kp.current < kp.groups.length){
+      clearKanaCanvas(); drawKanaGuide(); kanaShowKanaStatus('Next stroke','good'); kp.busy=false;
+    } else {
+      await recordKanjiWrite(kp.char, item.setId);
+      clearKanaCanvas(); kanaShowKanaStatus('✓ Character complete','good');
+      kp.busy=false;
+      practiceAdvanceAfterCharacter();
+    }
+  },240);
+}
+function setupKanaPointerHandlers(canvas){
+  kanaPractice.canvas=canvas; clearKanaCanvas();
+  canvas.onpointerdown=kanaStartPointer; canvas.onpointermove=kanaMovePointer; canvas.onpointerup=kanaEndPointer; canvas.onpointercancel=kanaEndPointer;
+}
+function loadKana(char){
+  destroyHanzi();
+  const target=$('hanziTarget'); if(!target)return;
+  target.innerHTML=`<div class="kana-writer"><div class="kana-guide-label">Loading kana stroke guide…</div><div class="kana-guide-wrap"><span class="kana-stroke-no">1</span><svg class="kana-guide-svg" viewBox="0 0 1024 1024" aria-hidden="true"></svg><div class="kana-draw-wrap"><div class="kana-draw-guide">${esc(char)}</div><canvas aria-label="Write ${esc(char)}"></canvas></div></div><div class="kana-status">Write the highlighted stroke</div></div>`;
+  const el=target.firstElementChild; const requestToken=Symbol('kana'); kanaPractice={char,data:null,groups:[],current:0,canvas:null,ctx:null,points:[],drawing:false,busy:false,free:false,writerEl:el,token:requestToken};
+  const canvas=el.querySelector('canvas'); setupKanaPointerHandlers(canvas);
+  const kind=isHiraganaChar(char)?'hiragana':'katakana';
+  fetch('https://cdn.jsdelivr.net/npm/kana-svg-data@latest/dist/'+kind+'/'+encodeURIComponent(char)+'.json',{cache:'force-cache'})
+    .then(r=>{if(!r.ok)throw new Error('Kana data '+r.status);return r.json();})
+    .then(data=>{
+      if(kanaPractice.token!==requestToken) return;
+      kanaPractice.data=data; kanaPractice.groups=kanaStrokeGroups(data);
+      if(!kanaPractice.groups.length) throw new Error('No stroke medians');
+      drawKanaGuide(); kanaShowKanaStatus('Trace the highlighted stroke, then write it');
+    })
+    .catch(err=>{
+      if(kanaPractice.token!==requestToken) return;
+      console.warn('Kana stroke data failed',err);
+      kanaShowKanaStatus('Could not load kana stroke data. Check internet and try again.','bad');
+    });
+}
+function practiceAdvanceAfterCharacter(){
+  const s=state.practice, item=s.items[s.i]; if(!item)return;
+  const chars=item.chars && item.chars.length?item.chars:[item.kanji];
+  const written=getCurrentPracticeChar(item);
+  savePracticeHistory({...item,kanji:written});
+  try{renderPractice();}catch(_){ } try{renderWords();}catch(_){ } try{if(typeof renderPath==='function')renderPath();}catch(_){ }
+  if(item.charIndex < chars.length-1){
+    item.charIndex++; item.kanji=chars[item.charIndex]; updatePracticeModalHeader(item);
+    requestAnimationFrame(()=>{loadHanzi(item.kanji); setTimeout(()=>practiceStartGuidedWrite(),300);});
+  } else {
+    item.charIndex=chars.length; renderPracticeSlots(item);
+    const slotsEl=$('practiceSlots'); if(slotsEl) slotsEl.querySelectorAll('.practice-slot').forEach((el,i)=>{el.classList.remove('current');el.classList.add('filled');el.textContent=chars[i]||'';});
+    const msg='✓ '+item.word+' complete'; if($('practiceProgress'))$('practiceProgress').textContent=msg; if($('wordsProgress'))$('wordsProgress').textContent=msg;
+  }
+}
+
 function loadHanzi(char) {
+  if (isKanaChar(char)) { loadKana(char); return; }
   destroyHanzi();
   const target = $('hanziTarget');
   if (!target) return;
@@ -4273,23 +3707,15 @@ function updatePracticeModalHeader(item) {
   const chars = item.chars && item.chars.length ? item.chars : [item.kanji];
   const current = getCurrentPracticeChar(item);
   item.kanji = current;
-  if ($('practiceModalTitle')) {
-    $('practiceModalTitle').textContent = isKanaChar(current)
-      ? (isKatakanaChar(current) ? 'Write the missing Katakana' : 'Write the missing Hiragana')
-      : 'Write the missing Kanji';
-  }
   if ($('practiceReading')) $('practiceReading').textContent = item.reading || '';
   if ($('practiceModalKanji')) $('practiceModalKanji').textContent = item.word || item.kanji;
+  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = 'Write the missing ' + practiceCharKind(current);
   if ($('practiceModalMeta')) {
     const parts = [];
     if (item.english) parts.push(item.english);
-    if (item.word && chars.length > 1) parts.push('Char ' + (item.charIndex + 1) + '/' + chars.length);
-    if (currentPracticeIsKana(item)) {
-      parts.push(isKatakanaChar(current) ? 'Katakana' : 'Hiragana');
-    } else {
-      parts.push('Kanji');
-    }
-    parts.push(item.vocabularyWord ? 'Vocabulary' : 'Set ' + item.setId);
+    if (item.word && chars.length > 1) parts.push('Char ' + (Math.min(item.charIndex, chars.length - 1) + 1) + '/' + chars.length);
+    parts.push(practiceCharKind(current));
+    parts.push('Set ' + item.setId);
     $('practiceModalMeta').textContent = parts.join(' · ');
   }
   const prev = $('practicePrevious');
@@ -4309,7 +3735,7 @@ function practiceGoToChar(charIndex) {
   item.charIndex = next;
   item.kanji = chars[next];
   updatePracticeModalHeader(item);
-  loadPracticeCharacter(item.kanji);
+  loadHanzi(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
 
@@ -4330,15 +3756,14 @@ function openPracticeModal(idx) {
   if (!item.chars || !item.chars.length) item.chars = [item.kanji];
   item.kanji = getCurrentPracticeChar(item);
 
-  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = currentPracticeIsKana(item) ? 'Write the kana' : 'Write the Kanji';
   updatePracticeModalHeader(item);
 
   document.body.classList.add('modal-open');
   $('practiceModal').classList.remove('hidden');
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      loadPracticeCharacter(item.kanji);
-      setTimeout(() => { if (hanziWriter || currentPracticeIsKana(item)) practiceStartGuidedWrite(); }, 350);
+      loadHanzi(item.kanji);
+      setTimeout(() => { if (hanziWriter) practiceStartGuidedWrite(); }, 350);
     });
   });
 }
@@ -4363,8 +3788,10 @@ function closePracticeModal() {
 
 function practiceStartGuidedWrite() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) {
-    // Kana uses the drawing pad; completion is recorded by its Check writing button.
+  if (!item) return;
+  const current = getCurrentPracticeChar(item);
+  if (isKanaChar(current)) {
+    if (!kanaPractice.writerEl || kanaPractice.char !== current) loadKana(current);
     return;
   }
   if (!hanziWriter) return;
@@ -4373,49 +3800,19 @@ function practiceStartGuidedWrite() {
   hanziWriter.showOutline();
   hanziWriter.quiz({
     onComplete: async () => {
-      const s = state.practice;
-      const item = s.items[s.i];
-      if (!item) return;
       const writtenChar = getCurrentPracticeChar(item);
-      const count = await recordKanjiWrite(writtenChar, item.setId);
-      savePracticeHistory({ ...item, kanji: writtenChar });
-      try { renderPractice(); } catch (_) {}
-      try { renderWords(); } catch (_) {}
-      try { if (typeof renderPath === 'function') renderPath(); } catch (_) {}
-
-      const chars = item.chars && item.chars.length ? item.chars : [item.kanji];
-      if (item.charIndex < chars.length - 1) {
-        item.charIndex += 1;
-        item.kanji = chars[item.charIndex];
-        updatePracticeModalHeader(item);
-        requestAnimationFrame(() => {
-          loadPracticeCharacter(item.kanji);
-          setTimeout(() => practiceStartGuidedWrite(), 300);
-        });
-      } else {
-        item.charIndex = chars.length;
-        renderPracticeSlots(item);
-        const slotsEl = $('practiceSlots');
-        if (slotsEl) {
-          slotsEl.querySelectorAll('.practice-slot').forEach((el, i) => {
-            el.classList.remove('current');
-            el.classList.add('filled');
-            el.textContent = chars[i] || '';
-          });
-        }
-        const msg = count >= PRACTICE_GOAL
-          ? writtenChar + ': Goal complete! ' + PRACTICE_GOAL + '/' + PRACTICE_GOAL
-          : writtenChar + ': ' + count + '/' + PRACTICE_GOAL + ' writings';
-        if ($('practiceProgress')) $('practiceProgress').textContent = msg;
-        if ($('wordsProgress')) $('wordsProgress').textContent = msg;
-      }
+      await recordKanjiWrite(writtenChar, item.setId);
+      practiceAdvanceAfterCharacter();
     }
   });
 }
 
 function practiceAnimate() {
-  const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:true, animate:true}); return; }
+  if (isKanaChar(getCurrentPracticeChar(state.practice.items[state.practice.i]))) {
+    if (!kanaPractice.data) { loadKana(getCurrentPracticeChar(state.practice.items[state.practice.i])); return; }
+    const svg=kanaPractice.writerEl?.querySelector('.kana-current'); if(svg){ svg.classList.remove('animate'); void svg.getBoundingClientRect(); svg.classList.add('animate'); }
+    return;
+  }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.hideCharacter();
@@ -4424,8 +3821,8 @@ function practiceAnimate() {
 }
 
 function practiceWrite() {
-  const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:false, animate:false}); return; }
+  const ch=getCurrentPracticeChar(state.practice.items[state.practice.i]);
+  if(isKanaChar(ch)){ kanaPractice.free=true; if(kanaPractice.writerEl){ const g=kanaPractice.writerEl.querySelector('.kana-guide-svg'); if(g)g.style.opacity='.15'; kanaShowKanaStatus('Free write — no guide'); } return; }
   practiceStartGuidedWrite();
 }
 
@@ -4435,7 +3832,7 @@ function practiceRewrite() {
   if (!item) return;
   item.kanji = getCurrentPracticeChar(item);
   renderPracticeSlots(item);
-  loadPracticeCharacter(item.kanji);
+  loadHanzi(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
 
@@ -4508,8 +3905,11 @@ function renderPracticeHistory() {
 }
 
 function practiceShow() {
-  const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:true, animate:false}); return; }
+  const ch=getCurrentPracticeChar(state.practice.items[state.practice.i]);
+  if(isKanaChar(ch)){
+    if(kanaPractice.writerEl){ const g=kanaPractice.writerEl.querySelector('.kana-guide-svg'); if(g)g.style.opacity='1'; kanaPractice.free=false; drawKanaGuide(); kanaShowKanaStatus('Guide shown'); }
+    return;
+  }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.showCharacter();
@@ -4598,8 +3998,8 @@ function setupStudyWords(rows, sourceKanji = '') {
 
 function wordJlptLevel(word, fallbackKanji = '') {
   const chars = [...String(word || '')].filter(isKanjiChar);
-  if (!chars.length) return fallbackKanji ? (JLPT_LEVEL_MAP[fallbackKanji] || 'N1') : 'N5';
-  const ranks = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[JLPT_LEVEL_MAP[k] || 'N1']));
+  if (!chars.length && fallbackKanji) return pathLevelOf(fallbackKanji);
+  const ranks = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[pathLevelOf(k)] || 1));
   const hardest = Math.min(...ranks);
   return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N1';
 }
@@ -6329,8 +5729,25 @@ async function fetchVocabPage(opts){
 }
 async function loadAllJoyoVocabulary(){ await fetchVocabPage(); }
 function prefetchVocabBank(){
-  // Vocabulary is loaded by ensureVocabularyLoaded() when the Word tab is opened.
-  // IndexedDB keeps the full 40,000-entry dataset available for instant future opens.
+  // warm first pages in background for instant open
+  const pages=[0,1,2];
+  (async()=>{
+    for(const p of pages){
+      const key=vocabCacheKey('',p);
+      if(JOYO_VOCAB_CACHE[key]&&Date.now()-(JOYO_VOCAB_CACHE[key].ts||0)<1000*60*60*12)continue;
+      try{
+        const res=await fetch('/api/vocab?page='+p+'&limit=50',{credentials:'include'});
+        if(!res.ok)continue;
+        const data=await res.json();
+        JOYO_VOCAB_CACHE[key]={items:data.items||[],total:data.total||0,ts:Date.now()};
+        if(p===0){
+          JOYO_VOCAB_TOTAL=data.total||0;
+          if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
+        }
+      }catch(e){}
+    }
+    saveVocabCacheToStorage();
+  })();
 }
 
 function renderPathVocabulary(item,info){
@@ -6501,7 +5918,7 @@ function showMode(next) {
     b.classList.toggle('active', b.dataset.mode === mode);
   });
   if (mode === 'path') renderPath();
-  if (mode === 'words') { renderWords(); ensureVocabularyLoaded(); }
+  if (mode === 'words') renderWords();
   if (mode === 'practice') renderPractice();
 }
 
@@ -6709,26 +6126,28 @@ bind('practicePrevious', 'onclick', practicePreviousKanji);
 bind('practiceRewrite', 'onclick', practiceRewrite);
 bind('practiceNext', 'onclick', practiceNextKanji);
 bind('practiceSkip', 'onclick', practiceSkip);
-document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(btn => {
-  btn.onclick = () => {
-    state.words.levelFilter = btn.getAttribute('data-word-level') || 'N5';
-    document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(b => b.classList.toggle('active', b === btn));
-    renderWords();
-  };
+bind('wordsChooseSets', 'onclick', () => openModal('words'));
+bind('vocabBankHide', 'onclick', ()=>{
+  const bank=$('vocabBank'),show=$('vocabBankShow');
+  if(bank)bank.classList.add('hidden');
+  if(show)show.classList.remove('hidden');
 });
-bind('wordsSearch', 'oninput', () => {
-  state.words.searchQuery = $('wordsSearch')?.value || '';
-  const clear = $('wordsSearchClear');
-  if (clear) clear.classList.toggle('hidden', !state.words.searchQuery);
-  renderWords();
+bind('vocabBankShow', 'onclick', ()=>{
+  const bank=$('vocabBank'),show=$('vocabBankShow');
+  // instant from cache if present
+  const key=vocabCacheKey(JOYO_VOCAB_QUERY.trim(),JOYO_VOCAB_PAGE);
+  if(JOYO_VOCAB_CACHE[key]&&JOYO_VOCAB_CACHE[key].items){
+    JOYO_VOCAB_ITEMS=JOYO_VOCAB_CACHE[key].items;
+    JOYO_VOCAB_TOTAL=JOYO_VOCAB_CACHE[key].total||JOYO_VOCAB_ITEMS.length;
+    renderVocabBank();
+  }
+  if(bank)bank.classList.remove('hidden');
+  if(show)show.classList.add('hidden');
+  fetchVocabPage(); // refresh in background / first load
 });
-bind('wordsSearchClear', 'onclick', () => {
-  state.words.searchQuery = '';
-  if ($('wordsSearch')) $('wordsSearch').value = '';
-  if ($('wordsSearchClear')) $('wordsSearchClear').classList.add('hidden');
-  renderWords();
-  $('wordsSearch')?.focus();
-});
+bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; fetchVocabPage(); });
+bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
+bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; fetchVocabPage(); });
 
 // Prevent clicks inside the practice dialog from being treated as backdrop clicks.
 $('practiceModal').addEventListener('click', e => {
@@ -6851,11 +6270,12 @@ window.addEventListener('resize', () => {
 (() => {
   setupStudy([1], true);
   setupPractice([1]);
-  setupWords([]);
+  setupWords([1]);
   showMode('path');
   loadFullJoyoPath();
   if (typeof bindAuthUi === 'function') bindAuthUi();
   if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
+try{prefetchVocabBank();}catch(e){}
 
 })();
 </script>
