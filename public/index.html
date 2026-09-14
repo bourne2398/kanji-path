@@ -4146,6 +4146,15 @@ async function refreshCurrentUser() {
     currentUser = null;
   }
   updateUserBanner();
+  if (currentUser) {
+    try {
+      await pullPathProgressFromServer();
+      if (typeof renderPath === 'function') renderPath();
+    } catch (_) {}
+    try {
+      await syncPracticeWritingProgress();
+    } catch (_) {}
+  }
   return currentUser;
 }
 
@@ -4199,6 +4208,12 @@ function bindAuthUi() {
       if (!res.ok) { if (err) err.textContent = data.error || 'Login failed'; return; }
       currentUser = data.user;
       updateUserBanner();
+      try {
+        await pullPathProgressFromServer();
+        // Push any offline local progress up to server
+        schedulePathServerSync(loadPathProgress());
+        if (typeof renderPath === 'function') renderPath();
+      } catch (_) {}
       if (modal) { modal.classList.add('hidden'); document.body.classList.remove('modal-open'); }
     } catch (e) {
       if (err) err.textContent = 'Network error';
@@ -5012,18 +5027,63 @@ function savePracticeWritingProgress(progress) {
 }
 
 async function apiGetKanjiProgress() {
-  return { progress: loadPracticeWritingProgress() };
+  // Always have local fallback
+  const local = loadPracticeWritingProgress();
+  if (!currentUser) return { progress: local };
+  try {
+    const res = await fetch('/api/progress/practice', { credentials: 'include' });
+    if (!res.ok) return { progress: local };
+    const data = await res.json();
+    const map = { ...local };
+    for (const row of (data.items || [])) {
+      if (!row || !row.kanji) continue;
+      const remote = Math.max(0, Number(row.write_count) || 0);
+      const prev = Number(map[row.kanji] || 0);
+      map[row.kanji] = Math.min(PRACTICE_GOAL, Math.max(prev, remote));
+    }
+    savePracticeWritingProgress(map);
+    return { progress: map };
+  } catch (_) {
+    return { progress: local };
+  }
 }
 
 async function apiSaveKanjiProgress(kanji, count, setId) {
   const progress = loadPracticeWritingProgress();
   progress[kanji] = Math.min(PRACTICE_GOAL, Math.max(0, Math.floor(Number(count) || 0)));
   savePracticeWritingProgress(progress);
-  return { ok: true, local: true, count: progress[kanji] };
+  if (currentUser) {
+    try {
+      const res = await fetch('/api/progress/practice', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kanji,
+          write_count: progress[kanji],
+          set_id: setId != null ? setId : null
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const saved = (data.saved && data.saved[0]) || {};
+        if (saved.write_count != null) {
+          progress[kanji] = Math.min(PRACTICE_GOAL, Math.max(0, Number(saved.write_count) || 0));
+          savePracticeWritingProgress(progress);
+        }
+      }
+    } catch (err) {
+      console.warn('practice progress API save failed', err);
+    }
+  }
+  return { ok: true, count: progress[kanji] };
 }
 
 async function syncPracticeWritingProgress() {
-  renderPractice();
+  try {
+    await apiGetKanjiProgress();
+  } catch (_) {}
+  if (typeof renderPractice === 'function') renderPractice();
 }
 
 function getKanjiWriteCount(kanji) {
@@ -6972,7 +7032,93 @@ function pathItems(){
 }
 function pathLevelCounts(items){const c={N5:0,N4:0,N3:0,N2:0,N1:0};for(const x of items)c[pathLevelOf(x.kanji)]++;return c}
 function loadPathProgress(){try{const raw=JSON.parse(localStorage.getItem('kanjiMnemonicPath')||'{}');if(!raw||typeof raw!=='object')return{};const out={};for(const[k,v]of Object.entries(raw)){if(v===true)out[k]={stage:3,ease:2.5,interval:4,due:Date.now()+4*864e5,reps:3,lapses:0,last:Date.now()};else if(v&&typeof v==='object')out[k]=v}return out}catch(_){return{}}}
-function savePathProgress(x){try{localStorage.setItem('kanjiMnemonicPath',JSON.stringify(x))}catch(_){}}
+function savePathProgress(x){
+  try{localStorage.setItem('kanjiMnemonicPath',JSON.stringify(x))}catch(_){}
+  // Persist to Neon when logged in (debounced bulk + immediate single handled by queuePathEntry)
+  schedulePathServerSync(x);
+}
+/** Debounced full map sync to server */
+let _pathSyncTimer=null;
+function schedulePathServerSync(map){
+  if(!currentUser) return;
+  clearTimeout(_pathSyncTimer);
+  _pathSyncTimer=setTimeout(()=>syncPathProgressToServer(map),400);
+}
+async function syncPathProgressToServer(map){
+  if(!currentUser) return;
+  try{
+    const items=Object.entries(map||{}).map(([kanji,e])=>({
+      kanji,
+      stage:e.stage|0,
+      ease:e.ease!=null?e.ease:2.5,
+      interval:e.interval|0,
+      due:e.due||null,
+      reps:e.reps|0,
+      lapses:e.lapses|0,
+      last:e.last||Date.now(),
+      jlpt: typeof pathLevelOf==='function'?pathLevelOf(kanji):null
+    }));
+    if(!items.length) return;
+    await fetch('/api/progress/path',{
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items})
+    });
+  }catch(err){console.warn('path progress sync failed',err)}
+}
+/** Upsert a single kanji entry immediately (called from pathAnswer) */
+async function upsertPathEntry(kanji, entry){
+  if(!currentUser||!kanji||!entry) return;
+  try{
+    await fetch('/api/progress/path',{
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        kanji,
+        stage:entry.stage|0,
+        ease:entry.ease!=null?entry.ease:2.5,
+        interval:entry.interval|0,
+        due:entry.due||null,
+        reps:entry.reps|0,
+        lapses:entry.lapses|0,
+        last:entry.last||Date.now(),
+        jlpt: typeof pathLevelOf==='function'?pathLevelOf(kanji):null
+      })
+    });
+  }catch(err){console.warn('path entry upsert failed',err)}
+}
+/** Pull server progress and merge into localStorage (server wins on newer last) */
+async function pullPathProgressFromServer(){
+  if(!currentUser) return loadPathProgress();
+  try{
+    const res=await fetch('/api/progress/path',{credentials:'include'});
+    if(!res.ok) return loadPathProgress();
+    const data=await res.json();
+    const local=loadPathProgress();
+    const items=Array.isArray(data.items)?data.items:[];
+    for(const row of items){
+      if(!row||!row.kanji) continue;
+      const remote={
+        stage:row.stage|0,
+        ease:row.ease!=null?Number(row.ease):2.5,
+        interval:row.interval|0,
+        due:row.due!=null?Number(row.due):(row.due_at?new Date(row.due_at).getTime():0),
+        reps:row.reps|0,
+        lapses:row.lapses|0,
+        last:row.last!=null?Number(row.last):Date.now()
+      };
+      const prev=local[row.kanji];
+      if(!prev || (remote.last||0)>=(prev.last||0)) local[row.kanji]=remote;
+    }
+    try{localStorage.setItem('kanjiMnemonicPath',JSON.stringify(local))}catch(_){}
+    return local;
+  }catch(err){
+    console.warn('pull path progress failed',err);
+    return loadPathProgress();
+  }
+}
 function pathIsLearned(p,k){return!!(p[k]&&p[k].stage>0)}
 function pathIsDue(p,k){const e=p[k];return!!(e&&e.stage>0&&(e.due||0)<=Date.now())}
 function pathDueList(items,p){return items.filter(x=>pathIsDue(p,x.kanji))}
@@ -7336,7 +7482,7 @@ const radWrap=$('pathRadicals'),radList=$('pathRadicalsList'),radNote=$('pathRad
 if(radWrap&&radList){if(rads.length){radWrap.style.display='';radList.innerHTML=rads.map(r=>`<span class="path-radical-chip"><strong>${esc(r.radical)}</strong><small>${esc(r.meaning)}</small></span>`).join('');if(radNote)radNote.textContent=rads.filter(r=>r.story).map(r=>r.radical+' = '+r.story).join(' · ')||'Learn these building blocks first, then combine them into the kanji.';}else{radWrap.style.display='none';radList.innerHTML='';if(radNote)radNote.textContent='';}}
 const writeCount=getKanjiWriteCount(item.kanji);const writesDone=writeCount>=PRACTICE_GOAL;const learnBtn=$('pathLearnBtn');if(learnBtn){if(isDue){learnBtn.textContent='✓ I remembered it';learnBtn.dataset.mode='review-good';learnBtn.disabled=false;learnBtn.title=''}else if(isLearned){learnBtn.textContent='✓ Learned — continue →';learnBtn.dataset.mode='continue';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.dataset.mode='learn';if(writesDone){learnBtn.textContent='Mark as learned →';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.textContent=`Write ${writeCount}/${PRACTICE_GOAL} to unlock →`;learnBtn.disabled=true;learnBtn.title=`Write this kanji ${PRACTICE_GOAL} times in Practice before marking learned`}}}const writeHint=$('pathWriteHint');if(writeHint){if(isDue||isLearned){writeHint.style.display='none'}else{writeHint.style.display='';writeHint.textContent=writesDone?`Writing goal complete (${PRACTICE_GOAL}/${PRACTICE_GOAL})`:`Writing progress: ${writeCount} / ${PRACTICE_GOAL}`}}const revBtn=$('pathReviewToggle');if(revBtn){revBtn.style.display=due.length?'':'none';revBtn.textContent=pathReviewMode?'← Back to new kanji':`🔄 ${due.length} reviews due`}const againBtn=$('pathAgainBtn');if(againBtn)againBtn.style.display=isDue?'':'none';renderPathRoadmap(items,p);updateReviewNotifBadge();if(!item.reading||!item.english)ensurePathMeta(item.kanji).then(()=>renderPath());if(!PATH_WORDS_CACHE[item.kanji]){renderPathVocabulary(item,info);ensurePathWords(item.kanji).then(()=>{if(pathItems()[pathCurrent]?.kanji===item.kanji)renderPathVocabulary(item,pathInfo(item));});}}
 function renderPathRoadmap(items,p){const grid=$('pathRoadmap');if(!grid)return;const visible=pathLevelItems(items),counts=pathLevelCounts(items);grid.innerHTML='';for(let vi=0;vi<visible.length;vi++){const x=visible[vi],i=items.indexOf(x),b=document.createElement('button');b.type='button';b.className='path-node';if(pathIsLearned(p,x.kanji))b.classList.add('learned');if(pathIsDue(p,x.kanji))b.classList.add('due');if(i===pathCurrent)b.classList.add('current');const prevInLevel=vi>0?visible[vi-1]:null;const unlocked=vi===0||(prevInLevel&&pathIsLearned(p,prevInLevel.kanji))||pathIsLearned(p,x.kanji);if(!unlocked)b.classList.add('locked');b.disabled=!unlocked;b.innerHTML=`<strong>${esc(x.kanji)}</strong><small>${vi+1} · ${pathLevelOf(x.kanji)}</small>`;b.onclick=()=>{pathReviewMode=false;pathCurrent=i;renderPath()};grid.appendChild(b)}if($('pathRoadmapCount'))$('pathRoadmapCount').textContent=`${visible.length.toLocaleString()} kanji · ${pathLevelFilter}`;if($('pathLevelSummary'))$('pathLevelSummary').innerHTML=`Learning <strong>${pathLevelFilter}</strong> · N5 ${counts.N5} · N4 ${counts.N4} · N3 ${counts.N3} · N2 ${counts.N2} · N1 ${counts.N1}`}
-function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);if(quality===0){renderPath();return}pathReviewMode=false;const visible=pathLevelItems(items);const vi=visible.findIndex(v=>v.kanji===x.kanji);if(vi>=0&&vi<visible.length-1){pathCurrent=items.indexOf(visible[vi+1]);}else if(pathCurrent<items.length-1){pathCurrent++;}renderPath()}
+function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);upsertPathEntry(x.kanji,p[x.kanji]);if(quality===0){renderPath();return}pathReviewMode=false;const visible=pathLevelItems(items);const vi=visible.findIndex(v=>v.kanji===x.kanji);if(vi>=0&&vi<visible.length-1){pathCurrent=items.indexOf(visible[vi+1]);}else if(pathCurrent<items.length-1){pathCurrent++;}renderPath()}
 function pathMarkLearned(){
   const btn = $('pathLearnBtn');
   const mode = (btn && btn.dataset && btn.dataset.mode) || 'learn';
@@ -7836,14 +7982,14 @@ window.addEventListener('resize', () => {
   }
 });
 // Boot — guest works offline; login optional (admin at /admin.html).
-(() => {
+(async () => {
   setupStudy([1], true);
   setupPractice([1]);
   setupWords([]);
   showMode('home');
   loadFullJoyoPath();
   if (typeof bindAuthUi === 'function') bindAuthUi();
-  if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
+  if (typeof refreshCurrentUser === 'function') await refreshCurrentUser();
 })();
 </script>
 </body>
