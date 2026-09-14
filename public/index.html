@@ -3607,57 +3607,55 @@ function kanaPracticeCanvas() { return null; }
 // { strokes: string[], medians: number[][][] }.
 const kanaDataCache = new Map();
 
-function loadKanaStrokeData(char, onLoad, onError) {
+async function loadKanaStrokeData(char) {
+  // HanziWriter 3.x supports a Promise-returning charDataLoader. Use that
+  // interface directly instead of mixing it with the old callback form.
+  // This is important because the Kana database is remote and the writer must
+  // receive the CharacterJson before it can animate or start grading strokes.
   const cached = kanaDataCache.get(char);
-  if (cached) {
-    onLoad(cached);
-    return;
-  }
+  if (cached) return cached;
 
-  // IMPORTANT: Do NOT convert kana-svg-data here.
-  // The previous implementation caused unsolvable strokes because kana-svg-data
-  // uses animCJK clip-path medians, not HanziWriter's CharacterJson grading data.
-  // This database is specifically generated for HanziWriter and already returns:
-  //   { strokes: string[], medians: number[][][] }
-  // It also explicitly supports Hiragana and Katakana.
   const url = 'https://cdn.jsdelivr.net/gh/MadLadSquad/hanzi-writer-data-youyin@latest/data/'
     + encodeURIComponent(char) + '.json';
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);
 
-  fetch(url, { cache: 'force-cache', signal: controller.signal })
-    .then(res => {
-      if (!res.ok) throw new Error('Kana HanziWriter data unavailable (' + res.status + ')');
-      return res.json();
-    })
-    .then(data => {
-      clearTimeout(timeout);
-      if (!data || !Array.isArray(data.strokes) || !Array.isArray(data.medians)) {
-        throw new Error('Invalid HanziWriter kana data');
-      }
-      if (data.strokes.length !== data.medians.length || !data.strokes.length) {
-        throw new Error('Incomplete HanziWriter kana data');
-      }
+  try {
+    const res = await fetch(url, { cache: 'force-cache', signal: controller.signal });
+    if (!res.ok) throw new Error('Kana HanziWriter data unavailable (' + res.status + ')');
+    const data = await res.json();
 
-      // Validate the exact format expected by HanziWriter before starting quiz.
-      const clean = {
-        strokes: data.strokes,
-        medians: data.medians
-      };
-      kanaDataCache.set(char, clean);
-      onLoad(clean);
-    })
-    .catch(err => {
-      clearTimeout(timeout);
-      console.warn('Kana HanziWriter data failed for', char, err);
-      if (onError) onError(err);
-    });
+    if (!data || !Array.isArray(data.strokes) || !Array.isArray(data.medians)) {
+      throw new Error('Invalid HanziWriter kana data');
+    }
+    if (data.strokes.length !== data.medians.length || !data.strokes.length) {
+      throw new Error('Incomplete HanziWriter kana data');
+    }
+
+    const clean = {
+      strokes: data.strokes,
+      medians: data.medians
+    };
+    kanaDataCache.set(char, clean);
+    return clean;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function setupKanaCanvas(char, options = {}) {
   const target = $('hanziTarget');
   const box = $('practiceHwBox');
   if (!target || !box) return;
+
+  // A mode switch (Animate -> Write -> Show) must never leave the previous
+  // HanziWriter instance attached to the same target. Cancel/destroy it first.
+  if (hanziWriter) {
+    try { if (typeof hanziWriter.cancelQuiz === 'function') hanziWriter.cancelQuiz(); } catch (_) {}
+    try { if (typeof hanziWriter.cancelAnimation === 'function') hanziWriter.cancelAnimation(); } catch (_) {}
+    try { if (typeof hanziWriter._hanziWriterRenderer?.destroy === 'function') hanziWriter._hanziWriterRenderer.destroy(); } catch (_) {}
+    hanziWriter = null;
+  }
 
   box.classList.add('is-kana');
   target.innerHTML = '';
@@ -3712,19 +3710,26 @@ function setupKanaCanvas(char, options = {}) {
       onLoadCharDataSuccess: () => {
         target.setAttribute('data-character', char);
         resizePracticeHanzi();
-        if (mode === 'show') {
-          // Same as Kanji → Show: display the complete kana without starting the quiz.
-          writer.showOutline({ duration: 0 });
-          writer.showCharacter({ duration: 250 });
-        } else if (mode === 'animate') {
-          // Same as Kanji → Animate: show the stroke order, but do not grade input.
-          writer.hideCharacter({ duration: 0 });
-          writer.showOutline({ duration: 0 });
-          writer.animateCharacter();
-        } else {
-          // EXACTLY the Kanji writing behavior: HanziWriter grades one stroke at a time,
-          // advances automatically after a correct stroke, and completes the character.
-          writer.quiz({
+
+        // Wait one paint so the SVG renderer is mounted before starting an
+        // animation/quiz. This prevents a newly-created Kana writer from
+        // appearing blank when the previous mode was just destroyed.
+        requestAnimationFrame(() => {
+          if (!writer || hanziWriter !== writer) return;
+          if (mode === 'show') {
+            writer.showOutline({ duration: 0 });
+            writer.showCharacter({ duration: 250 });
+          } else if (mode === 'animate') {
+            writer.hideCharacter({ duration: 0 });
+            writer.showOutline({ duration: 0 });
+            writer.animateCharacter({
+              strokeAnimationSpeed: 1,
+              delayBetweenStrokes: 180
+            });
+          } else {
+            // EXACTLY the Kanji writing behavior: HanziWriter grades one stroke at a time,
+            // advances automatically after a correct stroke, and completes the character.
+            writer.quiz({
             leniency: 1,
             showHintAfterMisses: 2,
             highlightOnComplete: true,
@@ -3734,12 +3739,16 @@ function setupKanaCanvas(char, options = {}) {
             highlightColor: '#16803c',
             onCorrectStroke: (strokeData) => {
               if ($('practiceProgress')) {
-                $('practiceProgress').textContent = `${char}: stroke ${strokeData.strokeNum} correct`;
+                const done = Number(strokeData.strokesRemaining || 0) === 0;
+                $('practiceProgress').textContent = done
+                  ? `${char}: stroke ${strokeData.strokeNum + 1} correct — complete!`
+                  : `${char}: stroke ${strokeData.strokeNum + 1} correct — next stroke`;
               }
             },
-            onMistake: () => {
+            onMistake: (strokeData) => {
               if ($('practiceProgress')) {
-                $('practiceProgress').textContent = `${char}: try that stroke again`;
+                const n = Number(strokeData?.strokeNum ?? 0) + 1;
+                $('practiceProgress').textContent = `${char}: stroke ${n} — try again`;
               }
             },
             onComplete: async () => {
@@ -3766,9 +3775,11 @@ function setupKanaCanvas(char, options = {}) {
             }
           });
         }
+        });
       },
       onLoadCharDataError: (err) => {
         target.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#64748b;text-align:center;padding:20px">Could not load kana stroke data.<br>Please check your internet connection.</div>';
+        if ($('practiceProgress')) $('practiceProgress').textContent = `${char}: stroke data failed to load`;
         console.warn('Kana HanziWriter load error', err);
       }
     });
