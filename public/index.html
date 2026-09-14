@@ -2598,20 +2598,33 @@ html[data-theme="dark"] .study-level-btn.active {
 .word-progress-track { height:7px; width:100%; border-radius:999px; background:#ece9f7; overflow:hidden; }
 .word-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#c2185b,#7c3aed); }
 
-/* Kana writing practice for vocabulary words */
-.practice-hw-box.is-kana{display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* Kana guided writing practice — centered, responsive, with real stroke-order guide */
+.practice-hw-box.is-kana{display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}
 .practice-hw-box.is-kana #hanziTarget{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0}
-.kana-practice-panel{box-sizing:border-box;width:100%;height:100%;max-width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px;border-radius:16px;background:linear-gradient(145deg,#fff7fb,#f4f1ff);border:1px solid rgba(185,28,74,.12);box-shadow:0 8px 24px rgba(39,24,70,.08);overflow:hidden}
-.kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(3rem,12vw,4.8rem);font-weight:900;line-height:.95;color:#18244b;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
-.kana-reference small{display:block;font-size:.72rem;font-weight:700;color:#786ba1;text-align:center;margin-top:4px;line-height:1.1}
-.kana-pad{display:block;width:min(190px,58vw);height:min(190px,58vw);max-width:190px;max-height:190px;aspect-ratio:1;border-radius:14px;background:#fff;border:2px dashed #c9c1df;touch-action:none;cursor:crosshair;box-shadow:inset 0 0 0 1px rgba(185,28,74,.05);flex:0 1 auto}
+.kana-practice-panel{box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:16px;background:linear-gradient(145deg,#fff8fb,#f7f5ff);border:1px solid rgba(185,28,74,.12);overflow:hidden}
+.kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(2.5rem,9vw,3.6rem);font-weight:900;line-height:1;color:#18244b;display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+.kana-reference small{display:block;font-size:.68rem;font-weight:800;color:#786ba1;text-align:center;margin-top:3px;line-height:1.1}
+.kana-guide-stage{position:relative;width:min(178px,56vw);height:min(178px,56vw);max-width:178px;max-height:178px;aspect-ratio:1;flex:0 0 auto;border:2px solid #d9d4e8;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(185,28,74,.04);overflow:hidden}
+.kana-guide-svg,.kana-writing-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.kana-guide-svg{pointer-events:none}
+.kana-guide-fill{fill:#e8e5ef;opacity:.42}
+.kana-guide-line{fill:none;stroke:#b7accf;stroke-width:34;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+.kana-guide-line.is-hidden{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.kana-guide-line.is-animated{animation:kanaStrokeGuide .65s ease forwards;animation-delay:var(--delay,0s)}
+@keyframes kanaStrokeGuide{to{stroke-dashoffset:0;opacity:.95}}
+.kana-stroke-number{font:700 30px/1 Arial,sans-serif;fill:#7c3aed;opacity:.9}
+.kana-writing-canvas{z-index:2;background:transparent;border:0;touch-action:none;cursor:crosshair}
+.kana-guide-label{position:absolute;left:8px;top:7px;z-index:3;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.9);color:#786ba1;font-size:.62rem;font-weight:800;pointer-events:none}
 .kana-pad-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:0 0 auto}
-.kana-pad-actions .btn{min-height:36px;padding:7px 11px;font-size:.78rem}
-.kana-pad-hint{font-size:.68rem;color:#7183a9;text-align:center;line-height:1.15;max-width:250px;flex:0 0 auto}
-@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 40px));height:min(300px,calc(100vw - 40px));}.kana-pad{width:min(170px,52vw);height:min(170px,52vw)}.kana-reference{font-size:3.2rem}.kana-pad-actions .btn{min-height:34px;padding:6px 9px}}
+.kana-pad-actions .btn{min-height:34px;padding:6px 10px;font-size:.76rem}
+.kana-pad-hint{font-size:.64rem;color:#7183a9;text-align:center;line-height:1.15;max-width:245px;flex:0 0 auto}
+@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(164px,52vw);height:min(164px,52vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
 html[data-theme="dark"] .kana-practice-panel{background:linear-gradient(145deg,#202033,#1a2030);border-color:var(--border)}
 html[data-theme="dark"] .kana-reference{color:#eef2ff}
-html[data-theme="dark"] .kana-pad{background:#111827;border-color:#66708c}
+html[data-theme="dark"] .kana-guide-stage{background:#111827;border-color:#66708c}
+html[data-theme="dark"] .kana-guide-fill{fill:#475069;opacity:.5}
+html[data-theme="dark"] .kana-guide-line{stroke:#8f84ad}
+html[data-theme="dark"] .kana-guide-label{background:rgba(17,24,39,.9);color:#b9a9e5}
 html[data-theme="dark"] .kana-pad-hint{color:#a9b8d8}
 html[data-theme="dark"] .word-flashcard { background:linear-gradient(145deg,#172033,#141a2b); border-color:var(--border); }
 html[data-theme="dark"] .word-flashcard .word-art { background:#20263a; }
@@ -3586,24 +3599,31 @@ function clearKanaCanvas() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
-function setupKanaCanvas(char) {
+function setupKanaCanvas(char, options = {}) {
   const target = $('hanziTarget');
   const box = $('practiceHwBox');
   if (!target || !box) return;
+  const animate = options.animate !== false;
+  const showGuide = options.showGuide !== false;
   box.classList.add('is-kana');
-  const size = Math.min(190, Math.max(160, Math.floor(getPracticeHanziSize() * 0.62)));
   target.innerHTML = `
     <div class="kana-practice-panel">
-      <div class="kana-reference">${esc(char)}<small>Write this kana</small></div>
-      <canvas id="kanaPracticeCanvas" class="kana-pad" width="600" height="600" aria-label="Write kana ${esc(char)}"></canvas>
+      <div class="kana-reference">${esc(char)}<small>${showGuide ? 'Trace the stroke order, then write it' : 'Free write'}</small></div>
+      <div class="kana-guide-stage" id="kanaGuideStage">
+        <div class="kana-guide-label" id="kanaGuideLabel">Stroke guide</div>
+        <svg class="kana-guide-svg" id="kanaGuideSvg" viewBox="0 0 1024 1024" aria-hidden="true"></svg>
+        <canvas id="kanaPracticeCanvas" class="kana-writing-canvas" width="600" height="600" aria-label="Write kana ${esc(char)}"></canvas>
+      </div>
       <div class="kana-pad-actions">
+        <button type="button" class="btn subtle" id="kanaAnimateBtn">▶ Guide</button>
+        <button type="button" class="btn subtle" id="kanaShowBtn">Show</button>
         <button type="button" class="btn subtle" id="kanaClearBtn">Clear</button>
         <button type="button" class="btn primary" id="kanaDoneBtn">✓ Check writing</button>
       </div>
-      <div class="kana-pad-hint">Draw the kana with your finger, mouse, or stylus.</div>
+      <div class="kana-pad-hint">Follow the numbered strokes. Write with your finger, mouse, or stylus.</div>
     </div>`;
+
   const canvas = kanaPracticeCanvas();
-  canvas.style.width = size + 'px'; canvas.style.height = size + 'px';
   const ctx = canvas.getContext('2d');
   ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=16; ctx.strokeStyle='#c2185b';
   let drawing=false, hasInk=false;
@@ -3612,7 +3632,55 @@ function setupKanaCanvas(char) {
   canvas.addEventListener('pointermove',e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke();});
   const end=()=>{drawing=false;};
   canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
-  $('kanaClearBtn').onclick=()=>{hasInk=false;clearKanaCanvas();};
+
+  const clear=()=>{hasInk=false;clearKanaCanvas();};
+  const guideSvg=$('kanaGuideSvg');
+  const guideLabel=$('kanaGuideLabel');
+  let guideData=null;
+
+  function drawGuide(data, mode='guide') {
+    guideData=data;
+    if(!guideSvg) return;
+    const prefix='kg'+Date.now().toString(36);
+    const strokes=Array.isArray(data?.strokes)?data.strokes:[];
+    const medians=Array.isArray(data?.medians)?data.medians:[];
+    const fills=strokes.map(st=>`<path class="kana-guide-fill" d="${st.value||''}"></path>`).join('');
+    const lines=[];
+    medians.forEach((m,i)=>{
+      const pts=Array.isArray(m?.value)?m.value:[];
+      if(pts.length<2) return;
+      const points=pts.map(p=>`${p[0]},${p[1]}`).join(' ');
+      const delay=(i*0.55).toFixed(2);
+      const hidden=mode==='animate'?'is-hidden is-animated':(mode==='guide'?'':'is-hidden');
+      lines.push(`<polyline class="kana-guide-line ${hidden}" style="--delay:${delay}s" pathLength="1" points="${points}"></polyline>`);
+      if(mode!=='animate'){
+        const first=pts[0];
+        lines.push(`<text class="kana-stroke-number" x="${first[0]+18}" y="${first[1]-12}">${i+1}</text>`);
+      }
+    });
+    guideSvg.innerHTML=fills+lines.join('');
+    if(guideLabel) guideLabel.textContent=mode==='animate'?'Playing stroke order':mode==='show'?'Full character':'Stroke guide';
+  }
+
+  async function loadGuide(mode='animate') {
+    if(!isKanaChar(char)) return;
+    try {
+      const dir=isKatakanaChar(char)?'katakana':'hiragana';
+      const url='https://cdn.jsdelivr.net/npm/kana-svg-data/dist/'+dir+'/'+encodeURIComponent(char)+'.json';
+      const res=await fetch(url,{cache:'force-cache'});
+      if(!res.ok) throw new Error('Kana stroke data unavailable');
+      const data=await res.json();
+      drawGuide(data,mode);
+    } catch(err) {
+      console.warn('Kana stroke guide failed for',char,err);
+      if(guideLabel) guideLabel.textContent='Guide unavailable — write freely';
+      if(guideSvg) guideSvg.innerHTML='';
+    }
+  }
+
+  $('kanaClearBtn').onclick=clear;
+  $('kanaAnimateBtn').onclick=()=>loadGuide('animate');
+  $('kanaShowBtn').onclick=()=>loadGuide('show');
   $('kanaDoneBtn').onclick=async()=>{
     if(!hasInk){ $('practiceProgress').textContent='Please write the kana first.'; return; }
     const s=state.practice, item=s.items[s.i]; if(!item) return;
@@ -3624,6 +3692,7 @@ function setupKanaCanvas(char) {
     if($('practiceProgress')) $('practiceProgress').textContent=msg;
     if($('wordsProgress')) $('wordsProgress').textContent=msg;
   };
+  loadGuide(animate?'animate':'guide');
 }
 
 function loadPracticeCharacter(char) {
@@ -4110,7 +4179,7 @@ function practiceStartGuidedWrite() {
 
 function practiceAnimate() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:true, animate:true}); return; }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.hideCharacter();
@@ -4120,7 +4189,7 @@ function practiceAnimate() {
 
 function practiceWrite() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:false, animate:false}); return; }
   practiceStartGuidedWrite();
 }
 
@@ -4204,7 +4273,7 @@ function renderPracticeHistory() {
 
 function practiceShow() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {showGuide:true, animate:false}); return; }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.showCharacter();
