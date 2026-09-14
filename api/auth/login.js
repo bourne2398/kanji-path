@@ -1,76 +1,196 @@
 import { getDb } from '../../lib/db.js';
 import { verifyPassword, createToken, sessionCookie } from '../../lib/auth.js';
 
-export const config = { runtime: 'nodejs20.x' };
+export const config = { runtime: 'edge' };
 
-function send(res, data, status = 200, headers = {}) {
-  res.statusCode = status;
-  for (const [key, value] of Object.entries(headers)) res.setHeader(key, value);
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.end(JSON.stringify(data));
+function jsonResponse(data, status = 200, headers = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...headers,
+    },
+  });
 }
 
-function readBody(req) {
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') {
-    try { return JSON.parse(req.body); } catch { return null; }
-  }
-  return null;
-}
-
-export default async function handler(req, res) {
+export default async function handler(req) {
+  // Only POST is allowed
   if (req.method !== 'POST') {
-    return send(res, { error: 'Method not allowed' }, 405);
+    return jsonResponse(
+      { error: 'Method not allowed' },
+      405,
+      { Allow: 'POST' }
+    );
   }
 
-  const body = readBody(req);
-  if (!body) return send(res, { error: 'Invalid JSON body' }, 400);
+  // Read JSON request body
+  let body;
 
-  const email = String(body.email || '').trim().toLowerCase();
-  const password = String(body.password || '');
+  try {
+    body = await req.json();
+  } catch (error) {
+    console.error('Invalid login JSON:', error);
+    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+  }
+
+  const email = String(body?.email || '')
+    .trim()
+    .toLowerCase();
+
+  const password = String(body?.password || '');
+
   if (!email || !password) {
-    return send(res, { error: 'Email and password are required' }, 400);
+    return jsonResponse(
+      { error: 'Email and password are required' },
+      400
+    );
   }
 
   try {
+    // Connect to Neon
     const sql = getDb();
+
+    // Find user
     const rows = await sql`
-      SELECT id, email, password_hash, name, role
+      SELECT
+        id,
+        email,
+        password_hash,
+        name,
+        role
       FROM users
       WHERE LOWER(email) = ${email}
       LIMIT 1
     `;
-    const user = rows[0];
-    if (!user) return send(res, { error: 'Invalid email or password' }, 401);
 
-    if (!user.password_hash) {
-      console.error('login error: user has no password_hash');
-      return send(res, { error: 'Account is not configured correctly. Contact the administrator.' }, 500);
+    const user = rows[0];
+
+    // Don't reveal whether email exists
+    if (!user) {
+      return jsonResponse(
+        { error: 'Invalid email or password' },
+        401
+      );
     }
 
-    const ok = await verifyPassword(password, user.password_hash);
-    if (!ok) return send(res, { error: 'Invalid email or password' }, 401);
+    // Check password
+    const passwordValid = await verifyPassword(
+      password,
+      user.password_hash
+    );
 
-    await sql`UPDATE users SET last_login_at = NOW() WHERE id = ${user.id}`;
+    if (!passwordValid) {
+      return jsonResponse(
+        { error: 'Invalid email or password' },
+        401
+      );
+    }
+
+    // Update last login
+    await sql`
+      UPDATE users
+      SET last_login_at = NOW()
+      WHERE id = ${user.id}
+    `;
+
+    // Create JWT
     const token = await createToken(user);
 
-    return send(res, {
-      ok: true,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role }
-    }, 200, { 'Set-Cookie': sessionCookie(token) });
-  } catch (err) {
-    console.error('login error:', err);
-    const message = String(err?.message || err || 'Unknown server error');
+    // Return successful login
+    return jsonResponse(
+      {
+        ok: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        }
+      },
+      200,
+      {
+        'Set-Cookie': sessionCookie(token)
+      }
+    );
 
-    if (/DATABASE_URL|database is not configured/i.test(message)) {
-      return send(res, { error: 'Database is not configured. Check DATABASE_URL in Vercel and redeploy.' }, 500);
+  } catch (error) {
+    console.error('LOGIN ERROR:', error);
+
+    const message = String(
+      error?.message || error || 'Unknown server error'
+    );
+
+    // Database configuration
+    if (
+      /DATABASE_URL|database is not configured|not set/i.test(message)
+    ) {
+      return jsonResponse(
+        {
+          error:
+            'Database is not configured. Check DATABASE_URL in Vercel.'
+        },
+        500
+      );
     }
-    if (/relation .*users.*does not exist|users.*does not exist/i.test(message)) {
-      return send(res, { error: 'The users table is missing in Neon. Run the database schema/seed script once.' }, 500);
+
+    // Missing users table
+    if (
+      /relation .*users.*does not exist|users.*does not exist/i.test(
+        message
+      )
+    ) {
+      return jsonResponse(
+        {
+          error:
+            'The users table does not exist in the database.'
+        },
+        500
+      );
     }
-    if (/column .*password_hash.*does not exist|column .*role.*does not exist/i.test(message)) {
-      return send(res, { error: 'The users table has an outdated schema. Run the latest schema.sql in Neon.' }, 500);
+
+    // Incorrect database schema
+    if (
+      /column .*password_hash.*does not exist|column .*role.*does not exist|column .*last_login_at.*does not exist/i.test(
+        message
+      )
+    ) {
+      return jsonResponse(
+        {
+          error:
+            'The users table schema is outdated. Run the latest schema.sql in Neon.'
+        },
+        500
+      );
     }
-    return send(res, { error: 'Server error during login. Check Vercel Function Logs.' }, 500);
+
+    // JWT secret
+    if (/JWT_SECRET/i.test(message)) {
+      return jsonResponse(
+        {
+          error:
+            'JWT_SECRET is missing or invalid in Vercel.'
+        },
+        500
+      );
+    }
+
+    // Password/bcrypt error
+    if (/bcrypt|password_hash/i.test(message)) {
+      return jsonResponse(
+        {
+          error:
+            'Password verification failed. Check the stored password hash.'
+        },
+        500
+      );
+    }
+
+    return jsonResponse(
+      {
+        error: 'Login server error.',
+        details: message
+      },
+      500
+    );
   }
 }
