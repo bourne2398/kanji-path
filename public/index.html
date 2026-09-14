@@ -3042,7 +3042,7 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
     </div>
     <div class="modal-foot practice-foot-clean">
       <div class="practice-modal-actions practice-actions-main">
-        <button class="btn" id="practicePrevious" aria-label="Previous kanji">← Previous</button>
+        <button class="btn" id="practicePrevious" aria-label="Previous character">← Previous</button>
         <button class="btn" id="practiceRewrite">↻ Rewrite</button>
         <button class="btn primary" id="practiceNext">Next</button>
       </div>
@@ -3559,6 +3559,12 @@ function isKanaChar(ch) {
   return (cp >= 0x3040 && cp <= 0x309f) || (cp >= 0x30a0 && cp <= 0x30ff) || (cp >= 0x31f0 && cp <= 0x31ff);
 }
 
+function isKatakanaChar(ch) {
+  if (!ch) return false;
+  const cp = ch.codePointAt(0);
+  return (cp >= 0x30a0 && cp <= 0x30ff) || (cp >= 0x31f0 && cp <= 0x31ff);
+}
+
 function isJapanesePracticeChar(ch) {
   return isKanjiChar(ch) || isKanaChar(ch);
 }
@@ -3633,12 +3639,19 @@ function advanceWordPracticeCharacter() {
   }
 }
 
+function getWordWritingCharacters(word) {
+  // Practice EVERY written Japanese character in the vocabulary word:
+  // Kanji + Hiragana + Katakana. Ignore punctuation/spaces only.
+  return [...String(word || '')].filter(isJapanesePracticeChar);
+}
+
 function openWordWrite(idx) {
-  // Convert the vocabulary flashcard into the shared multi-kanji writing item.
+  // Vocabulary writing must include kana that are part of the written word.
+  // Example: 食べ物屋 becomes [食, べ, 物, 屋], so べ gets its own writing box.
   const w = state.words;
   const v = w.items[idx];
   if (!v) return;
-  const practiceChars = [...String(v.word || '')].filter(ch => isKanjiChar(ch) || isKanaChar(ch));
+  const practiceChars = getWordWritingCharacters(v.word);
   const item = {
     setId: 'Vocabulary',
     word: v.word,
@@ -3947,20 +3960,29 @@ function updatePracticeModalHeader(item) {
   const chars = item.chars && item.chars.length ? item.chars : [item.kanji];
   const current = getCurrentPracticeChar(item);
   item.kanji = current;
+  if ($('practiceModalTitle')) {
+    $('practiceModalTitle').textContent = isKanaChar(current)
+      ? (isKatakanaChar(current) ? 'Write the missing Katakana' : 'Write the missing Hiragana')
+      : 'Write the missing Kanji';
+  }
   if ($('practiceReading')) $('practiceReading').textContent = item.reading || '';
   if ($('practiceModalKanji')) $('practiceModalKanji').textContent = item.word || item.kanji;
   if ($('practiceModalMeta')) {
     const parts = [];
     if (item.english) parts.push(item.english);
     if (item.word && chars.length > 1) parts.push('Char ' + (item.charIndex + 1) + '/' + chars.length);
-    parts.push(currentPracticeIsKana(item) ? 'Hiragana / Katakana' : 'Kanji');
-    parts.push('Set ' + item.setId);
+    if (currentPracticeIsKana(item)) {
+      parts.push(isKatakanaChar(current) ? 'Katakana' : 'Hiragana');
+    } else {
+      parts.push('Kanji');
+    }
+    parts.push(item.vocabularyWord ? 'Vocabulary' : 'Set ' + item.setId);
     $('practiceModalMeta').textContent = parts.join(' · ');
   }
   const prev = $('practicePrevious');
   if (prev) {
     prev.disabled = !item.word || item.charIndex <= 0;
-    prev.title = prev.disabled ? 'Already at the first kanji' : 'Go back to the previous kanji';
+    prev.title = prev.disabled ? 'Already at the first character' : 'Go back to the previous character';
   }
   renderPracticeSlots(item);
 }
