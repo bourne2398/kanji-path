@@ -5038,7 +5038,7 @@ async function apiGetKanjiProgress() {
   const local = loadPracticeWritingProgress();
   if (!currentUser) return { progress: local };
   try {
-    const res = await fetch('/api/progress?type=practice', { credentials: 'include' });
+    const res = await fetch('/api/progress/practice', { credentials: 'include' });
     if (!res.ok) return { progress: local };
     const data = await res.json();
     const map = { ...local };
@@ -5061,7 +5061,7 @@ async function apiSaveKanjiProgress(kanji, count, setId) {
   savePracticeWritingProgress(progress);
   if (currentUser) {
     try {
-      const res = await fetch('/api/progress?type=practice', {
+      const res = await fetch('/api/progress/practice', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -7066,7 +7066,7 @@ async function syncPathProgressToServer(map){
       jlpt: typeof pathLevelOf==='function'?pathLevelOf(kanji):null
     }));
     if(!items.length) return;
-    await fetch('/api/progress?type=path',{
+    await fetch('/api/progress/path',{
       method:'POST',
       credentials:'include',
       headers:{'Content-Type':'application/json'},
@@ -7078,7 +7078,7 @@ async function syncPathProgressToServer(map){
 async function upsertPathEntry(kanji, entry){
   if(!currentUser||!kanji||!entry) return;
   try{
-    await fetch('/api/progress?type=path',{
+    await fetch('/api/progress/path',{
       method:'POST',
       credentials:'include',
       headers:{'Content-Type':'application/json'},
@@ -7100,7 +7100,7 @@ async function upsertPathEntry(kanji, entry){
 async function pullPathProgressFromServer(){
   if(!currentUser) return loadPathProgress();
   try{
-    const res=await fetch('/api/progress?type=path',{credentials:'include'});
+    const res=await fetch('/api/progress/path',{credentials:'include'});
     if(!res.ok) return loadPathProgress();
     const data=await res.json();
     const local=loadPathProgress();
