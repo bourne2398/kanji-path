@@ -2604,11 +2604,14 @@ html[data-theme="dark"] .study-level-btn.active {
 .kana-practice-panel{box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:16px;background:linear-gradient(145deg,#fff8fb,#f7f5ff);border:1px solid rgba(185,28,74,.12);overflow:hidden}
 .kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(2.5rem,9vw,3.6rem);font-weight:900;line-height:1;color:#18244b;display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
 .kana-reference small{display:block;font-size:.68rem;font-weight:800;color:#786ba1;text-align:center;margin-top:3px;line-height:1.1}
-.kana-guide-stage{position:relative;width:min(178px,56vw);height:min(178px,56vw);max-width:178px;max-height:178px;aspect-ratio:1;flex:0 0 auto;border:2px solid #d9d4e8;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(185,28,74,.04);overflow:hidden}
+.kana-guide-stage{position:relative;width:min(170px,54vw);height:min(170px,54vw);max-width:170px;max-height:170px;aspect-ratio:1;flex:0 0 auto;border:2px solid #d9d4e8;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(185,28,74,.04);overflow:hidden}
 .kana-guide-svg,.kana-writing-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .kana-guide-svg{pointer-events:none}
 .kana-guide-fill{fill:#e8e5ef;opacity:.42}
-.kana-guide-line{fill:none;stroke:#b7accf;stroke-width:34;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+.kana-guide-line{fill:none;stroke:#b7accf;stroke-width:34;stroke-linecap:round;stroke-linejoin:round;opacity:.82;transition:stroke .18s ease,opacity .18s ease}
+.kana-guide-line.is-current{stroke:#7c3aed;opacity:.95}
+.kana-guide-line.is-completed{stroke:#16a34a;opacity:.92}
+.kana-stroke-number.is-current-number{fill:#7c3aed;font-size:34px}
 .kana-guide-line.is-hidden{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
 .kana-guide-line.is-animated{animation:kanaStrokeGuide .65s ease forwards;animation-delay:var(--delay,0s)}
 @keyframes kanaStrokeGuide{to{stroke-dashoffset:0;opacity:.95}}
@@ -2618,7 +2621,7 @@ html[data-theme="dark"] .study-level-btn.active {
 .kana-pad-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:0 0 auto}
 .kana-pad-actions .btn{min-height:34px;padding:6px 10px;font-size:.76rem}
 .kana-pad-hint{font-size:.64rem;color:#7183a9;text-align:center;line-height:1.15;max-width:245px;flex:0 0 auto}
-@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(164px,52vw);height:min(164px,52vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
+@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(152px,48vw);height:min(152px,48vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
 html[data-theme="dark"] .kana-practice-panel{background:linear-gradient(145deg,#202033,#1a2030);border-color:var(--border)}
 html[data-theme="dark"] .kana-reference{color:#eef2ff}
 html[data-theme="dark"] .kana-guide-stage{background:#111827;border-color:#66708c}
@@ -3606,11 +3609,12 @@ function setupKanaCanvas(char, options = {}) {
   const animate = options.animate !== false;
   const showGuide = options.showGuide !== false;
   box.classList.add('is-kana');
+
   target.innerHTML = `
     <div class="kana-practice-panel">
-      <div class="kana-reference">${esc(char)}<small>${showGuide ? 'Trace the stroke order, then write it' : 'Free write'}</small></div>
+      <div class="kana-reference">${esc(char)}<small>${showGuide ? 'Write each stroke in order' : 'Free write'}</small></div>
       <div class="kana-guide-stage" id="kanaGuideStage">
-        <div class="kana-guide-label" id="kanaGuideLabel">Stroke guide</div>
+        <div class="kana-guide-label" id="kanaGuideLabel">Loading stroke guide…</div>
         <svg class="kana-guide-svg" id="kanaGuideSvg" viewBox="0 0 1024 1024" aria-hidden="true"></svg>
         <canvas id="kanaPracticeCanvas" class="kana-writing-canvas" width="600" height="600" aria-label="Write kana ${esc(char)}"></canvas>
       </div>
@@ -3618,81 +3622,313 @@ function setupKanaCanvas(char, options = {}) {
         <button type="button" class="btn subtle" id="kanaAnimateBtn">▶ Guide</button>
         <button type="button" class="btn subtle" id="kanaShowBtn">Show</button>
         <button type="button" class="btn subtle" id="kanaClearBtn">Clear</button>
-        <button type="button" class="btn primary" id="kanaDoneBtn">✓ Check writing</button>
+        ${showGuide ? '' : '<button type="button" class="btn primary" id="kanaDoneBtn">✓ Check writing</button>'}
       </div>
-      <div class="kana-pad-hint">Follow the numbered strokes. Write with your finger, mouse, or stylus.</div>
+      <div class="kana-pad-hint" id="kanaPadHint">Follow the highlighted stroke from the start point to the end point. A correct stroke advances automatically.</div>
     </div>`;
 
   const canvas = kanaPracticeCanvas();
   const ctx = canvas.getContext('2d');
-  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=16; ctx.strokeStyle='#c2185b';
-  let drawing=false, hasInk=false;
-  const pos=e=>{ const r=canvas.getBoundingClientRect(); return {x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)}; };
-  canvas.addEventListener('pointerdown',e=>{e.preventDefault(); drawing=true; hasInk=true; canvas.setPointerCapture?.(e.pointerId); const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
-  canvas.addEventListener('pointermove',e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke();});
-  const end=()=>{drawing=false;};
-  canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 18;
+  ctx.strokeStyle = '#c2185b';
+  ctx.fillStyle = '#c2185b';
 
-  const clear=()=>{hasInk=false;clearKanaCanvas();};
-  const guideSvg=$('kanaGuideSvg');
-  const guideLabel=$('kanaGuideLabel');
-  let guideData=null;
+  const guideSvg = $('kanaGuideSvg');
+  const guideLabel = $('kanaGuideLabel');
+  const hint = $('kanaPadHint');
+  let guideData = null;
+  let medians = [];
+  let currentStroke = 0;
+  let drawing = false;
+  let hasInk = false;
+  let points = [];
+  let checking = false;
+  let completed = [];
 
-  function drawGuide(data, mode='guide') {
-    guideData=data;
-    if(!guideSvg) return;
-    const prefix='kg'+Date.now().toString(36);
-    const strokes=Array.isArray(data?.strokes)?data.strokes:[];
-    const medians=Array.isArray(data?.medians)?data.medians:[];
-    const fills=strokes.map(st=>`<path class="kana-guide-fill" d="${st.value||''}"></path>`).join('');
-    const lines=[];
-    medians.forEach((m,i)=>{
-      const pts=Array.isArray(m?.value)?m.value:[];
-      if(pts.length<2) return;
-      const points=pts.map(p=>`${p[0]},${p[1]}`).join(' ');
-      const delay=(i*0.55).toFixed(2);
-      const hidden=mode==='animate'?'is-hidden is-animated':(mode==='guide'?'':'is-hidden');
-      lines.push(`<polyline class="kana-guide-line ${hidden}" style="--delay:${delay}s" pathLength="1" points="${points}"></polyline>`);
-      if(mode!=='animate'){
-        const first=pts[0];
-        lines.push(`<text class="kana-stroke-number" x="${first[0]+18}" y="${first[1]-12}">${i+1}</text>`);
-      }
-    });
-    guideSvg.innerHTML=fills+lines.join('');
-    if(guideLabel) guideLabel.textContent=mode==='animate'?'Playing stroke order':mode==='show'?'Full character':'Stroke guide';
+  const pos = e => {
+    const r = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left) * (canvas.width / r.width) * (1024 / canvas.width),
+      y: (e.clientY - r.top) * (canvas.height / r.height) * (1024 / canvas.height)
+    };
+  };
+
+  function clearInk() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasInk = false;
+    points = [];
   }
 
-  async function loadGuide(mode='animate') {
-    if(!isKanaChar(char)) return;
+  function normalizeMedian(m) {
+    const pts = Array.isArray(m?.value) ? m.value : [];
+    return pts.filter(p => Array.isArray(p) && p.length >= 2 && Number.isFinite(+p[0]) && Number.isFinite(+p[1]))
+      .map(p => [Number(p[0]), Number(p[1])]);
+  }
+
+  function pathLength(pts) {
+    let n = 0;
+    for (let i = 1; i < pts.length; i++) n += Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]);
+    return n;
+  }
+
+  function pointSegmentDistance(p, a, b) {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const len2 = dx * dx + dy * dy;
+    if (!len2) return Math.hypot(p[0] - a[0], p[1] - a[1]);
+    let t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy));
+  }
+
+  function nearestOnPolyline(p, line) {
+    let best = { dist: Infinity, progress: 0 };
+    let total = pathLength(line) || 1;
+    let travelled = 0;
+    for (let i = 1; i < line.length; i++) {
+      const a = line[i-1], b = line[i];
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      const len2 = dx*dx + dy*dy;
+      const segLen = Math.sqrt(len2);
+      let t = len2 ? ((p[0]-a[0])*dx + (p[1]-a[1])*dy) / len2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const q = [a[0] + t*dx, a[1] + t*dy];
+      const d = Math.hypot(p[0]-q[0], p[1]-q[1]);
+      if (d < best.dist) best = { dist:d, progress:(travelled + segLen*t) / total };
+      travelled += segLen;
+    }
+    return best;
+  }
+
+  function evaluateStroke(user, expected) {
+    if (!expected || expected.length < 2 || user.length < 3) return { ok:false, reason:'too-short' };
+    const expectedLen = pathLength(expected);
+    const userLen = pathLength(user);
+    if (expectedLen < 25 || userLen < expectedLen * 0.35) return { ok:false, reason:'too-short' };
+
+    const tolerance = Math.max(72, Math.min(125, expectedLen * 0.18));
+    const startDist = Math.hypot(user[0][0]-expected[0][0], user[0][1]-expected[0][1]);
+    const endDist = Math.hypot(user[user.length-1][0]-expected[expected.length-1][0], user[user.length-1][1]-expected[expected.length-1][1]);
+    if (startDist > tolerance * 1.45) return { ok:false, reason:'start' };
+    if (endDist > tolerance * 1.55) return { ok:false, reason:'end' };
+
+    let maxDist = 0;
+    let lastProgress = 0;
+    let maxProgress = 0;
+    let backtrack = 0;
+    let goodSamples = 0;
+    for (let i = 0; i < user.length; i++) {
+      const near = nearestOnPolyline(user[i], expected);
+      maxDist = Math.max(maxDist, near.dist);
+      if (near.dist <= tolerance) goodSamples++;
+      if (near.progress + 0.10 < lastProgress) backtrack += lastProgress - near.progress;
+      lastProgress = Math.max(lastProgress, near.progress);
+      maxProgress = Math.max(maxProgress, near.progress);
+    }
+    const coverage = goodSamples / user.length;
+    const lengthRatio = userLen / expectedLen;
+    const ok = maxDist <= tolerance * 1.35 && coverage >= 0.62 && maxProgress >= 0.82 && backtrack <= 0.55 && lengthRatio >= 0.42 && lengthRatio <= 2.6;
+    return { ok, reason: ok ? 'ok' : 'shape', tolerance, maxDist, coverage, maxProgress };
+  }
+
+  function drawGuide(mode='current') {
+    if (!guideSvg) return;
+    const fills = Array.isArray(guideData?.strokes) ? guideData.strokes : [];
+    const lines = [];
+    medians.forEach((pts, i) => {
+      if (!pts.length) return;
+      const pointsAttr = pts.map(p => `${p[0]},${p[1]}`).join(' ');
+      const isDone = completed.includes(i);
+      const isCurrent = i === currentStroke && !isDone;
+      const isFuture = i > currentStroke && !isDone;
+      let cls = 'kana-guide-line';
+      if (isDone) cls += ' is-completed';
+      else if (isCurrent) cls += ' is-current';
+      else if (isFuture) cls += ' is-hidden';
+      const delay = (i === currentStroke && mode === 'animate') ? '0s' : '0s';
+      lines.push(`<polyline class="${cls}" style="--delay:${delay}" pathLength="1" points="${pointsAttr}"></polyline>`);
+      if (mode === 'show' || isCurrent) {
+        const first = pts[0];
+        lines.push(`<text class="kana-stroke-number ${isCurrent ? 'is-current-number' : ''}" x="${first[0]+18}" y="${first[1]-12}">${i+1}</text>`);
+      }
+    });
+    const fillsHtml = fills.map((st, i) => {
+      const opacity = i <= currentStroke || mode === 'show' ? '.20' : '.045';
+      return `<path class="kana-guide-fill" style="opacity:${opacity}" d="${st.value||''}"></path>`;
+    }).join('');
+    guideSvg.innerHTML = fillsHtml + lines.join('');
+    if (guideLabel) guideLabel.textContent = mode === 'show' ? 'Full character' : `Stroke ${Math.min(currentStroke+1, Math.max(1, medians.length))} of ${medians.length}`;
+  }
+
+  function setHint(text, good=false) {
+    if (hint) hint.textContent = text;
+    if (guideLabel) guideLabel.textContent = good ? '✓ Correct — next stroke' : guideLabel.textContent;
+  }
+
+  function resetCurrentStroke() {
+    clearInk();
+    checking = false;
+    canvas.style.pointerEvents = 'auto';
+  }
+
+  async function finishKanaCharacter() {
+    if (checking) return;
+    checking = true;
+    canvas.style.pointerEvents = 'none';
+    const s = state.practice, item = s.items[s.i];
+    if (!item) return;
+    const writtenChar = getCurrentPracticeChar(item);
+    const count = await recordKanjiWrite(writtenChar, item.setId);
+    savePracticeHistory({...item, kanji:writtenChar});
+    try { renderPractice(); } catch (_) {}
+    try { renderWords(); } catch (_) {}
+    setHint(`✓ ${writtenChar} complete.`, true);
+    if ($('practiceProgress')) $('practiceProgress').textContent = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
+    if ($('wordsProgress')) $('wordsProgress').textContent = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
+    setTimeout(() => {
+      if (!state.practice.items[state.practice.i]) return;
+      advanceWordPracticeCharacter();
+    }, 260);
+  }
+
+  async function acceptStroke() {
+    if (checking) return;
+    const expected = medians[currentStroke];
+    const result = evaluateStroke(points, expected);
+    if (!result.ok) {
+      clearInk();
+      setHint(result.reason === 'start' ? 'Start closer to the numbered start point, then follow the stroke.' : 'Not quite. Follow the highlighted stroke from start to finish and try again.');
+      if (guideLabel) guideLabel.textContent = 'Try again';
+      setTimeout(() => { if (guideLabel) guideLabel.textContent = `Stroke ${currentStroke+1} of ${medians.length}`; }, 850);
+      return;
+    }
+    completed.push(currentStroke);
+    clearInk();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const doneStroke = currentStroke;
+    currentStroke++;
+    drawGuide('current');
+    if (currentStroke < medians.length) {
+      setHint(`✓ Stroke ${doneStroke+1} correct. Now write stroke ${currentStroke+1}.`, true);
+      if (guideLabel) guideLabel.textContent = `Stroke ${currentStroke+1} of ${medians.length}`;
+      return;
+    }
+    await finishKanaCharacter();
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    if (checking || !medians.length || currentStroke >= medians.length) return;
+    e.preventDefault();
+    drawing = true;
+    hasInk = true;
+    points = [pos(e)];
+    canvas.setPointerCapture?.(e.pointerId);
+    ctx.beginPath();
+    const p = points[0];
+    ctx.moveTo(p[0] * canvas.width / 1024, p[1] * canvas.height / 1024);
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!drawing || checking) return;
+    e.preventDefault();
+    const p = pos(e);
+    points.push(p);
+    ctx.lineTo(p[0] * canvas.width / 1024, p[1] * canvas.height / 1024);
+    ctx.stroke();
+  });
+  const endStroke = async e => {
+    if (!drawing) return;
+    drawing = false;
+    try { canvas.releasePointerCapture?.(e.pointerId); } catch (_) {}
+    if (points.length >= 3 && showGuide) await acceptStroke();
+  };
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+
+  const clear = () => {
+    if (checking) return;
+    clearInk();
+    setHint(showGuide ? `Stroke ${currentStroke+1} of ${medians.length || '?'} — try again.` : 'Free write: draw the kana, then check it.');
+    drawGuide('current');
+  };
+
+  const animateGuide = async () => {
+    if (!guideData) return;
+    completed = [];
+    currentStroke = 0;
+    clearInk();
+    drawGuide('animate');
+    if (guideLabel) guideLabel.textContent = `Stroke 1 of ${medians.length}`;
+    setHint('Watch the stroke order, then write the highlighted stroke.');
+  };
+
+  const showAll = () => {
+    if (!guideData) return;
+    clearInk();
+    drawGuide('show');
+    if (guideLabel) guideLabel.textContent = 'Full character';
+    setHint('Stroke numbers show the correct order. Press Guide to practice one stroke at a time.');
+  };
+
+  const clearBtn = $('kanaClearBtn');
+  if (clearBtn) clearBtn.onclick = clear;
+  const animBtn = $('kanaAnimateBtn');
+  if (animBtn) animBtn.onclick = animateGuide;
+  const showBtn = $('kanaShowBtn');
+  if (showBtn) showBtn.onclick = showAll;
+  const doneBtn = $('kanaDoneBtn');
+  if (doneBtn) doneBtn.onclick = async () => {
+    if (!hasInk) {
+      setHint('Write the kana first.');
+      return;
+    }
+    const s = state.practice, item = s.items[s.i];
+    if (!item) return;
+    const writtenChar = getCurrentPracticeChar(item);
+    const count = await recordKanjiWrite(writtenChar, item.setId);
+    savePracticeHistory({...item, kanji:writtenChar});
+    advanceWordPracticeCharacter();
+    const msg = `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
+    if ($('practiceProgress')) $('practiceProgress').textContent = msg;
+    if ($('wordsProgress')) $('wordsProgress').textContent = msg;
+  };
+
+  async function loadGuide() {
     try {
-      const dir=isKatakanaChar(char)?'katakana':'hiragana';
-      const url='https://cdn.jsdelivr.net/npm/kana-svg-data/dist/'+dir+'/'+encodeURIComponent(char)+'.json';
-      const res=await fetch(url,{cache:'force-cache'});
-      if(!res.ok) throw new Error('Kana stroke data unavailable');
-      const data=await res.json();
-      drawGuide(data,mode);
-    } catch(err) {
-      console.warn('Kana stroke guide failed for',char,err);
-      if(guideLabel) guideLabel.textContent='Guide unavailable — write freely';
-      if(guideSvg) guideSvg.innerHTML='';
+      const dir = isKatakanaChar(char) ? 'katakana' : 'hiragana';
+      const url = 'https://cdn.jsdelivr.net/npm/kana-svg-data/dist/' + dir + '/' + encodeURIComponent(char) + '.json';
+      const res = await fetch(url, {cache:'force-cache'});
+      if (!res.ok) throw new Error('Kana stroke data unavailable');
+      guideData = await res.json();
+      medians = (Array.isArray(guideData.medians) ? guideData.medians : []).map(normalizeMedian).filter(x => x.length >= 2);
+      if (!medians.length) throw new Error('No usable kana stroke medians');
+      currentStroke = 0;
+      completed = [];
+      drawGuide('current');
+      canvas.style.pointerEvents = showGuide ? 'auto' : 'auto';
+      if (showGuide) {
+        setHint('Follow the highlighted stroke. Release your finger/mouse when you reach the end — the next stroke starts automatically.');
+        if (animate) {
+          // Animate only the current stroke so the learner knows exactly what to write next.
+          const line = guideSvg?.querySelector('.kana-guide-line.is-current');
+          if (line) {
+            line.classList.add('is-animated');
+            line.style.setProperty('--delay','0s');
+          }
+        }
+      } else {
+        setHint('Free write: draw the kana, then press Check writing.');
+      }
+    } catch (err) {
+      console.warn('Kana stroke guide failed for', char, err);
+      if (guideLabel) guideLabel.textContent = 'Guide unavailable';
+      if (guideSvg) guideSvg.innerHTML = '';
+      setHint('Stroke data could not be loaded. You can still use Free write.');
+      if (showGuide) canvas.style.pointerEvents = 'none';
     }
   }
 
-  $('kanaClearBtn').onclick=clear;
-  $('kanaAnimateBtn').onclick=()=>loadGuide('animate');
-  $('kanaShowBtn').onclick=()=>loadGuide('show');
-  $('kanaDoneBtn').onclick=async()=>{
-    if(!hasInk){ $('practiceProgress').textContent='Please write the kana first.'; return; }
-    const s=state.practice, item=s.items[s.i]; if(!item) return;
-    const writtenChar=getCurrentPracticeChar(item);
-    const count=await recordKanjiWrite(writtenChar,item.setId);
-    savePracticeHistory({...item,kanji:writtenChar});
-    advanceWordPracticeCharacter();
-    const msg=`${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
-    if($('practiceProgress')) $('practiceProgress').textContent=msg;
-    if($('wordsProgress')) $('wordsProgress').textContent=msg;
-  };
-  loadGuide(animate?'animate':'guide');
+  loadGuide();
 }
 
 function loadPracticeCharacter(char) {
