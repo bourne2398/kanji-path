@@ -2581,6 +2581,13 @@ html[data-theme="dark"] .path-node.due {
       <span class="badge" id="studySetSummary"></span>
       <span class="badge" id="studyCount"></span>
     </div>
+    <div class="path-level-filter study-level-filter" id="studyLevelFilter" style="margin:0 0 12px">
+      <button type="button" class="path-level-btn active" data-study-level="N5">N5</button>
+      <button type="button" class="path-level-btn" data-study-level="N4">N4</button>
+      <button type="button" class="path-level-btn" data-study-level="N3">N3</button>
+      <button type="button" class="path-level-btn" data-study-level="N2">N2</button>
+      <button type="button" class="path-level-btn" data-study-level="N1">N1</button>
+    </div>
     <div class="study-grid" id="studyGrid"></div>
     <div class="progress" id="studyProgress"></div>
     <div class="controls">
@@ -2878,7 +2885,7 @@ let historyEntries = [];
 let quitTarget = null;
 
 const state = {
-  study: { sets: [1], cards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '' },
+  study: { sets: [1], cards: [], allCards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '', levelFilter: 'N5' },
   practice: { sets: [1], items: [], i: 0 },
   words: { sets: [1], items: [], i: 0 },
   // stubs so leftover quiz/games helpers do not crash if called
@@ -3675,13 +3682,35 @@ function quizRevealHTML(c, reverse) {
 }
 
 /* ---------- STUDY ---------- */
+function studyCardLevel(c) {
+  if (c && c[3]) return c[3];
+  const word = (c && c[0]) || '';
+  return wordJlptLevel(word, state.study.wordSourceKanji || '');
+}
+function applyStudyLevelFilter() {
+  const s = state.study;
+  const level = s.levelFilter || 'N5';
+  const all = Array.isArray(s.allCards) ? s.allCards : [];
+  s.cards = all.filter(c => studyCardLevel(c) === level);
+  s.flips = new Array(s.cards.length).fill(false);
+  document.querySelectorAll('#studyLevelFilter .path-level-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-study-level') === level);
+  });
+}
 function setupStudy(ids, shuffle = true) {
   const s = state.study;
   s.wordMode = false;
   s.wordSourceKanji = '';
   s.sets = [...ids];
-  s.cards = shuffle ? shuffled(getCards(ids)) : getCards(ids);
-  s.flips = new Array(s.cards.length).fill(false);
+  const raw = getCards(ids).map(c => {
+    const row = Array.isArray(c) ? [...c] : [c];
+    while (row.length < 3) row.push('');
+    row[3] = wordJlptLevel(row[0], '');
+    return row;
+  });
+  s.allCards = shuffle ? shuffled(raw) : raw;
+  if (!s.levelFilter) s.levelFilter = 'N5';
+  applyStudyLevelFilter();
   renderStudy();
 }
 
@@ -3691,8 +3720,9 @@ function setupStudyWords(rows, sourceKanji = '') {
   s.wordSourceKanji = sourceKanji || '';
   s.sets = [];
   const clean = (Array.isArray(rows) ? rows : []).filter(r => Array.isArray(r) && r[0]);
-  s.cards = shuffled(clean.map(r => [String(r[0] || ''), String(r[1] || ''), String(r[2] || ''), wordJlptLevel(r[0], sourceKanji)]));
-  s.flips = new Array(s.cards.length).fill(false);
+  s.allCards = shuffled(clean.map(r => [String(r[0] || ''), String(r[1] || ''), String(r[2] || ''), wordJlptLevel(r[0], sourceKanji)]));
+  if (!s.levelFilter) s.levelFilter = 'N5';
+  applyStudyLevelFilter();
   renderStudy();
 }
 
@@ -3750,7 +3780,11 @@ function renderStudy() {
     if (backBtn) backBtn.style.display = 'none';
     $('studySetSummary').textContent = setSummary(s.sets);
   }
-  $('studyCount').textContent = `${s.cards.length} cards`;
+  const totalAll = (s.allCards && s.allCards.length) ? s.allCards.length : s.cards.length;
+  const level = s.levelFilter || 'N5';
+  $('studyCount').textContent = totalAll !== s.cards.length
+    ? `${s.cards.length} · ${level} / ${totalAll}`
+    : `${s.cards.length} cards · ${level}`;
 }
 
 function updateStudyProgress() {
@@ -5295,6 +5329,28 @@ function srsSchedule(entry,quality){const now=Date.now();let{stage=0,ease=2.5,in
 const PATH_WORDS_CACHE=Object.create(null);
 const PATH_WORDS_LOADING=Object.create(null);
 let JOYO_VOCAB_PAGE=0,JOYO_VOCAB_QUERY='',JOYO_VOCAB_TOTAL=0,JOYO_VOCAB_ITEMS=[],JOYO_VOCAB_LOADING=false;
+const JOYO_VOCAB_CACHE_KEY='kanjiPathVocabCacheV1';
+let JOYO_VOCAB_CACHE=Object.create(null); // key -> {items,total,ts}
+function vocabCacheKey(q,page){return (q||'')+'|'+page;}
+function loadVocabCacheFromStorage(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(JOYO_VOCAB_CACHE_KEY)||'{}');
+    if(raw&&typeof raw==='object')JOYO_VOCAB_CACHE=raw;
+  }catch(e){JOYO_VOCAB_CACHE=Object.create(null);}
+}
+function saveVocabCacheToStorage(){
+  try{
+    // keep only recent keys to avoid quota issues
+    const keys=Object.keys(JOYO_VOCAB_CACHE);
+    if(keys.length>40){
+      keys.sort((a,b)=>(JOYO_VOCAB_CACHE[a].ts||0)-(JOYO_VOCAB_CACHE[b].ts||0));
+      keys.slice(0,keys.length-30).forEach(k=>delete JOYO_VOCAB_CACHE[k]);
+    }
+    localStorage.setItem(JOYO_VOCAB_CACHE_KEY,JSON.stringify(JOYO_VOCAB_CACHE));
+  }catch(e){console.warn('vocab cache save failed',e);}
+}
+loadVocabCacheFromStorage();
+
 function pathWordEntryToRow(entry,kanji){
   if(!entry||!Array.isArray(entry.variants))return [];
   const rows=[];
@@ -5355,29 +5411,74 @@ function renderVocabBank(){
   if(status)status.textContent=JOYO_VOCAB_LOADING?'Loading…':`${(JOYO_VOCAB_TOTAL||0).toLocaleString()} words in database · page ${JOYO_VOCAB_PAGE+1}/${totalPages}`;
   const prev=$('vocabPrevPage'),next=$('vocabNextPage');if(prev)prev.disabled=JOYO_VOCAB_PAGE<=0||JOYO_VOCAB_LOADING;if(next)next.disabled=JOYO_VOCAB_LOADING||!((JOYO_VOCAB_PAGE+1)*50<JOYO_VOCAB_TOTAL);
 }
-async function fetchVocabPage(){
-  if(JOYO_VOCAB_LOADING)return;
+async function fetchVocabPage(opts){
+  opts=opts||{};
+  const quiet=!!opts.quiet;
+  const q=JOYO_VOCAB_QUERY.trim();
+  const key=vocabCacheKey(q,JOYO_VOCAB_PAGE);
+  const cached=JOYO_VOCAB_CACHE[key];
+  const fresh=cached&&(Date.now()-(cached.ts||0)<1000*60*60*24); // 24h
+  if(fresh&&Array.isArray(cached.items)){
+    JOYO_VOCAB_ITEMS=cached.items;
+    JOYO_VOCAB_TOTAL=cached.total||cached.items.length;
+    if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
+    JOYO_VOCAB_LOADING=false;
+    if(!quiet)renderVocabBank();
+    return;
+  }
+  if(JOYO_VOCAB_LOADING&&!opts.force)return;
   JOYO_VOCAB_LOADING=true;
-  const status=$('vocabBankStatus');if(status)status.textContent='Loading vocabulary from database…';
+  const status=$('vocabBankStatus');
+  if(status&&!quiet)status.textContent=cached?'Updating…':'Loading vocabulary from database…';
+  // show stale cache immediately while refreshing
+  if(cached&&Array.isArray(cached.items)&&!quiet){
+    JOYO_VOCAB_ITEMS=cached.items;
+    JOYO_VOCAB_TOTAL=cached.total||cached.items.length;
+    renderVocabBank();
+  }
   try{
-    const q=encodeURIComponent(JOYO_VOCAB_QUERY.trim());
-    const url=`/api/vocab?page=${JOYO_VOCAB_PAGE}&limit=50${q?`&q=${q}`:''}`;
+    const url=`/api/vocab?page=${JOYO_VOCAB_PAGE}&limit=50${q?`&q=${encodeURIComponent(q)}`:''}`;
     const res=await fetch(url,{credentials:'include'});
     if(!res.ok)throw new Error('API '+res.status);
     const data=await res.json();
     JOYO_VOCAB_ITEMS=Array.isArray(data.items)?data.items:[];
     JOYO_VOCAB_TOTAL=data.total||JOYO_VOCAB_ITEMS.length;
+    JOYO_VOCAB_CACHE[key]={items:JOYO_VOCAB_ITEMS,total:JOYO_VOCAB_TOTAL,ts:Date.now()};
+    saveVocabCacheToStorage();
     if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
   }catch(e){
     console.warn('Vocab API failed',e);
-    JOYO_VOCAB_ITEMS=[];JOYO_VOCAB_TOTAL=0;
-    if(status)status.textContent='Could not load vocabulary. Check database connection.';
+    if(!cached){
+      JOYO_VOCAB_ITEMS=[];JOYO_VOCAB_TOTAL=0;
+      if(status&&!quiet)status.textContent='Could not load vocabulary. Check database connection.';
+    }
   }finally{
     JOYO_VOCAB_LOADING=false;
-    renderVocabBank();
+    if(!quiet)renderVocabBank();
   }
 }
 async function loadAllJoyoVocabulary(){ await fetchVocabPage(); }
+function prefetchVocabBank(){
+  // warm first pages in background for instant open
+  const pages=[0,1,2];
+  (async()=>{
+    for(const p of pages){
+      const key=vocabCacheKey('',p);
+      if(JOYO_VOCAB_CACHE[key]&&Date.now()-(JOYO_VOCAB_CACHE[key].ts||0)<1000*60*60*12)continue;
+      try{
+        const res=await fetch('/api/vocab?page='+p+'&limit=50',{credentials:'include'});
+        if(!res.ok)continue;
+        const data=await res.json();
+        JOYO_VOCAB_CACHE[key]={items:data.items||[],total:data.total||0,ts:Date.now()};
+        if(p===0){
+          JOYO_VOCAB_TOTAL=data.total||0;
+          if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
+        }
+      }catch(e){}
+    }
+    saveVocabCacheToStorage();
+  })();
+}
 
 function renderPathVocabulary(item,info){
   const el=$('pathVocabList');if(!el)return;
@@ -5568,6 +5669,15 @@ bind('gameClearAllSets', 'onclick', () => { gameSetupSelected = []; renderGameSe
 bind('gameSetupStart', 'onclick', startSelectedGame);
 bind('gameQuit', 'onclick', () => askQuit('games'));
 
+
+document.querySelectorAll('#studyLevelFilter .path-level-btn').forEach(btn => {
+  btn.onclick = () => {
+    state.study.levelFilter = btn.getAttribute('data-study-level') || 'N5';
+    applyStudyLevelFilter();
+    renderStudy();
+  };
+});
+
 bind('studyChooseSets', 'onclick', () => openModal('study'));
 bind('studyKanjiBtn', 'onclick', () => { const x=pathItems()[pathCurrent]; if(x){ setupStudy([x.setId],true); } });
 bind('practiceChooseSets', 'onclick', () => openModal('practice'));
@@ -5603,8 +5713,13 @@ document.querySelectorAll('.path-level-btn').forEach(btn => {
 });
 
 bind('studyShuffle', 'onclick', () => {
-  state.study.cards = shuffled(state.study.cards);
-  state.study.flips = new Array(state.study.cards.length).fill(false);
+  if (state.study.allCards && state.study.allCards.length) {
+    state.study.allCards = shuffled(state.study.allCards);
+    applyStudyLevelFilter();
+  } else {
+    state.study.cards = shuffled(state.study.cards);
+    state.study.flips = new Array(state.study.cards.length).fill(false);
+  }
   renderStudy();
 });
 bind('studyReverse', 'onchange', e => {
@@ -5749,8 +5864,16 @@ bind('vocabBankHide', 'onclick', ()=>{
 });
 bind('vocabBankShow', 'onclick', ()=>{
   const bank=$('vocabBank'),show=$('vocabBankShow');
+  // instant from cache if present
+  const key=vocabCacheKey(JOYO_VOCAB_QUERY.trim(),JOYO_VOCAB_PAGE);
+  if(JOYO_VOCAB_CACHE[key]&&JOYO_VOCAB_CACHE[key].items){
+    JOYO_VOCAB_ITEMS=JOYO_VOCAB_CACHE[key].items;
+    JOYO_VOCAB_TOTAL=JOYO_VOCAB_CACHE[key].total||JOYO_VOCAB_ITEMS.length;
+    renderVocabBank();
+  }
   if(bank)bank.classList.remove('hidden');
   if(show)show.classList.add('hidden');
+  fetchVocabPage(); // refresh in background / first load
 });
 bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; fetchVocabPage(); });
 bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
@@ -5882,6 +6005,8 @@ window.addEventListener('resize', () => {
   loadFullJoyoPath();
   if (typeof bindAuthUi === 'function') bindAuthUi();
   if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
+try{prefetchVocabBank();}catch(e){}
+
 })();
 </script>
 </body>
