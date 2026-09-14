@@ -1,12 +1,7 @@
-{
-  "version": 2,
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
-    }
-  ]
+"functions": {
+  "api/auth/me.js": { "runtime": "edge" },
+  "api/auth/logout.js": { "runtime": "edge" },
+  "api/admin/users.js": { "runtime": "edge" },
+  "api/health.js": { "runtime": "edge" },
+  "api/vocab.js": { "runtime": "edge" }
 }
