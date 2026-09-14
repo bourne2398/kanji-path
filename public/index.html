@@ -3,28 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0d7a6f">
+<meta name="theme-color" content="#9f1239">
 <title>墨道 · Kanji Path</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f3f7f5;
+  --bg: #faf6f8;
   --panel: #ffffff;
-  --text: #14201c;
-  --muted: #5a6e66;
-  --border: #d5e2dc;
-  --accent: #0d7a6f;
-  --accent-soft: #e3f4f1;
-  --good: #1f7a45;
-  --good-bg: #e6f6ec;
-  --bad: #c23b3b;
-  --bad-bg: #fdf0f0;
-  --pink: #9b3b5a;
-  --gold: #0d7a6f;
-  --gold-soft: rgba(13,122,111,.14);
-  --shadow: 0 12px 40px rgba(20,50,45,.08);
+  --text: #1a1220;
+  --muted: #6b5a6e;
+  --border: #e8d4dc;
+  --accent: #b91c4a;
+  --accent-soft: #fce8ef;
+  --accent-2: #7c3aed;
+  --good: #15803d;
+  --good-bg: #e8f8ee;
+  --bad: #dc2626;
+  --bad-bg: #fef2f2;
+  --pink: #9f1239;
+  --gold: #b91c4a;
+  --gold-soft: rgba(185,28,74,.14);
+  --header-grad: linear-gradient(135deg, #9f1239 0%, #be185d 42%, #7c3aed 100%);
+  --shadow: 0 12px 40px rgba(80,20,50,.10);
   --radius: 14px;
   --safe-b: env(safe-area-inset-bottom, 0px);
 }
@@ -42,13 +44,13 @@ button { cursor: pointer; border: none; background: none; }
 
 /* Header */
 header {
-  background: var(--accent);
+  background: var(--header-grad);
   color: #fff;
   padding: 12px 14px;
   position: sticky;
   top: 0;
   z-index: 30;
-  box-shadow: 0 2px 12px rgba(91,79,207,.25);
+  box-shadow: 0 4px 20px rgba(159,18,57,.28);
 }
 .header-inner {
   max-width: 960px;
@@ -92,7 +94,7 @@ nav {
 }
 .nav-btn.active {
   background: #fff;
-  color: #0d7a6f;
+  color: #9f1239;
   border-color: #fff;
 }
 
@@ -145,7 +147,7 @@ h1 { font-size: 1.35rem; margin: 0 0 4px; }
   padding: 6px 10px;
   border-radius: 999px;
   background: var(--accent-soft);
-  color: #0d7a6f;
+  color: #9f1239;
   font-size: .78rem;
   font-weight: 800;
 }
@@ -700,20 +702,22 @@ body.modal-open { overflow: hidden; }
 
 /* ========== DARK MODE (distinct cool night theme) ========== */
 html[data-theme="dark"] {
-  --bg: #0c1412;
-  --panel: #15201c;
-  --text: #e8f2ee;
-  --muted: #8aa399;
-  --border: #2a3a34;
-  --accent: #2ec4b6;
-  --accent-soft: #1a3330;
+  --bg: #120a12;
+  --panel: #1c121c;
+  --text: #f5eaf0;
+  --muted: #a88a9a;
+  --border: #3a2434;
+  --accent: #e11d48;
+  --accent-soft: #2a1520;
+  --accent-2: #a78bfa;
   --good: #3dd68c;
   --good-bg: #0f2e22;
-  --bad: #f07178;
+  --bad: #fb7185;
   --bad-bg: #3a1a1e;
-  --gold: #2ec4b6;
-  --gold-soft: rgba(46,196,182,.18);
-  --shadow: 0 12px 40px rgba(0,0,0,.5);
+  --gold: #e11d48;
+  --gold-soft: rgba(225,29,72,.2);
+  --header-grad: linear-gradient(135deg, #7f1d1d 0%, #9f1239 45%, #5b21b6 100%);
+  --shadow: 0 12px 40px rgba(0,0,0,.55);
   color-scheme: dark;
 }
 html[data-theme="dark"] body {
@@ -721,8 +725,8 @@ html[data-theme="dark"] body {
   color: var(--text);
 }
 html[data-theme="dark"] header {
-  background: linear-gradient(135deg, #0c2d48 0%, #1a4f7a 100%);
-  box-shadow: 0 2px 16px rgba(0,0,0,.4);
+  background: var(--header-grad);
+  box-shadow: 0 2px 16px rgba(0,0,0,.45);
 }
 html[data-theme="dark"] .nav-btn {
   border-color: rgba(255,255,255,.2);
@@ -730,9 +734,9 @@ html[data-theme="dark"] .nav-btn {
   color: #d6e8f7;
 }
 html[data-theme="dark"] .nav-btn.active {
-  background: #2ec4b6;
+  background: #e11d48;
   color: #fff;
-  border-color: #2ec4b6;
+  border-color: #e11d48;
 }
 html[data-theme="dark"] .theme-toggle {
   border-color: rgba(255,255,255,.25);
@@ -750,11 +754,11 @@ html[data-theme="dark"] .user-banner strong {
 }
 html[data-theme="dark"] .user-banner .btn {
   background: #1a334d;
-  border-color: #2ec4b6;
-  color: #e8f1fa;
+  border-color: #e11d48;
+  color: #f5eaf0;
 }
 html[data-theme="dark"] .user-banner .btn:hover {
-  background: #2ec4b6;
+  background: #e11d48;
   color: #fff;
 }
 html[data-theme="dark"] .admin-link {
@@ -813,8 +817,8 @@ html[data-theme="dark"] .practice-tile.practice-complete .pt-progress {
   color: #3dd68c;
 }
 html[data-theme="dark"] .btn.primary {
-  background: #2ec4b6;
-  border-color: #2ec4b6;
+  background: #e11d48;
+  border-color: #e11d48;
   color: #fff;
 }
 html[data-theme="dark"] .btn.quit {
@@ -1267,31 +1271,42 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
 /* Practice mode */
 .practice-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
   width: 100%;
+}
+/* Word tiles: larger, flexible height for multi-kanji compounds */
+#wordsGrid.practice-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
 }
 .practice-tile {
   --practice-fill: 0%;
-  --practice-fill-color: rgba(59, 130, 246, .18);
+  --practice-fill-color: rgba(185, 28, 74, .14);
   position: relative;
   overflow: hidden;
   aspect-ratio: 1;
+  min-height: 120px;
   background: linear-gradient(to top, var(--practice-fill-color) 0%, var(--practice-fill-color) var(--practice-fill), #fff var(--practice-fill), #fff 100%);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
-  padding: 8px;
+  padding: 12px 10px;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   transition: background .35s ease, border-color .35s ease, box-shadow .35s ease, transform .15s ease;
+}
+#wordsGrid .practice-tile {
+  aspect-ratio: auto;
+  min-height: 148px;
+  padding: 16px 12px;
 }
 .practice-tile.practice-complete {
   --practice-fill-color: rgba(34, 197, 94, .25);
@@ -1320,15 +1335,30 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   max-width: 100%;
   scrollbar-width: none;
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-  font-size: clamp(1.8rem, 8vw, 2.6rem);
+  font-size: clamp(2rem, 9vw, 3rem);
   font-weight: 800;
-  line-height: 1;
-  color: #0f172a;
+  line-height: 1.05;
+  color: #1a1220;
+}
+#wordsGrid .practice-tile .pt-kanji {
+  font-size: clamp(1.75rem, 7vw, 2.55rem);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.15;
 }
 .practice-tile .pt-meta {
-  font-size: .68rem;
+  font-size: .78rem;
   color: #64748b;
   font-weight: 700;
+  text-align: center;
+  line-height: 1.25;
+  max-width: 100%;
+}
+#wordsGrid .practice-tile .pt-meta {
+  font-size: .8rem;
+}
+.practice-tile .pt-progress {
+  font-size: .72rem !important;
 }
 .practice-hw-wrap {
   width: 100%;
@@ -1920,7 +1950,15 @@ html[data-theme="dark"] .play-modal-backdrop {
 
   .practice-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
+  }
+  #wordsGrid.practice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  #wordsGrid .practice-tile {
+    min-height: 132px;
+    padding: 14px 10px;
   }
 
   .history-item {
@@ -2284,7 +2322,8 @@ html[data-theme="dark"] .path-node.due {
   .path-memory-grid { grid-template-columns: 1fr !important; }
   main { padding: 12px 12px calc(20px + var(--safe-b)); }
   .path-roadmap-card { padding: 12px; }
-  .practice-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+  .practice-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  #wordsGrid.practice-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
 @media (max-width: 380px) {
   .nav-btn { font-size: .75rem; padding: 8px 4px; }
@@ -2303,6 +2342,82 @@ html[data-theme="dark"] .path-node.due {
 .vocab-bank-item small{display:block;color:var(--muted);margin-top:2px;line-height:1.3}
 .vocab-bank-pages{display:flex;justify-content:center;gap:8px;margin-top:12px}
 @media(max-width:640px){.vocab-bank-grid{grid-template-columns:1fr}.vocab-bank{padding:10px}.vocab-bank-head{align-items:stretch}.vocab-bank-head .btn{width:100%}}
+
+@media (min-width: 640px) {
+  #wordsGrid.practice-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+  }
+  #wordsGrid .practice-tile {
+    min-height: 168px;
+    padding: 18px 14px;
+  }
+}
+@media (min-width: 900px) {
+  #wordsGrid.practice-grid {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  }
+  #wordsGrid .practice-tile {
+    min-height: 180px;
+  }
+}
+
+/* Review notification */
+.notif-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.4);
+  background: rgba(0,0,0,.18);
+  color: #fff;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.notif-btn:hover { background: rgba(0,0,0,.28); }
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #fbbf24;
+  color: #7f1d1d;
+  font-size: .68rem;
+  font-weight: 900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.notif-badge.show { display: inline-flex; }
+.review-modal-kanji {
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  font-size: clamp(3.5rem, 18vw, 5.5rem);
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.1;
+  margin: 8px 0;
+  color: var(--text);
+}
+.review-modal-meta {
+  text-align: center;
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.review-modal-q {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 12px 0 4px;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
@@ -2310,9 +2425,15 @@ html[data-theme="dark"] .path-node.due {
 <div class="app">
 <header>
   <div class="header-inner">
-    <div class="brand">
-     
+    <div class="brand" style="justify-content:space-between;width:100%">
       <span class="brand-text"><span class="jp">墨道</span> Kanji Path</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
+          🔔
+          <span class="notif-badge" id="reviewNotifBadge">0</span>
+        </button>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode">☾ Dark</button>
+      </div>
     </div>
     <nav>
       <button class="nav-btn active" data-mode="path">Kanji Path</button>
@@ -2320,7 +2441,6 @@ html[data-theme="dark"] .path-node.due {
       <button class="nav-btn" data-mode="practice">Practice</button>
       <button class="nav-btn" data-mode="words">Words</button>
     </nav>
-      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode">☾ Dark</button>
   </div>
 
 </header>
@@ -2353,6 +2473,29 @@ html[data-theme="dark"] .path-node.due {
 </div>
 
 <main>
+
+
+<!-- Review reminder modal -->
+<div class="modal-backdrop center hidden" id="reviewModal" aria-hidden="true">
+  <div class="modal" style="max-width:420px;height:auto;" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+    <div class="modal-head">
+      <button type="button" class="modal-close-x" id="reviewModalClose" aria-label="Close">×</button>
+      <h2 id="reviewModalTitle">Review reminder</h2>
+      <p class="subtitle" style="margin:0">Do you still remember this kanji?</p>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <div class="review-modal-kanji" id="reviewModalKanji">山</div>
+      <div class="review-modal-meta" id="reviewModalReading"></div>
+      <div class="review-modal-meta" id="reviewModalMeaning"></div>
+      <p class="review-modal-q">Still know it?</p>
+      <p class="start-hint" id="reviewModalHint" style="margin-top:4px">If yes, no need to write again. If no, you will practice writing it.</p>
+    </div>
+    <div class="modal-foot modal-actions" style="flex-wrap:wrap;gap:8px">
+      <button type="button" class="btn bad" id="reviewForgotBtn">❌ I forgot — write again</button>
+      <button type="button" class="btn good" id="reviewRememberBtn">✓ I still remember</button>
+    </div>
+  </div>
+</div>
 
 <!-- MNEMONIC PATH -->
   <section id="pathMode">
@@ -5247,12 +5390,112 @@ function renderPathVocabulary(item,info){
   if(!el)return;
   el.innerHTML=words.slice(0,120).map(x=>`<span class="path-vocab-chip"><strong>${esc(x[0])}</strong><small>${esc(x[1]||'')} · ${esc(x[2]||'')}</small></span>`).join('');
 }
+
+function updateReviewNotifBadge(){
+  const badge=$('reviewNotifBadge');
+  if(!badge)return;
+  try{
+    const items=pathItems();
+    const p=loadPathProgress();
+    const due=pathDueList(items,p);
+    const n=due.length;
+    badge.textContent=n>99?'99+':String(n);
+    badge.classList.toggle('show',n>0);
+    const btn=$('reviewNotifBtn');
+    if(btn)btn.title=n?`${n} kanji review${n===1?'':'s'} due`:'No reviews due';
+  }catch(e){badge.classList.remove('show');}
+}
+let reviewModalQueue=[];
+function openReviewReminder(){
+  const items=pathItems();
+  const p=loadPathProgress();
+  const due=pathDueList(items,p);
+  if(!due.length){
+    alert('No kanji reviews due right now. Keep learning — reviews appear with spaced repetition.');
+    return;
+  }
+  reviewModalQueue=due.map(x=>x.kanji);
+  showNextReviewCard();
+}
+function showNextReviewCard(){
+  const modal=$('reviewModal');
+  if(!modal)return;
+  if(!reviewModalQueue.length){
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden','true');
+    updateReviewNotifBadge();
+    return;
+  }
+  const kanji=reviewModalQueue[0];
+  const items=pathItems();
+  const item=items.find(x=>x.kanji===kanji)||{kanji,reading:'',english:''};
+  if($('reviewModalKanji'))$('reviewModalKanji').textContent=kanji;
+  if($('reviewModalReading'))$('reviewModalReading').textContent=item.reading||'';
+  if($('reviewModalMeaning'))$('reviewModalMeaning').textContent=item.english||'';
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden','false');
+  // refresh meta if missing
+  if(!item.reading||!item.english){
+    ensurePathMeta(kanji).then(()=>{
+      const it=pathItems().find(x=>x.kanji===kanji);
+      if(it&&$('reviewModalKanji')&&$('reviewModalKanji').textContent===kanji){
+        if($('reviewModalReading'))$('reviewModalReading').textContent=it.reading||'';
+        if($('reviewModalMeaning'))$('reviewModalMeaning').textContent=it.english||'';
+      }
+    });
+  }
+}
+function closeReviewModal(){
+  const modal=$('reviewModal');
+  if(modal){modal.classList.add('hidden');modal.setAttribute('aria-hidden','true');}
+  reviewModalQueue=[];
+  updateReviewNotifBadge();
+}
+function reviewRemember(){
+  if(!reviewModalQueue.length)return;
+  const kanji=reviewModalQueue.shift();
+  const items=pathItems();
+  const idx=items.findIndex(x=>x.kanji===kanji);
+  if(idx>=0){
+    pathCurrent=idx;
+    // quality 2 = remembered, schedule next review without writing
+    pathAnswer(2);
+  }
+  updateReviewNotifBadge();
+  if(reviewModalQueue.length)showNextReviewCard();
+  else closeReviewModal();
+}
+function reviewForgot(){
+  if(!reviewModalQueue.length)return;
+  const kanji=reviewModalQueue.shift();
+  const items=pathItems();
+  const idx=items.findIndex(x=>x.kanji===kanji);
+  if(idx>=0){
+    pathCurrent=idx;
+    pathAnswer(0); // lapse — needs re-learn
+  }
+  closeReviewModal();
+  // Open write practice for this kanji
+  const set=SETS.find(s=>s.kanji===kanji);
+  if(set){
+    setupPractice([set.id]);
+    showMode('practice');
+    setTimeout(()=>{
+      try{ openPracticeModal(0); }catch(e){ console.warn(e); }
+    },120);
+  }else{
+    showMode('path');updateReviewNotifBadge();
+    renderPath();
+  }
+  updateReviewNotifBadge();
+}
+
 function renderPath(){const items=pathItems(),p=loadPathProgress(),due=pathDueList(items,p),learned=items.filter(x=>pathIsLearned(p,x.kanji)).length;if(!items.length)return;if(pathReviewMode&&due.length){const idx=items.findIndex(x=>x.kanji===due[0].kanji);pathCurrent=idx>=0?idx:pathCurrent}else{pathCurrent=Math.max(0,Math.min(pathCurrent,items.length-1));if(!PATH_JOYO_READY&&pathCurrent===0){const first=items.findIndex(x=>!pathIsLearned(p,x.kanji));if(first>=0)pathCurrent=first}}const item=items[pathCurrent];if(!item)return;const info=pathInfo(item),isDue=pathIsDue(p,item.kanji),isLearned=pathIsLearned(p,item.kanji);if($('pathLearnedCount'))$('pathLearnedCount').textContent=learned;if($('pathCurrentNumber'))$('pathCurrentNumber').textContent=pathCurrent+1;if($('pathDueCount'))$('pathDueCount').textContent=due.length;if($('pathProgressLabel'))$('pathProgressLabel').textContent=`${learned.toLocaleString()} of 2,136 learned`+(due.length?` · ${due.length} due`:'');if($('pathProgressFill'))$('pathProgressFill').style.width=Math.min(100,(learned/2136)*100)+'%';if($('pathSetBadge'))$('pathSetBadge').textContent=`Kanji ${pathCurrent+1}`;if($('pathLessonNumber'))$('pathLessonNumber').textContent=`Lesson ${pathCurrent+1} · ${pathLevelOf(item.kanji)}`+(isDue?' · REVIEW':'');if($('pathKanji'))$('pathKanji').textContent=item.kanji;if($('pathMeaning'))$('pathMeaning').textContent=item.english||'Loading English meaning…';if($('pathReading'))$('pathReading').textContent=item.reading||'Loading Japanese reading…';if($('pathStory'))$('pathStory').textContent=info.story;if($('pathHook'))$('pathHook').textContent=info.hook;renderPathVocabulary(item,info);
 // Radical-first display
 const rads=info.radicals||[];
 const radWrap=$('pathRadicals'),radList=$('pathRadicalsList'),radNote=$('pathRadicalsNote');
 if(radWrap&&radList){if(rads.length){radWrap.style.display='';radList.innerHTML=rads.map(r=>`<span class="path-radical-chip"><strong>${esc(r.radical)}</strong><small>${esc(r.meaning)}</small></span>`).join('');if(radNote)radNote.textContent=rads.filter(r=>r.story).map(r=>r.radical+' = '+r.story).join(' · ')||'Learn these building blocks first, then combine them into the kanji.';}else{radWrap.style.display='none';radList.innerHTML='';if(radNote)radNote.textContent='';}}
-const writeCount=getKanjiWriteCount(item.kanji);const writesDone=writeCount>=PRACTICE_GOAL;const learnBtn=$('pathLearnBtn');if(learnBtn){if(isDue){learnBtn.textContent='✓ I remembered it';learnBtn.dataset.mode='review-good';learnBtn.disabled=false;learnBtn.title=''}else if(isLearned){learnBtn.textContent='✓ Learned — continue →';learnBtn.dataset.mode='continue';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.dataset.mode='learn';if(writesDone){learnBtn.textContent='Mark as learned →';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.textContent=`Write ${writeCount}/${PRACTICE_GOAL} to unlock →`;learnBtn.disabled=true;learnBtn.title=`Write this kanji ${PRACTICE_GOAL} times in Practice before marking learned`}}}const writeHint=$('pathWriteHint');if(writeHint){if(isDue||isLearned){writeHint.style.display='none'}else{writeHint.style.display='';writeHint.textContent=writesDone?`Writing goal complete (${PRACTICE_GOAL}/${PRACTICE_GOAL})`:`Writing progress: ${writeCount} / ${PRACTICE_GOAL}`}}const revBtn=$('pathReviewToggle');if(revBtn){revBtn.style.display=due.length?'':'none';revBtn.textContent=pathReviewMode?'← Back to new kanji':`🔄 ${due.length} reviews due`}const againBtn=$('pathAgainBtn');if(againBtn)againBtn.style.display=isDue?'':'none';renderPathRoadmap(items,p);if(!item.reading||!item.english)ensurePathMeta(item.kanji).then(()=>renderPath());if(!PATH_WORDS_CACHE[item.kanji]){renderPathVocabulary(item,info);ensurePathWords(item.kanji).then(()=>{if(pathItems()[pathCurrent]?.kanji===item.kanji)renderPathVocabulary(item,pathInfo(item));});}}
+const writeCount=getKanjiWriteCount(item.kanji);const writesDone=writeCount>=PRACTICE_GOAL;const learnBtn=$('pathLearnBtn');if(learnBtn){if(isDue){learnBtn.textContent='✓ I remembered it';learnBtn.dataset.mode='review-good';learnBtn.disabled=false;learnBtn.title=''}else if(isLearned){learnBtn.textContent='✓ Learned — continue →';learnBtn.dataset.mode='continue';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.dataset.mode='learn';if(writesDone){learnBtn.textContent='Mark as learned →';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.textContent=`Write ${writeCount}/${PRACTICE_GOAL} to unlock →`;learnBtn.disabled=true;learnBtn.title=`Write this kanji ${PRACTICE_GOAL} times in Practice before marking learned`}}}const writeHint=$('pathWriteHint');if(writeHint){if(isDue||isLearned){writeHint.style.display='none'}else{writeHint.style.display='';writeHint.textContent=writesDone?`Writing goal complete (${PRACTICE_GOAL}/${PRACTICE_GOAL})`:`Writing progress: ${writeCount} / ${PRACTICE_GOAL}`}}const revBtn=$('pathReviewToggle');if(revBtn){revBtn.style.display=due.length?'':'none';revBtn.textContent=pathReviewMode?'← Back to new kanji':`🔄 ${due.length} reviews due`}const againBtn=$('pathAgainBtn');if(againBtn)againBtn.style.display=isDue?'':'none';renderPathRoadmap(items,p);updateReviewNotifBadge();if(!item.reading||!item.english)ensurePathMeta(item.kanji).then(()=>renderPath());if(!PATH_WORDS_CACHE[item.kanji]){renderPathVocabulary(item,info);ensurePathWords(item.kanji).then(()=>{if(pathItems()[pathCurrent]?.kanji===item.kanji)renderPathVocabulary(item,pathInfo(item));});}}
 function renderPathRoadmap(items,p){const grid=$('pathRoadmap');if(!grid)return;const visible=pathLevelItems(items),counts=pathLevelCounts(items);grid.innerHTML='';for(let vi=0;vi<visible.length;vi++){const x=visible[vi],i=items.indexOf(x),b=document.createElement('button');b.type='button';b.className='path-node';if(pathIsLearned(p,x.kanji))b.classList.add('learned');if(pathIsDue(p,x.kanji))b.classList.add('due');if(i===pathCurrent)b.classList.add('current');const prevInLevel=vi>0?visible[vi-1]:null;const unlocked=vi===0||(prevInLevel&&pathIsLearned(p,prevInLevel.kanji))||pathIsLearned(p,x.kanji);if(!unlocked)b.classList.add('locked');b.disabled=!unlocked;b.innerHTML=`<strong>${esc(x.kanji)}</strong><small>${vi+1} · ${pathLevelOf(x.kanji)}</small>`;b.onclick=()=>{pathReviewMode=false;pathCurrent=i;renderPath()};grid.appendChild(b)}if($('pathRoadmapCount'))$('pathRoadmapCount').textContent=`${visible.length.toLocaleString()} kanji · ${pathLevelFilter}`;if($('pathLevelSummary'))$('pathLevelSummary').innerHTML=`Learning <strong>${pathLevelFilter}</strong> · N5 ${counts.N5} · N4 ${counts.N4} · N3 ${counts.N3} · N2 ${counts.N2} · N1 ${counts.N1}`}
 function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);if(quality===0){renderPath();return}pathReviewMode=false;const visible=pathLevelItems(items);const vi=visible.findIndex(v=>v.kanji===x.kanji);if(vi>=0&&vi<visible.length-1){pathCurrent=items.indexOf(visible[vi+1]);}else if(pathCurrent<items.length-1){pathCurrent++;}renderPath()}
 function pathMarkLearned(){
@@ -5334,6 +5577,12 @@ bind('pathLearnBtn', 'onclick', () => pathMarkLearned());
 bind('pathStudyBtn', 'onclick', () => pathStudy());
 bind('pathWriteBtn', 'onclick', () => pathWrite());
 bind('pathAgainBtn', 'onclick', () => pathAnswer(0));
+
+bind('reviewNotifBtn', 'onclick', openReviewReminder);
+bind('reviewModalClose', 'onclick', closeReviewModal);
+bind('reviewRememberBtn', 'onclick', reviewRemember);
+bind('reviewForgotBtn', 'onclick', reviewForgot);
+
 bind('pathReviewToggle', 'onclick', () => { pathReviewMode = !pathReviewMode; renderPath(); });
 document.querySelectorAll('.path-level-btn').forEach(btn => {
   btn.onclick = () => {
