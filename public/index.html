@@ -3,33 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#6d28d9">
+<meta name="theme-color" content="#2A1B4E">
 <title>墨道 · Kanji Path</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #eef2ff;
+  --bg: #F7F4FC;
   --panel: #ffffff;
-  --text: #1e1b4b;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --accent: #7c3aed;
-  --accent-soft: #ede9fe;
-  --accent-2: #6366f1;
+  --text: #1A1430;
+  --muted: #6B7280;
+  --border: #E8E4F0;
+  --accent: #6D28D9;
+  --accent-soft: #F3EEFF;
+  --accent-2: #7C3AED;
   --good: #15803d;
   --good-bg: #e8f8ee;
   --bad: #dc2626;
   --bad-bg: #fef2f2;
-  --pink: #ec4899;
-  --gold: #7c3aed;
-  --gold-soft: rgba(124,58,237,.14);
-  --header-grad: linear-gradient(90deg, #5b21b6 0%, #6d28d9 45%, #7c3aed 100%);
-  --shadow: 0 10px 40px rgba(79,70,229,.10);
+  --pink: #EC4899;
+  --gold: #6D28D9;
+  --gold-soft: rgba(109,40,217,.12);
+  --header-grad: #2A1B4E;
+  --nav-bg: #2A1B4E;
+  --shadow: 0 4px 20px rgba(42, 27, 78, 0.06);
+  --shadow-sm: 0 2px 12px rgba(42, 27, 78, 0.05);
+  --shadow-md: 0 8px 28px rgba(42, 27, 78, 0.08);
   --radius: 20px;
+  --radius-sm: 14px;
   --safe-b: env(safe-area-inset-bottom, 0px);
-  --hero-overlay: linear-gradient(105deg, rgba(91,33,182,.55) 0%, rgba(99,102,241,.25) 42%, rgba(255,255,255,.05) 100%);
+  --hero-overlay: linear-gradient(105deg, rgba(42,27,78,.65) 0%, rgba(109,40,217,.3) 42%, rgba(255,255,255,.05) 100%);
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; }
@@ -2673,438 +2677,536 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
 }
 
 
-/* ========== HOME DASHBOARD (exact theme match) ========== */
+
+/* ========== BENTO DASHBOARD — Kanji Path ========== */
+:root {
+  --bento-bg: #f3f0ff;
+  --bento-lavender: #c4b5fd;
+  --bento-purple: #8b5cf6;
+  --bento-purple-deep: #6d28d9;
+  --bento-sky: #93c5fd;
+  --bento-sky-deep: #3b82f6;
+  --bento-pink: #f9a8d4;
+  --bento-pink-deep: #ec4899;
+  --bento-card: #ffffff;
+  --bento-text: #1e1b4b;
+  --bento-muted: #6b7280;
+  --bento-shadow: 0 8px 30px rgba(109, 40, 217, 0.08);
+  --bento-shadow-hover: 0 14px 40px rgba(109, 40, 217, 0.14);
+  --bento-radius: 1.25rem; /* rounded-2xl */
+}
+
+body {
+  background:
+    radial-gradient(ellipse 90% 50% at 15% -5%, #EDE5FF 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at 100% 0%, #FCE7F3 0%, transparent 50%),
+    #F7F4FC !important;
+  font-family: Inter, "Noto Sans JP", system-ui, -apple-system, sans-serif;
+}
+
+/* —— Top navbar (dark purple) —— */
 .top-nav {
-  background: var(--header-grad);
+  background: linear-gradient(90deg, #5b21b6 0%, #6d28d9 50%, #7c3aed 100%);
   color: #fff;
-  padding: 10px 18px;
+  padding: 0.65rem 0;
   position: sticky;
   top: 0;
   z-index: 40;
-  box-shadow: 0 8px 28px rgba(91,33,182,.28);
+  width: 100%;
+  box-shadow: 0 8px 28px rgba(91, 33, 182, 0.3);
 }
 .top-nav-inner {
-  max-width: 1120px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 1rem;
 }
 .top-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.65rem;
   font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: -.01em;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  cursor: pointer;
   white-space: nowrap;
 }
 .top-brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  background: rgba(255,255,255,.18);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.28);
   display: grid;
   place-items: center;
-  font-size: 1.15rem;
-  border: 1px solid rgba(255,255,255,.28);
+  font-size: 1.05rem;
+  font-family: "Noto Sans JP", sans-serif;
 }
 .top-nav-pills {
   display: flex;
-  gap: 8px;
+  gap: 0.35rem;
   margin: 0 auto;
-  background: rgba(255,255,255,.12);
-  padding: 5px;
+  background: rgba(255,255,255,0.12);
+  padding: 0.3rem;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,0.16);
 }
 .top-pill {
   border: 0;
   background: transparent;
-  color: rgba(255,255,255,.9);
+  color: rgba(255,255,255,0.92);
   font-weight: 700;
-  font-size: .92rem;
-  padding: 9px 18px;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.15rem;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 40px;
+  gap: 0.4rem;
+  min-height: 2.4rem;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
 .top-pill.active {
   background: #fff;
   color: #6d28d9;
-  box-shadow: 0 6px 18px rgba(15,23,42,.12);
+  box-shadow: 0 4px 14px rgba(15,23,42,0.12);
 }
 .top-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   margin-left: auto;
 }
 .top-icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.28);
-  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.12);
   color: #fff;
   display: grid;
   place-items: center;
-  font-size: 1.05rem;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background 0.15s;
 }
-.top-icon-btn:hover { background: rgba(255,255,255,.22); }
+.top-icon-btn:hover { background: rgba(255,255,255,0.22); }
 
+/* —— Home shell —— */
 #homeMode {
-  max-width: 1120px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 calc(2rem + var(--safe-b));
+  min-height: calc(100dvh - 3.5rem);
+  flex: 1 1 auto;
+}
+.home-inner {
+  width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 18px 14px calc(28px + var(--safe-b));
+  padding: 1.5rem 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.home-hero {
+/* —— Bento grid —— */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+}
+
+/* Hero spans full width */
+.bento-hero {
+  grid-column: 1 / -1;
   position: relative;
-  border-radius: 28px;
+  border-radius: var(--bento-radius);
   overflow: hidden;
-  min-height: 280px;
+  min-height: clamp(260px, 38vh, 400px);
   color: #fff;
   background:
-    linear-gradient(110deg, rgba(67,20,140,.72) 0%, rgba(99,102,241,.35) 48%, rgba(244,114,182,.18) 100%),
-    url('https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-  box-shadow: 0 18px 50px rgba(79,70,229,.18);
-  padding: 28px 24px 22px;
+    linear-gradient(115deg, rgba(76, 29, 149, 0.72) 0%, rgba(109, 40, 217, 0.4) 40%, rgba(236, 72, 153, 0.2) 100%),
+    url('https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat;
+  box-shadow: var(--bento-shadow);
+  padding: 1.75rem 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 0.75rem;
 }
-.home-hero-kicker {
-  font-size: .95rem;
+.bento-hero-kicker {
+  font-size: 0.95rem;
   font-weight: 600;
-  opacity: .95;
+  opacity: 0.95;
   font-family: "Noto Sans JP", sans-serif;
 }
-.home-hero h1 {
+.bento-hero h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2rem, 4.5vw, 2.85rem);
   font-weight: 800;
-  letter-spacing: -.03em;
+  letter-spacing: -0.03em;
   color: #fff;
-  text-shadow: 0 2px 18px rgba(15,23,42,.25);
+  text-shadow: 0 2px 16px rgba(15,23,42,0.25);
 }
-.home-hero-sub {
+.bento-hero-sub {
   margin: 0;
-  max-width: 420px;
-  font-size: .98rem;
+  max-width: 28rem;
+  font-size: 0.95rem;
   line-height: 1.5;
-  color: rgba(255,255,255,.92);
+  color: rgba(255,255,255,0.92);
 }
-.home-hero-row {
+.bento-hero-row {
   display: grid;
-  grid-template-columns: minmax(0,1.4fr) minmax(220px,.8fr);
-  gap: 14px;
-  margin-top: 6px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(200px, 0.85fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
   align-items: stretch;
 }
-.home-progress-card,
-.home-quote-card {
-  background: rgba(255,255,255,.92);
-  color: var(--text);
-  border-radius: 18px;
-  padding: 14px 16px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(15,23,42,.08);
+.bento-progress,
+.bento-quote {
+  background: rgba(255,255,255,0.94);
+  color: var(--bento-text);
+  border-radius: 1rem;
+  padding: 1rem 1.15rem; /* p-4-ish, generous */
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+  border: 1px solid rgba(255,255,255,0.7);
 }
-.home-progress-top {
+.bento-progress-top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.85rem;
 }
-.home-ring {
-  width: 54px;
-  height: 54px;
+.bento-ring {
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 999px;
-  background:
-    conic-gradient(#7c3aed calc(var(--pct,12) * 1%), #e9d5ff 0);
+  background: conic-gradient(#8b5cf6 calc(var(--pct, 12) * 1%), #ede9fe 0);
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
-.home-ring > span {
-  width: 40px;
-  height: 40px;
+.bento-ring > span {
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 999px;
   background: #fff;
   display: grid;
   place-items: center;
   font-weight: 800;
-  font-size: .78rem;
+  font-size: 0.75rem;
   color: #6d28d9;
 }
-.home-progress-meta strong {
+.bento-progress-meta strong {
   display: block;
-  font-size: .95rem;
+  font-size: 0.95rem;
   color: #312e81;
+  font-weight: 700;
 }
-.home-progress-meta span {
-  font-size: .82rem;
-  color: #64748b;
+.bento-progress-meta span {
+  font-size: 0.8rem;
+  color: var(--bento-muted);
+  font-weight: 600;
 }
-.home-progress-bar {
-  margin-top: 10px;
-  height: 8px;
+.bento-progress-bar {
+  margin-top: 0.75rem;
+  height: 0.5rem;
   border-radius: 999px;
   background: #ede9fe;
   overflow: hidden;
 }
-.home-progress-bar > i {
+.bento-progress-bar > i {
   display: block;
   height: 100%;
-  width: var(--pct,12%);
-  background: linear-gradient(90deg,#7c3aed,#a855f7);
+  width: var(--pct, 12%);
+  background: linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
   border-radius: 999px;
 }
-.home-quote-card {
+.bento-quote {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
-.home-quote-jp {
+.bento-quote-jp {
   font-family: "Noto Sans JP", sans-serif;
   font-weight: 800;
   color: #6d28d9;
-  font-size: 1.02rem;
+  font-size: 1rem;
 }
-.home-quote-en {
-  color: #64748b;
-  font-size: .9rem;
+.bento-quote-en {
+  color: var(--bento-muted);
+  font-size: 0.88rem;
   font-style: italic;
 }
 
-.home-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 18px;
-}
-.home-panel {
-  background: #fff;
-  border: 1px solid rgba(226,232,240,.9);
-  border-radius: 24px;
-  padding: 22px 20px 18px;
-  box-shadow: 0 14px 40px rgba(79,70,229,.08);
+/* Study + Practice main cards */
+.bento-card {
+  grid-column: span 6;
+  background: var(--bento-card);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--bento-radius);
+  padding: 1.5rem; /* p-6 */
+  box-shadow: var(--bento-shadow);
   position: relative;
   overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.15s;
 }
-.home-panel::before {
+.bento-card:hover {
+  box-shadow: var(--bento-shadow-hover);
+  transform: translateY(-2px);
+}
+.bento-card::before {
   content: '';
   position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
+  top: 0; left: 0; right: 0;
   height: 4px;
-  background: linear-gradient(90deg,#7c3aed,#a855f7,#ec4899);
-  opacity: .85;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa, #f9a8d4);
+  opacity: 0.9;
 }
-.home-panel-head {
+.bento-card-head {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 0.9rem;
+  margin-bottom: 1.15rem;
 }
-.home-panel-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
+.bento-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
   display: grid;
   place-items: center;
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.2);
 }
-.home-panel-icon.study { background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff; }
-.home-panel-icon.practice { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; }
-.home-panel h2 {
+.bento-icon.study {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #fff;
+}
+.bento-icon.practice {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  color: #fff;
+}
+.bento-card h2 {
   margin: 0;
   font-size: 1.35rem;
-  color: #1e1b4b;
+  font-weight: 800;
+  color: var(--bento-text);
+  letter-spacing: -0.02em;
 }
-.home-panel p {
-  margin: 4px 0 0;
-  color: #64748b;
-  font-size: .9rem;
-  line-height: 1.45;
+.bento-card p {
+  margin: 0.3rem 0 0;
+  color: var(--bento-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
-.home-panel-go {
+.bento-go {
   margin-left: auto;
-  width: 38px;
-  height: 38px;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  color: #64748b;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #9ca3af;
   display: grid;
   place-items: center;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
 }
-.home-panel-go:hover { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
-.home-chips {
+.bento-go:hover {
+  background: #ede9fe;
+  color: #6d28d9;
+  border-color: #ddd6fe;
+}
+
+/* Pill badges */
+.bento-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.55rem;
 }
-.home-chip {
-  border: 1px solid #eef2ff;
-  background: #f8fafc;
-  border-radius: 14px;
-  padding: 10px 12px;
-  min-width: 96px;
+.bento-pill {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  min-width: 6.5rem;
   cursor: pointer;
   text-align: left;
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  transition: transform 0.12s, box-shadow 0.12s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
-.home-chip:hover {
+.bento-pill:hover {
   transform: translateY(-1px);
-  border-color: #c4b5fd;
-  box-shadow: 0 8px 20px rgba(124,58,237,.1);
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.12);
 }
-.home-chip .chip-top {
+.bento-pill .pill-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.4rem;
   font-weight: 700;
-  font-size: .88rem;
+  font-size: 0.85rem;
   color: #312e81;
 }
-.home-chip .chip-glyph {
-  width: 26px;
-  height: 26px;
+.bento-pill .pill-glyph {
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  font-size: .85rem;
+  font-size: 0.75rem;
   font-weight: 800;
   font-family: "Noto Sans JP", sans-serif;
 }
-.home-chip.kanji .chip-glyph { background:#ede9fe; color:#6d28d9; }
-.home-chip.vocab .chip-glyph { background:#e0e7ff; color:#4338ca; }
-.home-chip.kana .chip-glyph { background:#fce7f3; color:#db2777; }
-.home-chip small {
-  display: block;
-  margin-top: 4px;
-  color: #94a3b8;
-  font-size: .78rem;
+.bento-pill small {
+  font-size: 0.75rem;
   font-weight: 700;
+  color: #9ca3af;
+  padding-left: 1.9rem;
 }
+.bento-pill.kanji {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+}
+.bento-pill.kanji .pill-glyph { background: #ede9fe; color: #6d28d9; }
+.bento-pill.vocab {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.bento-pill.vocab .pill-glyph { background: #dbeafe; color: #2563eb; }
+.bento-pill.kana {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+.bento-pill.kana .pill-glyph { background: #fce7f3; color: #db2777; }
 
-.home-quick {
-  margin-top: 18px;
-  background: #fff;
-  border: 1px solid #eef2ff;
-  border-radius: 22px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(79,70,229,.06);
+/* Quick access — full width bento row */
+.bento-quick {
+  grid-column: 1 / -1;
+  background: var(--bento-card);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--bento-radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--bento-shadow);
 }
-.home-quick-head {
+.bento-quick-head {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  color: #475569;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  color: #4b5563;
   font-weight: 700;
-  font-size: .92rem;
+  font-size: 0.9rem;
 }
-.home-quick-grid {
+.bento-quick-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
 }
-.home-quick-item {
-  border: 1px solid #eef2ff;
-  background: linear-gradient(180deg,#ffffff 0%, #fafaff 100%);
-  border-radius: 16px;
-  padding: 14px 12px;
+.bento-quick-item {
+  border: 1px solid #f3e8ff;
+  background: linear-gradient(180deg, #ffffff 0%, #faf8ff 100%);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
   text-align: left;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 72px;
-  transition: transform .12s ease, box-shadow .12s ease;
+  gap: 0.75rem;
+  min-height: 4.25rem;
+  transition: transform 0.12s, box-shadow 0.15s, border-color 0.15s;
 }
-.home-quick-item:hover {
+.bento-quick-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(124,58,237,.12);
+  box-shadow: var(--bento-shadow-hover);
   border-color: #ddd6fe;
 }
-.home-quick-item .q-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+.bento-quick-item .q-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
   display: grid;
   place-items: center;
   font-weight: 900;
   font-family: "Noto Sans JP", sans-serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
-.home-quick-item.path .q-icon { background:#fce7f3; color:#db2777; }
-.home-quick-item.vocab .q-icon { background:#e0e7ff; color:#4338ca; }
-.home-quick-item.hira .q-icon { background:#fce7f3; color:#be185d; }
-.home-quick-item.kata .q-icon { background:#ede9fe; color:#6d28d9; }
-.home-quick-item strong {
+.bento-quick-item.path .q-icon { background: #fce7f3; color: #db2777; }
+.bento-quick-item.vocab .q-icon { background: #dbeafe; color: #2563eb; }
+.bento-quick-item.hira .q-icon { background: #fce7f3; color: #be185d; }
+.bento-quick-item.kata .q-icon { background: #ede9fe; color: #6d28d9; }
+.bento-quick-item strong {
   display: block;
-  font-size: .92rem;
-  color: #1e1b4b;
+  font-size: 0.9rem;
+  color: var(--bento-text);
+  font-weight: 700;
 }
-.home-quick-item small {
-  color: #94a3b8;
-  font-size: .75rem;
+.bento-quick-item small {
+  color: #9ca3af;
+  font-size: 0.72rem;
   font-weight: 600;
 }
-.home-quick-item .q-arrow {
+.bento-quick-item .q-arrow {
   margin-left: auto;
-  color: #cbd5e1;
-  font-size: 1.1rem;
+  color: #d1d5db;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
-.home-footer-note {
+.bento-footer {
+  grid-column: 1 / -1;
   text-align: center;
-  color: #94a3b8;
-  font-size: .82rem;
-  margin: 18px 0 4px;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  margin: 0.25rem 0 0;
+  padding-bottom: 0.5rem;
 }
 
+/* Responsive bento */
 @media (max-width: 900px) {
-  .home-hero-row { grid-template-columns: 1fr; }
-  .home-grid { grid-template-columns: 1fr; }
-  .home-quick-grid { grid-template-columns: 1fr 1fr; }
+  .bento-card { grid-column: 1 / -1; }
+  .bento-hero-row { grid-template-columns: 1fr; }
+  .bento-quick-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
-  .top-nav-inner { flex-wrap: wrap; }
+  .top-nav-inner { padding: 0 0.75rem; flex-wrap: wrap; }
   .top-nav-pills { order: 3; width: 100%; justify-content: center; }
   .top-pill { flex: 1; justify-content: center; }
-  .home-hero { min-height: 240px; padding: 22px 16px 16px; border-radius: 22px; }
-  .home-quick-grid { grid-template-columns: 1fr; }
-  .home-panel { padding: 18px 14px; }
+  .home-inner { padding: 1rem 0.75rem 0; gap: 1rem; }
+  .bento { gap: 1rem; }
+  .bento-hero { min-height: 240px; padding: 1.25rem; border-radius: 1.1rem; }
+  .bento-card { padding: 1.15rem; }
+  .bento-quick-grid { grid-template-columns: 1fr; }
+  .bento-quick { padding: 1rem; }
+}
+@media (min-width: 1100px) {
+  .home-inner { max-width: 1400px; padding-left: 2.5rem; padding-right: 2.5rem; }
+  .bento-hero { min-height: 360px; }
 }
 
-/* Soft page background like the image */
-body {
-  background:
-    radial-gradient(1200px 500px at 10% -10%, #ddd6fe 0%, transparent 55%),
-    radial-gradient(900px 420px at 100% 0%, #fbcfe8 0%, transparent 45%),
-    linear-gradient(180deg, #eef2ff 0%, #f8fafc 40%, #f1f5f9 100%) !important;
-}
-html[data-theme="dark"] body {
-  background: #120a12 !important;
-}
+/* chrome visibility */
+.top-nav { display: block !important; }
+body.show-legacy-header .top-nav { display: none !important; }
+.app > header.legacy-header { display: none !important; }
+body.show-legacy-header .app > header.legacy-header { display: block !important; }
+#homeMode.hidden { display: none !important; }
+body:not(.show-legacy-header) #userBanner { display: none !important; }
 
-/* Make existing app header optional when using top-nav home */
-.app > header.legacy-header { display: none; }
-body.show-legacy-header .app > header.legacy-header { display: block; }
-body.show-legacy-header .top-nav { display: none; }
-
+/* Legacy class aliases so old JS hooks still style correctly */
+.home-hero { /* noop - replaced by bento-hero in HTML */ }
+.home-panel { }
+.home-chip { }
+.home-quick { }
+.home-quick-item { }
 
 /* Force correct chrome visibility */
 .top-nav { display: block !important; }
@@ -3115,6 +3217,312 @@ body.show-legacy-header .app > header.legacy-header { display: block !important;
 
 
 body:not(.show-legacy-header) #userBanner { display: none !important; }
+
+
+/* Full-screen layout */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.app {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.top-nav {
+  width: 100%;
+  flex: 0 0 auto;
+}
+#homeMode {
+  flex: 1 1 auto;
+}
+.home-grid {
+  grid-template-columns: 1fr 1fr;
+}
+@media (min-width: 1100px) {
+  .home-inner { max-width: 1400px; padding-left: 40px; padding-right: 40px; }
+  .home-hero { min-height: 380px; }
+  .home-quick-grid { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+}
+
+
+/* ========== PREMIUM GLOBAL CHROME ========== */
+.top-nav,
+header.legacy-header {
+  background: #2A1B4E !important;
+  background-image: none !important;
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(20, 10, 40, 0.28) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.top-nav { padding: 0.55rem 0; }
+header.legacy-header {
+  padding: 10px 16px !important;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.header-inner {
+  max-width: 1200px !important;
+  margin: 0 auto;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+.header-inner .brand {
+  flex: 0 0 auto;
+  width: auto !important;
+  justify-content: flex-start !important;
+}
+.header-inner .brand > div {
+  order: 2;
+  margin-left: auto;
+}
+.header-inner nav {
+  flex: 0 1 auto;
+  margin-left: auto;
+}
+.brand, .brand-text {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: #fff !important;
+}
+.brand .jp { color: #fff; font-size: 1.2rem; }
+
+header.legacy-header nav,
+.header-inner nav {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+  grid-template-columns: none !important;
+  background: rgba(255,255,255,0.08);
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.nav-btn {
+  border: none !important;
+  background: transparent !important;
+  color: rgba(255,255,255,0.88) !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  font-size: 0.84rem !important;
+  min-height: 36px !important;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.nav-btn:hover {
+  background: rgba(255,255,255,0.12) !important;
+  color: #fff !important;
+}
+.nav-btn.active {
+  background: #ffffff !important;
+  color: #2A1B4E !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.theme-toggle, .notif-btn {
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  background: rgba(255,255,255,0.1) !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+.theme-toggle:hover, .notif-btn:hover {
+  background: rgba(255,255,255,0.18) !important;
+}
+
+main {
+  max-width: 1200px !important;
+  padding: 20px 16px calc(32px + var(--safe-b)) !important;
+}
+
+.toolbar,
+.user-banner,
+.path-hero,
+.path-lesson,
+.path-roadmap-card,
+.game-menu-card,
+.history-item,
+.help-box,
+.intro-card,
+.vocab-bank {
+  border-radius: 20px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: #fff;
+}
+
+.user-banner {
+  background: #fff !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-sm) !important;
+  padding: 12px 16px !important;
+}
+.user-banner .btn {
+  background: #2A1B4E !important;
+  border-color: #2A1B4E !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  font-weight: 700;
+}
+
+.btn {
+  border-radius: 14px !important;
+  font-weight: 700;
+}
+.btn.primary {
+  background: #2A1B4E !important;
+  border-color: #2A1B4E !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+}
+
+.badge {
+  border-radius: 999px !important;
+  background: var(--accent-soft) !important;
+  color: #5B21B6 !important;
+  font-weight: 800;
+  border: 1px solid #E9D5FF;
+}
+
+.path-stats div {
+  border-radius: 16px !important;
+  background: #F8F6FC !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+.path-progress {
+  background: #EDE9FE !important;
+  border-radius: 999px !important;
+}
+.path-progress span {
+  background: linear-gradient(90deg, #6D28D9, #A78BFA) !important;
+}
+
+.practice-tile {
+  border-radius: 18px !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--border) !important;
+  background: #fff !important;
+}
+.practice-tile .pt-kanji { color: #1A1430 !important; }
+
+.word-flashcard {
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid rgba(109,40,217,0.08) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #FBF9FF 100%) !important;
+}
+.word-flashcard:hover {
+  box-shadow: var(--shadow-md) !important;
+  border-color: rgba(109,40,217,0.18) !important;
+}
+.word-level-btn {
+  border-radius: 999px !important;
+  border: 1px solid var(--border) !important;
+  background: #fff !important;
+  font-weight: 800;
+}
+.word-level-btn.active {
+  background: #2A1B4E !important;
+  color: #fff !important;
+  border-color: #2A1B4E !important;
+  box-shadow: 0 4px 12px rgba(42,27,78,0.2);
+}
+.words-search {
+  border-radius: 16px !important;
+  border: 1.5px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: #fff !important;
+}
+.words-search:focus {
+  border-color: #8B5CF6 !important;
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.15) !important;
+}
+
+.path-level-btn,
+.study-level-btn {
+  border-radius: 999px !important;
+  border: 1px solid var(--border) !important;
+  background: #fff !important;
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
+}
+.path-level-btn.active,
+.study-level-btn.active {
+  background: #2A1B4E !important;
+  color: #fff !important;
+  border-color: #2A1B4E !important;
+}
+
+.path-node {
+  border-radius: 14px !important;
+  border: 1px solid var(--border) !important;
+  background: #fff !important;
+  box-shadow: var(--shadow-sm);
+}
+.path-node.current {
+  outline: 2px solid #6D28D9 !important;
+  box-shadow: 0 0 0 4px rgba(109,40,217,0.12) !important;
+}
+.path-node.learned {
+  background: #ECFDF5 !important;
+  outline: 2px solid #34D399 !important;
+}
+
+.modal {
+  border-radius: 24px !important;
+  box-shadow: 0 24px 80px rgba(20,10,40,0.25) !important;
+}
+
+.top-nav { background: #2A1B4E !important; }
+.top-pill.active {
+  background: #fff !important;
+  color: #2A1B4E !important;
+}
+
+.subtitle, .hint, .progress, .path-progress-label, .path-level-summary {
+  color: var(--muted) !important;
+}
+h1, h2, h3 { color: var(--text); font-weight: 800; letter-spacing: -0.02em; }
+
+html[data-theme="dark"] {
+  --bg: #120a18;
+  --panel: #1c1428;
+  --text: #f5f0fa;
+  --muted: #a89bb8;
+  --border: #3a2a4e;
+  --accent: #a78bfa;
+  --accent-soft: #2a1a3a;
+  --header-grad: #1a102e;
+  --nav-bg: #1a102e;
+  --shadow: 0 8px 28px rgba(0,0,0,0.45);
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.35);
+}
+html[data-theme="dark"] body { background: #120a18 !important; }
+html[data-theme="dark"] header.legacy-header,
+html[data-theme="dark"] .top-nav { background: #1a102e !important; }
+html[data-theme="dark"] .nav-btn.active {
+  background: #a78bfa !important;
+  color: #1a102e !important;
+}
+
+@media (max-width: 640px) {
+  header.legacy-header nav { width: 100%; justify-content: center; }
+  .nav-btn { padding: 8px 10px !important; font-size: 0.78rem !important; }
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
@@ -3142,14 +3550,14 @@ body:not(.show-legacy-header) #userBanner { display: none !important; }
 
 <header class="legacy-header">
   <div class="header-inner">
-    <div class="brand" style="justify-content:space-between;width:100%">
+    <div class="brand" style="justify-content:flex-start;gap:10px">
       <span class="brand-text" id="legacyBrandHome" style="cursor:pointer"><span class="jp">墨道</span> Kanji Path</span>
       <div style="display:flex;align-items:center;gap:8px">
         <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
           🔔
           <span class="notif-badge" id="reviewNotifBadge">0</span>
         </button>
-        <button type="button" class="theme-toggle" id="themeToggleLegacy" aria-label="Switch to dark mode">☾ Dark</button>
+        <button type="button" class="theme-toggle" id="themeToggleLegacy" aria-label="Switch to dark mode">☾</button>
       </div>
     </div>
     <nav>
@@ -3216,108 +3624,116 @@ body:not(.show-legacy-header) #userBanner { display: none !important; }
 </div>
 
 
-<!-- HOME DASHBOARD -->
+<!-- HOME DASHBOARD — Bento Grid -->
 <section id="homeMode">
-  <div class="home-hero">
-    <div class="home-hero-kicker">一歩ずつ、夢に近づく</div>
-    <h1>Kanji Path</h1>
-    <p class="home-hero-sub">Learn Japanese kanji and vocabulary at your own pace. Small steps every day, big progress tomorrow.</p>
-    <div class="home-hero-row">
-      <div class="home-progress-card">
-        <div class="home-progress-top">
-          <div class="home-ring" id="homeProgressRing" style="--pct:12"><span id="homeProgressPct">12%</span></div>
-          <div class="home-progress-meta">
-            <strong>Overall Progress</strong>
-            <span id="homeProgressLabel">2,480 / 20,000 words</span>
+  <div class="home-inner">
+    <div class="bento">
+
+      <!-- Hero -->
+      <div class="bento-hero">
+        <div class="bento-hero-kicker">一歩ずつ、夢に近づく</div>
+        <h1>Kanji Path</h1>
+        <p class="bento-hero-sub">Learn Japanese kanji and vocabulary at your own pace. Small steps every day, big progress tomorrow.</p>
+        <div class="bento-hero-row">
+          <div class="bento-progress">
+            <div class="bento-progress-top">
+              <div class="bento-ring" id="homeProgressRing" style="--pct:12"><span id="homeProgressPct">12%</span></div>
+              <div class="bento-progress-meta">
+                <strong>Overall Progress</strong>
+                <span id="homeProgressLabel">2,480 / 20,000 words</span>
+              </div>
+            </div>
+            <div class="bento-progress-bar"><i id="homeProgressFill" style="width:12%"></i></div>
+          </div>
+          <div class="bento-quote">
+            <div class="bento-quote-jp">🌸 「継続は力なり」</div>
+            <div class="bento-quote-en">“Continuity builds strength.”</div>
           </div>
         </div>
-        <div class="home-progress-bar"><i id="homeProgressFill" style="width:12%"></i></div>
       </div>
-      <div class="home-quote-card">
-        <div class="home-quote-jp">🌸 「継続は力なり」</div>
-        <div class="home-quote-en">“Continuity builds strength.”</div>
+
+      <!-- Study card -->
+      <article class="bento-card">
+        <div class="bento-card-head">
+          <div class="bento-icon study">📖</div>
+          <div style="min-width:0;flex:1">
+            <h2>Study</h2>
+            <p>Learn new kanji, vocabulary and readings with clear explanations and examples.</p>
+          </div>
+          <button type="button" class="bento-go" data-go="study" aria-label="Open Study">→</button>
+        </div>
+        <div class="bento-pills">
+          <button type="button" class="bento-pill kanji" data-go="path">
+            <span class="pill-label"><span class="pill-glyph">漢</span> Kanji</span>
+            <small>2,136</small>
+          </button>
+          <button type="button" class="bento-pill vocab" data-go="words">
+            <span class="pill-label"><span class="pill-glyph">語</span> Vocabulary</span>
+            <small id="homeVocabCount">259</small>
+          </button>
+          <button type="button" class="bento-pill kana" data-go="kana-study">
+            <span class="pill-label"><span class="pill-glyph">あ</span> Kana</span>
+            <small>182</small>
+          </button>
+        </div>
+      </article>
+
+      <!-- Practice card -->
+      <article class="bento-card">
+        <div class="bento-card-head">
+          <div class="bento-icon practice">✏️</div>
+          <div style="min-width:0;flex:1">
+            <h2>Practice</h2>
+            <p>Reinforce what you've learned with interactive writing and recognition exercises.</p>
+          </div>
+          <button type="button" class="bento-go" data-go="practice" aria-label="Open Practice">→</button>
+        </div>
+        <div class="bento-pills">
+          <button type="button" class="bento-pill kanji" data-go="practice">
+            <span class="pill-label"><span class="pill-glyph">漢</span> Kanji</span>
+            <small>2,136</small>
+          </button>
+          <button type="button" class="bento-pill vocab" data-go="words">
+            <span class="pill-label"><span class="pill-glyph">語</span> Vocabulary</span>
+            <small id="homeVocabCount2">259</small>
+          </button>
+          <button type="button" class="bento-pill kana" data-go="kana-practice">
+            <span class="pill-label"><span class="pill-glyph">あ</span> Kana</span>
+            <small>182</small>
+          </button>
+        </div>
+      </article>
+
+      <!-- Quick Access -->
+      <div class="bento-quick">
+        <div class="bento-quick-head">✨ Quick Access · Jump to a specific category</div>
+        <div class="bento-quick-grid">
+          <button type="button" class="bento-quick-item path" data-go="path">
+            <span class="q-icon">漢</span>
+            <span><strong>Kanji Path</strong><small>2,136 kanji</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+          <button type="button" class="bento-quick-item vocab" data-go="words">
+            <span class="q-icon">語</span>
+            <span><strong>Vocabulary</strong><small id="homeVocabCount3">259 words</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+          <button type="button" class="bento-quick-item hira" data-go="hiragana">
+            <span class="q-icon">あ</span>
+            <span><strong>Hiragana</strong><small>46 characters</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+          <button type="button" class="bento-quick-item kata" data-go="katakana">
+            <span class="q-icon">ア</span>
+            <span><strong>Katakana</strong><small>46 characters</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+        </div>
       </div>
+
+      <p class="bento-footer">Better Japanese. A Brighter Future.</p>
     </div>
   </div>
-
-  <div class="home-grid">
-    <article class="home-panel">
-      <div class="home-panel-head">
-        <div class="home-panel-icon study">📖</div>
-        <div style="min-width:0;flex:1">
-          <h2>Study</h2>
-          <p>Learn new kanji, vocabulary and readings with clear explanations and examples.</p>
-        </div>
-        <button type="button" class="home-panel-go" data-go="study" aria-label="Open Study">→</button>
-      </div>
-      <div class="home-chips">
-        <button type="button" class="home-chip kanji" data-go="path">
-          <span class="chip-top"><span class="chip-glyph">漢</span> Kanji</span>
-          <small>2,136</small>
-        </button>
-        <button type="button" class="home-chip vocab" data-go="words">
-          <span class="chip-top"><span class="chip-glyph">語</span> Vocabulary</span>
-          <small id="homeVocabCount">259</small>
-        </button>
-        <button type="button" class="home-chip kana" data-go="kana-study">
-          <span class="chip-top"><span class="chip-glyph">あ</span> Kana</span>
-          <small>182</small>
-        </button>
-      </div>
-    </article>
-
-    <article class="home-panel">
-      <div class="home-panel-head">
-        <div class="home-panel-icon practice">✏️</div>
-        <div style="min-width:0;flex:1">
-          <h2>Practice</h2>
-          <p>Reinforce what you've learned with interactive writing and recognition exercises.</p>
-        </div>
-        <button type="button" class="home-panel-go" data-go="practice" aria-label="Open Practice">→</button>
-      </div>
-      <div class="home-chips">
-        <button type="button" class="home-chip kanji" data-go="practice">
-          <span class="chip-top"><span class="chip-glyph">漢</span> Kanji</span>
-          <small>2,136</small>
-        </button>
-        <button type="button" class="home-chip vocab" data-go="words">
-          <span class="chip-top"><span class="chip-glyph">語</span> Vocabulary</span>
-          <small id="homeVocabCount2">259</small>
-        </button>
-        <button type="button" class="home-chip kana" data-go="kana-practice">
-          <span class="chip-top"><span class="chip-glyph">あ</span> Kana</span>
-          <small>182</small>
-        </button>
-      </div>
-    </article>
-  </div>
-
-  <div class="home-quick">
-    <div class="home-quick-head">✨ Quick Access · Jump to a specific category</div>
-    <div class="home-quick-grid">
-      <button type="button" class="home-quick-item path" data-go="path">
-        <span class="q-icon">漢</span>
-        <span><strong>Kanji Path</strong><small>2,136 kanji</small></span>
-        <span class="q-arrow">›</span>
-      </button>
-      <button type="button" class="home-quick-item vocab" data-go="words">
-        <span class="q-icon">語</span>
-        <span><strong>Vocabulary</strong><small id="homeVocabCount3">259 words</small></span>
-        <span class="q-arrow">›</span>
-      </button>
-      <button type="button" class="home-quick-item hira" data-go="hiragana">
-        <span class="q-icon">あ</span>
-        <span><strong>Hiragana</strong><small>46 characters</small></span>
-        <span class="q-arrow">›</span>
-      </button>
-      <button type="button" class="home-quick-item kata" data-go="katakana">
-        <span class="q-icon">ア</span>
-        <span><strong>Katakana</strong><small>46 characters</small></span>
-        <span class="q-arrow">›</span>
-      </button>
-    </div>
-  </div>
-  <p class="home-footer-note">Better Japanese. A Brighter Future.</p>
 </section>
 
 <!-- MNEMONIC PATH -->
@@ -7383,7 +7799,7 @@ if (legacyBrand) legacyBrand.onclick = () => showMode('home');
     const legacy = $('themeToggleLegacy');
     const top = $('themeToggle');
     if (legacy) {
-      legacy.textContent = dark ? '☀ Light' : '☾ Dark';
+      legacy.textContent = dark ? '☀' : '☾';
       legacy.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
     }
     if (top) top.textContent = dark ? '☀' : '☾';
