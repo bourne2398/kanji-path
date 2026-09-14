@@ -2458,7 +2458,7 @@ html[data-theme="dark"] .study-level-btn.active {
   .study-level-btn { flex: 1 1 auto; min-width: 0; }
 }
 
-/* Vocabulary flashcards */
+/* Vocabulary flashcards — illustrated card layout */
 .words-search-wrap {
   position: relative;
   width: 100%;
@@ -2509,15 +2509,106 @@ html[data-theme="dark"] .study-level-btn.active {
 .word-level-btn { border:1px solid #d7dce7; background:var(--card); color:var(--text); padding:9px 17px; border-radius:999px; font-weight:850; min-height:42px; min-width:54px; cursor:pointer; transition:.15s ease; }
 .word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 4px 10px rgba(185,28,74,.18); }
 .word-level-btn:active { transform:scale(.97); }
-.word-flashcard { aspect-ratio:auto !important; min-height:190px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:18px 14px; }
-.word-flashcard .pt-kanji { font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; font-size:clamp(1.8rem,5vw,2.8rem); font-weight:900; line-height:1.1; }
-.word-flashcard .pt-meta { font-size:.95rem; }
-.word-flashcard .word-level-badge { margin-top:3px; }
-html[data-theme="dark"] .words-search { border-color:var(--border); background:var(--panel); color:var(--text); }
-html[data-theme="dark"] .words-search::placeholder { color:#94a3c7; }
-html[data-theme="dark"] .words-search-clear { background:#334155; color:#e2e8f0; }
-html[data-theme="dark"] .word-level-btn { background:var(--panel); color:var(--text); border-color:var(--border); }
-html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.word-flashcard {
+  position:relative;
+  width:100%;
+  min-height:190px;
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  grid-template-rows:auto 1fr auto;
+  align-items:center;
+  column-gap:14px;
+  row-gap:6px;
+  padding:14px 14px 12px;
+  text-align:left;
+  border:1px solid rgba(185,28,74,.12);
+  border-radius:18px;
+  background:linear-gradient(145deg,#fff 0%,#fffafd 100%);
+  box-shadow:0 5px 18px rgba(39,24,70,.07);
+  cursor:pointer;
+  overflow:hidden;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.word-flashcard:hover {
+  transform:translateY(-2px);
+  border-color:rgba(185,28,74,.24);
+  box-shadow:0 10px 24px rgba(39,24,70,.11);
+}
+.word-flashcard:active { transform:translateY(0) scale(.995); }
+.word-flashcard .word-art {
+  grid-column:1;
+  grid-row:1 / span 2;
+  width:96px;
+  height:96px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:#fff3f7;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(185,28,74,.06);
+}
+.word-flashcard .word-art img { width:100%; height:100%; display:block; object-fit:cover; }
+.word-flashcard .word-head {
+  grid-column:2; grid-row:1;
+  display:flex; align-items:center; gap:8px; min-width:0; padding-right:26px;
+}
+.word-flashcard .word-level-badge { flex:0 0 auto; margin:0; }
+.word-flashcard .word-favorite {
+  position:absolute; top:12px; right:12px;
+  width:28px; height:28px; border-radius:50%;
+  display:grid; place-items:center;
+  color:#aab5d1; background:transparent;
+  font-size:1.1rem; line-height:1;
+  transition:.15s ease; z-index:2;
+}
+.word-flashcard .word-favorite.active { color:#c2185b; background:#fff0f6; }
+.word-flashcard .word-content { grid-column:2; grid-row:2; min-width:0; align-self:start; }
+.word-flashcard .pt-kanji {
+  display:block;
+  font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  font-size:clamp(1.7rem,2.5vw,2.25rem);
+  font-weight:900; line-height:1.12; letter-spacing:.01em;
+  color:#18244b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.word-flashcard .pt-meta {
+  display:block; margin-top:4px;
+  font-size:.9rem; font-weight:700; color:#786ba1;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.word-flashcard .word-meaning {
+  display:block; margin-top:2px;
+  font-size:.84rem; color:#61759e;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.word-flashcard .word-footer {
+  grid-column:1 / -1; grid-row:3;
+  display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center; gap:9px;
+  min-width:0; margin-top:3px;
+}
+.word-action {
+  width:34px; height:34px; border-radius:50%;
+  display:grid; place-items:center;
+  background:#fff0f6; color:#bd1457;
+  font-size:1rem; font-weight:900;
+  cursor:pointer; user-select:none;
+}
+.word-action:hover { background:#ffe3ef; transform:scale(1.04); }
+.word-progress-wrap { min-width:0; margin-left:2px; }
+.word-progress-label { display:flex; justify-content:space-between; gap:8px; font-size:.7rem; color:#7183a9; margin-bottom:4px; }
+.word-progress-track { height:7px; width:100%; border-radius:999px; background:#ece9f7; overflow:hidden; }
+.word-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#c2185b,#7c3aed); }
+html[data-theme="dark"] .word-flashcard { background:linear-gradient(145deg,#172033,#141a2b); border-color:var(--border); }
+html[data-theme="dark"] .word-flashcard .word-art { background:#20263a; }
+html[data-theme="dark"] .word-flashcard .pt-kanji { color:#eef2ff; }
+html[data-theme="dark"] .word-flashcard .pt-meta { color:#b9a9e5; }
+html[data-theme="dark"] .word-flashcard .word-meaning,
+html[data-theme="dark"] .word-progress-label { color:#a9b8d8; }
+html[data-theme="dark"] .word-flashcard .word-favorite.active { background:#352037; color:#ff79ad; }
+html[data-theme="dark"] .word-action { background:#2d2031; color:#ff76a8; }
+html[data-theme="dark"] .word-progress-track { background:#30374d; }
+@media (min-width:641px) and (max-width:1100px){
+  #wordsGrid.practice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 @media (max-width:640px){
   .words-search { min-height:50px; border-radius:15px; font-size:.96rem; }
   .word-level-filter { width:100%; display:grid; grid-template-columns:repeat(5,1fr); gap:7px; }
@@ -2525,17 +2616,20 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
   .words-toolbar .spacer { display:none; }
   .words-toolbar { display:grid; grid-template-columns:1fr auto; }
   #wordsGrid.practice-grid { grid-template-columns:1fr; gap:10px; }
-  #wordsGrid .word-flashcard { min-height:132px; flex-direction:row; justify-content:flex-start; text-align:left; padding:14px 16px; gap:12px; }
-  #wordsGrid .word-flashcard .pt-kanji { width:92px; flex:0 0 92px; text-align:center; font-size:clamp(1.8rem,8vw,2.4rem); }
-  #wordsGrid .word-flashcard .pt-meta { flex:1; min-width:0; text-align:left; }
-  #wordsGrid .word-flashcard .word-level-badge { order:3; flex:0 0 auto; }
-  #wordsGrid .word-flashcard .pt-progress { display:none; }
+  #wordsGrid .word-flashcard { min-height:126px; grid-template-columns:76px minmax(0,1fr); column-gap:11px; padding:12px; border-radius:16px; }
+  #wordsGrid .word-flashcard .word-art { width:76px; height:76px; border-radius:15px; }
+  #wordsGrid .word-flashcard .pt-kanji { font-size:clamp(1.55rem,8vw,2.1rem); }
+  #wordsGrid .word-flashcard .word-footer { gap:7px; }
+  #wordsGrid .word-flashcard .word-action { width:31px; height:31px; font-size:.9rem; }
+  #wordsGrid .word-flashcard .word-progress-label { font-size:.65rem; }
 }
 @media (max-width:380px){
   .words-search { padding-left:43px; padding-right:42px; }
   .words-search-icon { left:13px; }
-  #wordsGrid .word-flashcard { padding:12px 11px; gap:8px; }
-  #wordsGrid .word-flashcard .pt-kanji { width:76px; flex-basis:76px; }
+  #wordsGrid .word-flashcard { grid-template-columns:66px minmax(0,1fr); column-gap:9px; padding:10px; }
+  #wordsGrid .word-flashcard .word-art { width:66px; height:66px; }
+  #wordsGrid .word-flashcard .word-footer { gap:5px; }
+  #wordsGrid .word-flashcard .word-action { width:29px; height:29px; }
 }
 
 </style>
@@ -3246,6 +3340,60 @@ function filteredVocabularyItems() {
   });
 }
 
+function wordVisualEmoji(item) {
+  const text = `${item?.word || ''} ${item?.meaning || ''} ${item?.reading || ''}`.toLocaleLowerCase();
+  const rules = [
+    [/school|student|study|university|college|学校|学生|勉強|大学|学校/, '🏫'],
+    [/eat|food|meal|rice|noodle|bread|drink|cook|食|飯|米|料理|飲|食べ|ラーメン/, '🍜'],
+    [/friend|family|person|people|mother|father|parent|child|brother|sister|友達|家族|人|母|父|親|子供|兄|姉|弟|妹/, '👨‍👩‍👧'],
+    [/tokyo|japan|city|station|country|travel|place|東京|日本|都市|駅|旅行/, '🗼'],
+    [/house|home|room|building|hotel|家|部屋|建物|ホテル/, '🏠'],
+    [/money|economy|business|company|work|job|office|bank|経済|お金|会社|仕事|銀行|仕事/, '💼'],
+    [/experience|science|medicine|hospital|doctor|chemical|experiment|経験|病院|医者|科学/, '🧪'],
+    [/book|read|word|language|japanese|kanji|本|読む|言葉|日本語|漢字/, '📚'],
+    [/write|writing|letter|document|paper|書|手紙|文書|紙/, '✍️'],
+    [/car|train|bus|bike|bicycle|airplane|ship|車|電車|バス|自転車|飛行機|船/, '🚆'],
+    [/weather|rain|snow|sun|cloud|wind|天気|雨|雪|太陽|雲|風/, '🌤️'],
+    [/morning|night|day|today|tomorrow|time|clock|朝|夜|日|今日|明日|時間|時計/, '🕐'],
+    [/love|heart|happy|sad|fun|laugh|emotion|love|愛|幸せ|悲しい|楽しい|気持ち/, '💗'],
+    [/music|song|movie|game|play|sport|music|音楽|歌|映画|ゲーム|スポーツ/, '🎮'],
+    [/flower|tree|mountain|river|sea|nature|animal|plant|花|木|山|川|海|自然|動物|植物/, '🌸'],
+    [/dog|cat|bird|fish|犬|猫|鳥|魚/, '🐾'],
+    [/shop|store|buy|sell|market|shopping|店|買|売|市場/, '🛍️'],
+    [/phone|computer|internet|technology|telephone|スマホ|電話|コンピューター|インターネット/, '📱'],
+    [/health|body|head|hand|eye|ear|foot|health|健康|体|頭|手|目|耳|足/, '❤️'],
+    [/important|big|small|new|old|good|bad|easy|difficult|important|大|小|新|古|良|悪|簡単|難しい/, '✨']
+  ];
+  for (const [re, emoji] of rules) if (re.test(text)) return emoji;
+  return '🈳';
+}
+
+function makeWordArt(item) {
+  const emoji = wordVisualEmoji(item);
+  const word = String(item?.word || '').slice(0, 8);
+  const palettes = [
+    ['#fff1f6','#ffd4e4'], ['#eef4ff','#dce8ff'], ['#f2efff','#e3dbff'],
+    ['#effaf4','#d8f2e3'], ['#fff7e8','#ffe7bd']
+  ];
+  let hash = 0;
+  for (const ch of word) hash = ((hash << 5) - hash + ch.codePointAt(0)) | 0;
+  const [a,b] = palettes[Math.abs(hash) % palettes.length];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="160" height="160" rx="28" fill="url(#g)"/><circle cx="125" cy="32" r="16" fill="#fff" opacity=".55"/><circle cx="30" cy="132" r="23" fill="#fff" opacity=".42"/><text x="80" y="91" text-anchor="middle" dominant-baseline="middle" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif" font-size="66">${emoji}</text></svg>`;
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
+function wordFavoriteKey(word) { return `kanjiPathWordFavorite:${word}`; }
+function isWordFavorite(word) {
+  try { return localStorage.getItem(wordFavoriteKey(word)) === '1'; } catch (_) { return false; }
+}
+function toggleWordFavorite(word) {
+  try {
+    const key = wordFavoriteKey(word);
+    if (localStorage.getItem(key) === '1') localStorage.removeItem(key);
+    else localStorage.setItem(key, '1');
+  } catch (_) {}
+}
+
 function renderWords() {
   const s = state.words;
   const grid = $('wordsGrid');
@@ -3266,21 +3414,47 @@ function renderWords() {
     tile.className = 'practice-tile word-flashcard';
     const chars = [...item.word].filter(isKanjiChar);
     const count = chars.length ? Math.min(...chars.map(ch => getKanjiWriteCount(ch))) : 0;
-    const percent = chars.length ? Math.round((count / PRACTICE_GOAL) * 100) : 0;
+    const percent = chars.length ? Math.min(100, Math.round((count / PRACTICE_GOAL) * 100)) : 0;
     if (count >= PRACTICE_GOAL && chars.length) tile.classList.add('practice-complete');
-    tile.style.setProperty('--practice-fill', percent + '%');
-    tile.setAttribute('aria-label', `${item.word}, ${item.reading}, ${item.meaning}`);
-    tile.innerHTML = '<span class="pt-kanji">' + esc(item.word) + '</span>' +
-      '<span class="pt-meta">' + esc(item.reading || '') + (item.meaning ? ' · ' + esc(item.meaning) : '') + '</span>' +
-      '<span class="badge word-level-badge">' + esc(item.level || 'N5') + '</span>' +
-      '<span class="pt-progress">' + (chars.length ? esc(practiceProgressLabel(count)) : 'Kana word') + '</span>';
+    tile.setAttribute('aria-label', `${item.word}, ${item.reading}, ${item.meaning}. Tap to practice writing.`);
+    const fav = isWordFavorite(item.word);
+    tile.innerHTML = `
+      <span class="word-art"><img src="${makeWordArt(item)}" alt="" loading="lazy" decoding="async"></span>
+      <span class="word-favorite ${fav ? 'active' : ''}" title="Favorite" aria-label="${fav ? 'Remove favorite' : 'Add favorite'}">${fav ? '★' : '☆'}</span>
+      <span class="word-head"><span class="badge word-level-badge">${esc(item.level || 'N5')}</span></span>
+      <span class="word-content">
+        <span class="pt-kanji">${esc(item.word)}</span>
+        <span class="pt-meta">${esc(item.reading || '')}</span>
+        <span class="word-meaning">${esc(item.meaning || 'Japanese vocabulary')}</span>
+      </span>
+      <span class="word-footer">
+        <span class="word-action word-speak" title="Listen" aria-label="Listen to ${esc(item.word)}">🔊</span>
+        <span class="word-action word-write" title="Practice writing" aria-label="Practice writing ${esc(item.word)}">✎</span>
+        <span class="word-progress-wrap">
+          <span class="word-progress-label"><span>${chars.length ? 'Writing progress' : 'Kana word'}</span><span>${chars.length ? `${count}/${PRACTICE_GOAL}` : 'Ready'}</span></span>
+          <span class="word-progress-track"><span class="word-progress-fill" style="width:${percent}%"></span></span>
+        </span>
+      </span>`;
     tile.onclick = () => openWordWrite(idx);
+    const favEl = tile.querySelector('.word-favorite');
+    favEl.onclick = e => {
+      e.stopPropagation();
+      toggleWordFavorite(item.word);
+      renderWords();
+    };
+    favEl.onkeydown = e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); favEl.click(); }
+    };
+    const speakEl = tile.querySelector('.word-speak');
+    speakEl.onclick = e => { e.stopPropagation(); speak(item.word, 'ja-JP'); };
+    const writeEl = tile.querySelector('.word-write');
+    writeEl.onclick = e => { e.stopPropagation(); openWordWrite(idx); };
     grid.appendChild(tile);
   });
   const hidden = Math.max(0, filtered.length - maxVisible);
   const levelLabel = getWordLevelFilter();
   const search = getWordSearchQuery();
-  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} ${levelLabel} vocabulary${search ? ` matching “${esc(String(state.words.searchQuery || '').trim())}”` : ''} · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} flashcards${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to write it.`;
+  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} ${levelLabel} vocabulary${search ? ` matching “${String(state.words.searchQuery || '').trim()}”` : ''} · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} illustrated flashcards${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to practice writing.`;
   if ($('wordsCount')) $('wordsCount').textContent = `${filtered.length.toLocaleString()} words`;
   if ($('wordsSetSummary')) $('wordsSetSummary').textContent = getWordLevelFilter();
 }
@@ -3289,7 +3463,7 @@ async function ensureVocabularyLoaded(force = false) {
   if (state.words.vocabLoading && !force) return state.words.vocabLoading;
   state.words.vocabLoading = true;
   // V4 forces one clean rebuild after the JLPT classification fix.
-  const cacheKey = 'kanjiPathVocabulary40kV4';
+  const cacheKey = 'kanjiPathVocabulary40kV5';
   const readCache = () => new Promise(resolve => {
     try {
       const req = indexedDB.open('kanjiPathVocabularyDB', 1);
