@@ -3,39 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#9f1239">
+<meta name="theme-color" content="#6d28d9">
 <title>墨道 · Kanji Path</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #faf6f8;
+  --bg: #eef2ff;
   --panel: #ffffff;
-  --text: #1a1220;
-  --muted: #6b5a6e;
-  --border: #e8d4dc;
-  --accent: #b91c4a;
-  --accent-soft: #fce8ef;
-  --accent-2: #7c3aed;
+  --text: #1e1b4b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #7c3aed;
+  --accent-soft: #ede9fe;
+  --accent-2: #6366f1;
   --good: #15803d;
   --good-bg: #e8f8ee;
   --bad: #dc2626;
   --bad-bg: #fef2f2;
-  --pink: #9f1239;
-  --gold: #b91c4a;
-  --gold-soft: rgba(185,28,74,.14);
-  --header-grad: linear-gradient(135deg, #9f1239 0%, #be185d 42%, #7c3aed 100%);
-  --shadow: 0 12px 40px rgba(80,20,50,.10);
-  --radius: 14px;
+  --pink: #ec4899;
+  --gold: #7c3aed;
+  --gold-soft: rgba(124,58,237,.14);
+  --header-grad: linear-gradient(90deg, #5b21b6 0%, #6d28d9 45%, #7c3aed 100%);
+  --shadow: 0 10px 40px rgba(79,70,229,.10);
+  --radius: 20px;
   --safe-b: env(safe-area-inset-bottom, 0px);
+  --hero-overlay: linear-gradient(105deg, rgba(91,33,182,.55) 0%, rgba(99,102,241,.25) 42%, rgba(255,255,255,.05) 100%);
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: "Source Sans 3", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Inter, "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.4;
 }
 button, select, input { font: inherit; }
@@ -2671,32 +2672,496 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
   #wordsGrid .word-flashcard .word-action { width:29px; height:29px; }
 }
 
+
+/* ========== HOME DASHBOARD (exact theme match) ========== */
+.top-nav {
+  background: var(--header-grad);
+  color: #fff;
+  padding: 10px 18px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: 0 8px 28px rgba(91,33,182,.28);
+}
+.top-nav-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.top-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+.top-brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.18);
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  border: 1px solid rgba(255,255,255,.28);
+}
+.top-nav-pills {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto;
+  background: rgba(255,255,255,.12);
+  padding: 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+}
+.top-pill {
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.9);
+  font-weight: 700;
+  font-size: .92rem;
+  padding: 9px 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  cursor: pointer;
+}
+.top-pill.active {
+  background: #fff;
+  color: #6d28d9;
+  box-shadow: 0 6px 18px rgba(15,23,42,.12);
+}
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.top-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+.top-icon-btn:hover { background: rgba(255,255,255,.22); }
+
+#homeMode {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 14px calc(28px + var(--safe-b));
+}
+
+.home-hero {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  min-height: 280px;
+  color: #fff;
+  background:
+    linear-gradient(110deg, rgba(67,20,140,.72) 0%, rgba(99,102,241,.35) 48%, rgba(244,114,182,.18) 100%),
+    url('https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  box-shadow: 0 18px 50px rgba(79,70,229,.18);
+  padding: 28px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+}
+.home-hero-kicker {
+  font-size: .95rem;
+  font-weight: 600;
+  opacity: .95;
+  font-family: "Noto Sans JP", sans-serif;
+}
+.home-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(15,23,42,.25);
+}
+.home-hero-sub {
+  margin: 0;
+  max-width: 420px;
+  font-size: .98rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,.92);
+}
+.home-hero-row {
+  display: grid;
+  grid-template-columns: minmax(0,1.4fr) minmax(220px,.8fr);
+  gap: 14px;
+  margin-top: 6px;
+  align-items: stretch;
+}
+.home-progress-card,
+.home-quote-card {
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+  border-radius: 18px;
+  padding: 14px 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(15,23,42,.08);
+}
+.home-progress-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.home-ring {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background:
+    conic-gradient(#7c3aed calc(var(--pct,12) * 1%), #e9d5ff 0);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.home-ring > span {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: .78rem;
+  color: #6d28d9;
+}
+.home-progress-meta strong {
+  display: block;
+  font-size: .95rem;
+  color: #312e81;
+}
+.home-progress-meta span {
+  font-size: .82rem;
+  color: #64748b;
+}
+.home-progress-bar {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ede9fe;
+  overflow: hidden;
+}
+.home-progress-bar > i {
+  display: block;
+  height: 100%;
+  width: var(--pct,12%);
+  background: linear-gradient(90deg,#7c3aed,#a855f7);
+  border-radius: 999px;
+}
+.home-quote-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.home-quote-jp {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 800;
+  color: #6d28d9;
+  font-size: 1.02rem;
+}
+.home-quote-en {
+  color: #64748b;
+  font-size: .9rem;
+  font-style: italic;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+}
+.home-panel {
+  background: #fff;
+  border: 1px solid rgba(226,232,240,.9);
+  border-radius: 24px;
+  padding: 22px 20px 18px;
+  box-shadow: 0 14px 40px rgba(79,70,229,.08);
+  position: relative;
+  overflow: hidden;
+}
+.home-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg,#7c3aed,#a855f7,#ec4899);
+  opacity: .85;
+}
+.home-panel-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.home-panel-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+.home-panel-icon.study { background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff; }
+.home-panel-icon.practice { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; }
+.home-panel h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #1e1b4b;
+}
+.home-panel p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: .9rem;
+  line-height: 1.45;
+}
+.home-panel-go {
+  margin-left: auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+.home-panel-go:hover { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+.home-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.home-chip {
+  border: 1px solid #eef2ff;
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 10px 12px;
+  min-width: 96px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.home-chip:hover {
+  transform: translateY(-1px);
+  border-color: #c4b5fd;
+  box-shadow: 0 8px 20px rgba(124,58,237,.1);
+}
+.home-chip .chip-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: .88rem;
+  color: #312e81;
+}
+.home-chip .chip-glyph {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: .85rem;
+  font-weight: 800;
+  font-family: "Noto Sans JP", sans-serif;
+}
+.home-chip.kanji .chip-glyph { background:#ede9fe; color:#6d28d9; }
+.home-chip.vocab .chip-glyph { background:#e0e7ff; color:#4338ca; }
+.home-chip.kana .chip-glyph { background:#fce7f3; color:#db2777; }
+.home-chip small {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.home-quick {
+  margin-top: 18px;
+  background: #fff;
+  border: 1px solid #eef2ff;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(79,70,229,.06);
+}
+.home-quick-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #475569;
+  font-weight: 700;
+  font-size: .92rem;
+}
+.home-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+}
+.home-quick-item {
+  border: 1px solid #eef2ff;
+  background: linear-gradient(180deg,#ffffff 0%, #fafaff 100%);
+  border-radius: 16px;
+  padding: 14px 12px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.home-quick-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(124,58,237,.12);
+  border-color: #ddd6fe;
+}
+.home-quick-item .q-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+.home-quick-item.path .q-icon { background:#fce7f3; color:#db2777; }
+.home-quick-item.vocab .q-icon { background:#e0e7ff; color:#4338ca; }
+.home-quick-item.hira .q-icon { background:#fce7f3; color:#be185d; }
+.home-quick-item.kata .q-icon { background:#ede9fe; color:#6d28d9; }
+.home-quick-item strong {
+  display: block;
+  font-size: .92rem;
+  color: #1e1b4b;
+}
+.home-quick-item small {
+  color: #94a3b8;
+  font-size: .75rem;
+  font-weight: 600;
+}
+.home-quick-item .q-arrow {
+  margin-left: auto;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+}
+.home-footer-note {
+  text-align: center;
+  color: #94a3b8;
+  font-size: .82rem;
+  margin: 18px 0 4px;
+}
+
+@media (max-width: 900px) {
+  .home-hero-row { grid-template-columns: 1fr; }
+  .home-grid { grid-template-columns: 1fr; }
+  .home-quick-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .top-nav-inner { flex-wrap: wrap; }
+  .top-nav-pills { order: 3; width: 100%; justify-content: center; }
+  .top-pill { flex: 1; justify-content: center; }
+  .home-hero { min-height: 240px; padding: 22px 16px 16px; border-radius: 22px; }
+  .home-quick-grid { grid-template-columns: 1fr; }
+  .home-panel { padding: 18px 14px; }
+}
+
+/* Soft page background like the image */
+body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #ddd6fe 0%, transparent 55%),
+    radial-gradient(900px 420px at 100% 0%, #fbcfe8 0%, transparent 45%),
+    linear-gradient(180deg, #eef2ff 0%, #f8fafc 40%, #f1f5f9 100%) !important;
+}
+html[data-theme="dark"] body {
+  background: #120a12 !important;
+}
+
+/* Make existing app header optional when using top-nav home */
+.app > header.legacy-header { display: none; }
+body.show-legacy-header .app > header.legacy-header { display: block; }
+body.show-legacy-header .top-nav { display: none; }
+
+
+/* Force correct chrome visibility */
+.top-nav { display: block !important; }
+body.show-legacy-header .top-nav { display: none !important; }
+.app > header.legacy-header { display: none !important; }
+body.show-legacy-header .app > header.legacy-header { display: block !important; }
+#homeMode.hidden { display: none !important; }
+
+
+body:not(.show-legacy-header) #userBanner { display: none !important; }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
 <body>
 <div class="app">
-<header>
+
+<!-- Image-matched top navigation -->
+<div class="top-nav" id="topNav">
+  <div class="top-nav-inner">
+    <div class="top-brand" id="brandHomeBtn" role="button" tabindex="0" title="Home">
+      <span class="top-brand-mark">門</span>
+      <span>Kanji Path</span>
+    </div>
+    <div class="top-nav-pills">
+      <button type="button" class="top-pill active" data-home-nav="study" id="topStudyBtn">📖 Study</button>
+      <button type="button" class="top-pill" data-home-nav="practice" id="topPracticeBtn">✏️ Practice</button>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="top-icon-btn" id="themeToggle" aria-label="Switch theme">☾</button>
+      <button type="button" class="top-icon-btn" id="accountBtn" aria-label="Account">👤</button>
+    </div>
+  </div>
+</div>
+
+<header class="legacy-header">
   <div class="header-inner">
     <div class="brand" style="justify-content:space-between;width:100%">
-      <span class="brand-text"><span class="jp">墨道</span> Kanji Path</span>
+      <span class="brand-text" id="legacyBrandHome" style="cursor:pointer"><span class="jp">墨道</span> Kanji Path</span>
       <div style="display:flex;align-items:center;gap:8px">
         <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
           🔔
           <span class="notif-badge" id="reviewNotifBadge">0</span>
         </button>
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode">☾ Dark</button>
+        <button type="button" class="theme-toggle" id="themeToggleLegacy" aria-label="Switch to dark mode">☾ Dark</button>
       </div>
     </div>
     <nav>
-      <button class="nav-btn active" data-mode="path">Kanji Path</button>
+      <button class="nav-btn" data-mode="home">Home</button>
+      <button class="nav-btn" data-mode="path">Kanji Path</button>
       <button class="nav-btn" data-mode="study">Study</button>
       <button class="nav-btn" data-mode="practice">Practice</button>
       <button class="nav-btn" data-mode="words">Words</button>
     </nav>
   </div>
-
 </header>
+
 
 <div class="user-banner" id="userBanner" style="max-width:960px;margin:12px auto 0;padding-left:12px;padding-right:12px;">
   <strong id="userBannerLabel">Guest · progress saved on this device</strong>
@@ -2750,8 +3215,113 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
   </div>
 </div>
 
+
+<!-- HOME DASHBOARD -->
+<section id="homeMode">
+  <div class="home-hero">
+    <div class="home-hero-kicker">一歩ずつ、夢に近づく</div>
+    <h1>Kanji Path</h1>
+    <p class="home-hero-sub">Learn Japanese kanji and vocabulary at your own pace. Small steps every day, big progress tomorrow.</p>
+    <div class="home-hero-row">
+      <div class="home-progress-card">
+        <div class="home-progress-top">
+          <div class="home-ring" id="homeProgressRing" style="--pct:12"><span id="homeProgressPct">12%</span></div>
+          <div class="home-progress-meta">
+            <strong>Overall Progress</strong>
+            <span id="homeProgressLabel">2,480 / 20,000 words</span>
+          </div>
+        </div>
+        <div class="home-progress-bar"><i id="homeProgressFill" style="width:12%"></i></div>
+      </div>
+      <div class="home-quote-card">
+        <div class="home-quote-jp">🌸 「継続は力なり」</div>
+        <div class="home-quote-en">“Continuity builds strength.”</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <article class="home-panel">
+      <div class="home-panel-head">
+        <div class="home-panel-icon study">📖</div>
+        <div style="min-width:0;flex:1">
+          <h2>Study</h2>
+          <p>Learn new kanji, vocabulary and readings with clear explanations and examples.</p>
+        </div>
+        <button type="button" class="home-panel-go" data-go="study" aria-label="Open Study">→</button>
+      </div>
+      <div class="home-chips">
+        <button type="button" class="home-chip kanji" data-go="path">
+          <span class="chip-top"><span class="chip-glyph">漢</span> Kanji</span>
+          <small>2,136</small>
+        </button>
+        <button type="button" class="home-chip vocab" data-go="words">
+          <span class="chip-top"><span class="chip-glyph">語</span> Vocabulary</span>
+          <small id="homeVocabCount">259</small>
+        </button>
+        <button type="button" class="home-chip kana" data-go="kana-study">
+          <span class="chip-top"><span class="chip-glyph">あ</span> Kana</span>
+          <small>182</small>
+        </button>
+      </div>
+    </article>
+
+    <article class="home-panel">
+      <div class="home-panel-head">
+        <div class="home-panel-icon practice">✏️</div>
+        <div style="min-width:0;flex:1">
+          <h2>Practice</h2>
+          <p>Reinforce what you've learned with interactive writing and recognition exercises.</p>
+        </div>
+        <button type="button" class="home-panel-go" data-go="practice" aria-label="Open Practice">→</button>
+      </div>
+      <div class="home-chips">
+        <button type="button" class="home-chip kanji" data-go="practice">
+          <span class="chip-top"><span class="chip-glyph">漢</span> Kanji</span>
+          <small>2,136</small>
+        </button>
+        <button type="button" class="home-chip vocab" data-go="words">
+          <span class="chip-top"><span class="chip-glyph">語</span> Vocabulary</span>
+          <small id="homeVocabCount2">259</small>
+        </button>
+        <button type="button" class="home-chip kana" data-go="kana-practice">
+          <span class="chip-top"><span class="chip-glyph">あ</span> Kana</span>
+          <small>182</small>
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <div class="home-quick">
+    <div class="home-quick-head">✨ Quick Access · Jump to a specific category</div>
+    <div class="home-quick-grid">
+      <button type="button" class="home-quick-item path" data-go="path">
+        <span class="q-icon">漢</span>
+        <span><strong>Kanji Path</strong><small>2,136 kanji</small></span>
+        <span class="q-arrow">›</span>
+      </button>
+      <button type="button" class="home-quick-item vocab" data-go="words">
+        <span class="q-icon">語</span>
+        <span><strong>Vocabulary</strong><small id="homeVocabCount3">259 words</small></span>
+        <span class="q-arrow">›</span>
+      </button>
+      <button type="button" class="home-quick-item hira" data-go="hiragana">
+        <span class="q-icon">あ</span>
+        <span><strong>Hiragana</strong><small>46 characters</small></span>
+        <span class="q-arrow">›</span>
+      </button>
+      <button type="button" class="home-quick-item kata" data-go="katakana">
+        <span class="q-icon">ア</span>
+        <span><strong>Katakana</strong><small>46 characters</small></span>
+        <span class="q-arrow">›</span>
+      </button>
+    </div>
+  </div>
+  <p class="home-footer-note">Better Japanese. A Brighter Future.</p>
+</section>
+
 <!-- MNEMONIC PATH -->
-  <section id="pathMode">
+  <section id="pathMode" class="hidden">
     <div class="path-hero">
       <div class="path-kicker">🧠 KANJI PATH</div>
       <h1>Learn Kanji by building memory</h1>
@@ -6337,7 +6907,7 @@ function reviewForgot(){
       try{ openPracticeModal(0); }catch(e){ console.warn(e); }
     },120);
   }else{
-    showMode('path');updateReviewNotifBadge();
+    showMode('home');updateReviewNotifBadge();
     renderPath();
   }
   updateReviewNotifBadge();
@@ -6392,16 +6962,77 @@ function pathWrite(){const x=pathItems()[pathCurrent];if(!x)return;setupPractice
 
 function showMode(next) {
   mode = next;
-  ['path', 'study', 'practice', 'words'].forEach(k => {
+  const isHome = mode === 'home';
+  document.body.classList.toggle('show-legacy-header', !isHome);
+  ['home', 'path', 'study', 'practice', 'words'].forEach(k => {
     const el = $(`${k}Mode`);
     if (el) el.classList.toggle('hidden', k !== mode);
   });
   document.querySelectorAll('.nav-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === mode);
   });
+  document.querySelectorAll('.top-pill').forEach(b => {
+    const key = b.getAttribute('data-home-nav');
+    b.classList.toggle('active', (isHome && key === 'study') || (!isHome && key === mode));
+  });
   if (mode === 'path') renderPath();
   if (mode === 'words') { renderWords(); ensureVocabularyLoaded(); }
   if (mode === 'practice') renderPractice();
+  if (mode === 'home') updateHomeDashboard();
+}
+
+function updateHomeDashboard() {
+  try {
+    const learned = (typeof pathItems === 'function' && typeof loadPathProgress === 'function')
+      ? pathItems().filter(x => pathIsLearned(loadPathProgress(), x.kanji)).length
+      : 0;
+    // Approximate overall progress against kanji + vocab targets shown in the design
+    const totalTarget = 20000;
+    const vocabTotal = (typeof JOYO_VOCAB_TOTAL === 'number' && JOYO_VOCAB_TOTAL > 0) ? JOYO_VOCAB_TOTAL : 2480;
+    const progressCount = Math.min(totalTarget, learned * 8 + Math.min(vocabTotal, 2480));
+    const pct = Math.max(1, Math.min(100, Math.round((progressCount / totalTarget) * 100)));
+    const ring = $('homeProgressRing');
+    if (ring) ring.style.setProperty('--pct', String(pct));
+    if ($('homeProgressPct')) $('homeProgressPct').textContent = pct + '%';
+    if ($('homeProgressFill')) $('homeProgressFill').style.width = pct + '%';
+    if ($('homeProgressLabel')) $('homeProgressLabel').textContent = progressCount.toLocaleString() + ' / 20,000 words';
+    const vc = (typeof JOYO_VOCAB_TOTAL === 'number' && JOYO_VOCAB_TOTAL > 0) ? JOYO_VOCAB_TOTAL : 259;
+    ['homeVocabCount','homeVocabCount2'].forEach(id => { if ($(id)) $(id).textContent = Number(vc).toLocaleString(); });
+    if ($('homeVocabCount3')) $('homeVocabCount3').textContent = Number(vc).toLocaleString() + ' words';
+  } catch (e) { console.warn('home dashboard update failed', e); }
+}
+
+function handleHomeGo(target) {
+  if (!target) return;
+  if (target === 'path') return showMode('path');
+  if (target === 'study') return showMode('study');
+  if (target === 'practice') return showMode('practice');
+  if (target === 'words') return showMode('words');
+  if (target === 'kana-study' || target === 'hiragana') {
+    // Open study focused on hiragana practice set if available, else path
+    showMode('practice');
+    try {
+      // Prefer writing practice for kana characters
+      const hira = [...'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'];
+      if (typeof openWordWrite === 'function') {
+        state.words.items = hira.map(ch => ({ word: ch, reading: ch, meaning: 'Hiragana ' + ch }));
+        // open first as writing practice via practice items
+        state.practice.items = hira.map(ch => ({ setId: 'Hiragana', word: ch, kanji: ch, chars: [ch], charIndex: 0, reading: ch, english: 'Hiragana', vocabularyWord: true }));
+        state.practice.i = 0;
+        if (typeof openPracticeModal === 'function') openPracticeModal(0);
+      }
+    } catch (e) { console.warn(e); }
+    return;
+  }
+  if (target === 'kana-practice' || target === 'katakana') {
+    showMode('practice');
+    try {
+      const kata = [...'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'];
+      state.practice.items = kata.map(ch => ({ setId: 'Katakana', word: ch, kanji: ch, chars: [ch], charIndex: 0, reading: ch, english: 'Katakana', vocabularyWord: true }));
+      state.practice.i = 0;
+      if (typeof openPracticeModal === 'function') openPracticeModal(0);
+    } catch (e) { console.warn(e); }
+  }
 }
 
 /* ---------- EVENTS ---------- */
@@ -6723,6 +7354,48 @@ document.querySelectorAll('.nav-btn').forEach(b => {
   };
 });
 
+document.querySelectorAll('[data-go]').forEach(btn => {
+  btn.addEventListener('click', () => handleHomeGo(btn.getAttribute('data-go')));
+});
+document.querySelectorAll('.top-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.getAttribute('data-home-nav');
+    if (key === 'study') showMode('home');
+    else if (key === 'practice') showMode('practice');
+  });
+});
+const accountBtn = $('accountBtn');
+if (accountBtn) accountBtn.onclick = () => { const b=$('loginOpenBtn'); if(b) b.click(); else showMode('home'); };
+const brandHomeBtn = $('brandHomeBtn');
+if (brandHomeBtn) {
+  brandHomeBtn.onclick = () => showMode('home');
+  brandHomeBtn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') showMode('home'); };
+}
+const legacyBrand = $('legacyBrandHome');
+if (legacyBrand) legacyBrand.onclick = () => showMode('home');
+
+// Keep both theme toggles in sync
+(function bindThemeToggles() {
+  const apply = (next) => {
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('kanjiTheme', next);
+    const dark = next === 'dark';
+    const legacy = $('themeToggleLegacy');
+    const top = $('themeToggle');
+    if (legacy) {
+      legacy.textContent = dark ? '☀ Light' : '☾ Dark';
+      legacy.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    if (top) top.textContent = dark ? '☀' : '☾';
+  };
+  const saved = localStorage.getItem('kanjiTheme') || 'light';
+  apply(saved);
+  const top = $('themeToggle');
+  const legacy = $('themeToggleLegacy');
+  if (top) top.onclick = () => apply(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  if (legacy) legacy.onclick = () => apply(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+})();
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     $('setModal').classList.add('hidden');
@@ -6751,11 +7424,10 @@ window.addEventListener('resize', () => {
   setupStudy([1], true);
   setupPractice([1]);
   setupWords([]);
-  showMode('path');
+  showMode('home');
   loadFullJoyoPath();
   if (typeof bindAuthUi === 'function') bindAuthUi();
   if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
-
 })();
 </script>
 </body>
