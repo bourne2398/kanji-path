@@ -1,14 +1,12 @@
 import { getDb } from '../lib/db.js';
-import { json } from '../lib/auth.js';
 
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
+export default async function handler(req, res) {
   if (req.method !== 'GET') {
-    return json({ error: 'Method not allowed' }, 405);
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const url = new URL(req.url);
+  const url = new URL(req.url || '/', 'https://kanji-path.local');
   const q = (url.searchParams.get('q') || '').trim();
   const kanji = (url.searchParams.get('kanji') || '').trim();
   const page = Math.max(0, parseInt(url.searchParams.get('page') || '0', 10) || 0);
@@ -58,7 +56,7 @@ export default async function handler(req) {
       total = countRows[0]?.c ?? 0;
     }
 
-    return json({
+    return res.status(200).json({
       items: rows,
       page,
       limit,
@@ -66,7 +64,7 @@ export default async function handler(req) {
       hasMore: offset + rows.length < total,
     });
   } catch (err) {
-    console.error('vocab error', err);
-    return json({ error: 'Failed to query vocabulary. Has the SQL been loaded?' }, 500);
+    console.error('VOCAB ERROR:', err);
+    return res.status(500).json({ error: 'Failed to query vocabulary. Has the SQL been loaded?' });
   }
 }
