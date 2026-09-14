@@ -2597,6 +2597,18 @@ html[data-theme="dark"] .study-level-btn.active {
 .word-progress-label { display:flex; justify-content:space-between; gap:8px; font-size:.7rem; color:#7183a9; margin-bottom:4px; }
 .word-progress-track { height:7px; width:100%; border-radius:999px; background:#ece9f7; overflow:hidden; }
 .word-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#c2185b,#7c3aed); }
+
+/* Kana writing practice for vocabulary words */
+.kana-practice-panel{width:min(360px,92vw);display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px;border-radius:22px;background:linear-gradient(145deg,#fff7fb,#f4f1ff);border:1px solid rgba(185,28,74,.12);box-shadow:0 8px 24px rgba(39,24,70,.08)}
+.kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(3.5rem,15vw,6rem);font-weight:900;line-height:1;color:#18244b}
+.kana-reference small{display:block;font-size:.82rem;font-weight:700;color:#786ba1;text-align:center;margin-top:6px}
+.kana-pad{width:min(300px,78vw);height:min(300px,78vw);max-width:300px;max-height:300px;border-radius:18px;background:#fff;border:2px dashed #c9c1df;touch-action:none;cursor:crosshair;box-shadow:inset 0 0 0 1px rgba(185,28,74,.05)}
+.kana-pad-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.kana-pad-hint{font-size:.78rem;color:#7183a9;text-align:center}
+html[data-theme="dark"] .kana-practice-panel{background:linear-gradient(145deg,#202033,#1a2030);border-color:var(--border)}
+html[data-theme="dark"] .kana-reference{color:#eef2ff}
+html[data-theme="dark"] .kana-pad{background:#111827;border-color:#66708c}
+html[data-theme="dark"] .kana-pad-hint{color:#a9b8d8}
 html[data-theme="dark"] .word-flashcard { background:linear-gradient(145deg,#172033,#141a2b); border-color:var(--border); }
 html[data-theme="dark"] .word-flashcard .word-art { background:#20263a; }
 html[data-theme="dark"] .word-flashcard .pt-kanji { color:#eef2ff; }
@@ -3019,7 +3031,7 @@ html[data-theme="dark"] .word-progress-track { background:#30374d; }
       <button type="button" class="modal-close-x" id="practiceModalClose" aria-label="Close">×</button>
       <h2 id="practiceModalTitle">Write the missing Kanji</h2>
       <p class="practice-reading" id="practiceReading"></p>
-      <div class="practice-slots" id="practiceSlots" aria-label="Kanji slots"></div>
+      <div class="practice-slots" id="practiceSlots" aria-label="Word character slots"></div>
       <p class="practice-modal-meta" id="practiceModalMeta"></p>
       <p class="practice-modal-kanji" id="practiceModalKanji" style="display:none"></p>
     </div>
@@ -3412,7 +3424,7 @@ function renderWords() {
     const tile = document.createElement('button');
     tile.type = 'button';
     tile.className = 'practice-tile word-flashcard';
-    const chars = [...item.word].filter(isKanjiChar);
+    const chars = [...String(item.word || '')].filter(isJapanesePracticeChar);
     const count = chars.length ? Math.min(...chars.map(ch => getKanjiWriteCount(ch))) : 0;
     const percent = chars.length ? Math.min(100, Math.round((count / PRACTICE_GOAL) * 100)) : 0;
     if (count >= PRACTICE_GOAL && chars.length) tile.classList.add('practice-complete');
@@ -3541,19 +3553,101 @@ async function ensureVocabularyLoaded(force = false) {
   return state.words.allItems || [];
 }
 
+function isKanaChar(ch) {
+  if (!ch) return false;
+  const cp = ch.codePointAt(0);
+  return (cp >= 0x3040 && cp <= 0x309f) || (cp >= 0x30a0 && cp <= 0x30ff) || (cp >= 0x31f0 && cp <= 0x31ff);
+}
+
+function isJapanesePracticeChar(ch) {
+  return isKanjiChar(ch) || isKanaChar(ch);
+}
+
+function currentPracticeIsKana(item) {
+  return !!item && isKanaChar(getCurrentPracticeChar(item));
+}
+
+function kanaPracticeCanvas() { return $('kanaPracticeCanvas'); }
+
+function clearKanaCanvas() {
+  const canvas = kanaPracticeCanvas();
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function setupKanaCanvas(char) {
+  const target = $('hanziTarget');
+  if (!target) return;
+  const size = Math.min(300, Math.max(220, Math.floor(getPracticeHanziSize())));
+  target.innerHTML = `
+    <div class="kana-practice-panel">
+      <div class="kana-reference">${esc(char)}<small>Write this kana</small></div>
+      <canvas id="kanaPracticeCanvas" class="kana-pad" width="600" height="600" aria-label="Write kana ${esc(char)}"></canvas>
+      <div class="kana-pad-actions">
+        <button type="button" class="btn subtle" id="kanaClearBtn">Clear</button>
+        <button type="button" class="btn primary" id="kanaDoneBtn">✓ Check writing</button>
+      </div>
+      <div class="kana-pad-hint">Draw the kana with your finger, mouse, or stylus.</div>
+    </div>`;
+  const canvas = kanaPracticeCanvas();
+  canvas.style.width = size + 'px'; canvas.style.height = size + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=16; ctx.strokeStyle='#c2185b';
+  let drawing=false, hasInk=false;
+  const pos=e=>{ const r=canvas.getBoundingClientRect(); return {x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)}; };
+  canvas.addEventListener('pointerdown',e=>{e.preventDefault(); drawing=true; hasInk=true; canvas.setPointerCapture?.(e.pointerId); const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
+  canvas.addEventListener('pointermove',e=>{if(!drawing)return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke();});
+  const end=()=>{drawing=false;};
+  canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end); canvas.addEventListener('pointerleave',end);
+  $('kanaClearBtn').onclick=()=>{hasInk=false;clearKanaCanvas();};
+  $('kanaDoneBtn').onclick=async()=>{
+    if(!hasInk){ $('practiceProgress').textContent='Please write the kana first.'; return; }
+    const s=state.practice, item=s.items[s.i]; if(!item) return;
+    const writtenChar=getCurrentPracticeChar(item);
+    const count=await recordKanjiWrite(writtenChar,item.setId);
+    savePracticeHistory({...item,kanji:writtenChar});
+    advanceWordPracticeCharacter();
+    const msg=`${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
+    if($('practiceProgress')) $('practiceProgress').textContent=msg;
+    if($('wordsProgress')) $('wordsProgress').textContent=msg;
+  };
+}
+
+function loadPracticeCharacter(char) {
+  const s=state.practice, item=s.items[s.i];
+  if(isKanaChar(char)) { destroyHanzi(); setupKanaCanvas(char); return; }
+  loadHanzi(char);
+}
+
+function advanceWordPracticeCharacter() {
+  const s=state.practice, item=s.items[s.i];
+  if(!item || !item.word || !item.chars) return;
+  const chars=item.chars;
+  if(item.charIndex < chars.length-1) {
+    item.charIndex++; item.kanji=chars[item.charIndex]; updatePracticeModalHeader(item);
+    requestAnimationFrame(()=>loadPracticeCharacter(item.kanji));
+  } else {
+    item.charIndex=chars.length; renderPracticeSlots(item);
+    const slotsEl=$('practiceSlots'); if(slotsEl) slotsEl.querySelectorAll('.practice-slot').forEach((el,i)=>{el.classList.remove('current');el.classList.add('filled');el.textContent=chars[i]||'';});
+  }
+}
+
 function openWordWrite(idx) {
   // Convert the vocabulary flashcard into the shared multi-kanji writing item.
   const w = state.words;
   const v = w.items[idx];
   if (!v) return;
+  const practiceChars = [...String(v.word || '')].filter(ch => isKanjiChar(ch) || isKanaChar(ch));
   const item = {
     setId: 'Vocabulary',
     word: v.word,
-    kanji: [...v.word].filter(isKanjiChar)[0] || v.word,
-    chars: [...v.word].filter(isKanjiChar),
+    kanji: practiceChars[0] || v.word,
+    chars: practiceChars,
     charIndex: 0,
     reading: v.reading || '',
-    english: v.meaning || ''
+    english: v.meaning || '',
+    vocabularyWord: true
   };
   if (!item.chars.length) return;
   state.practice.items = [item];
@@ -3859,6 +3953,7 @@ function updatePracticeModalHeader(item) {
     const parts = [];
     if (item.english) parts.push(item.english);
     if (item.word && chars.length > 1) parts.push('Char ' + (item.charIndex + 1) + '/' + chars.length);
+    parts.push(currentPracticeIsKana(item) ? 'Hiragana / Katakana' : 'Kanji');
     parts.push('Set ' + item.setId);
     $('practiceModalMeta').textContent = parts.join(' · ');
   }
@@ -3879,7 +3974,7 @@ function practiceGoToChar(charIndex) {
   item.charIndex = next;
   item.kanji = chars[next];
   updatePracticeModalHeader(item);
-  loadHanzi(item.kanji);
+  loadPracticeCharacter(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
 
@@ -3900,15 +3995,15 @@ function openPracticeModal(idx) {
   if (!item.chars || !item.chars.length) item.chars = [item.kanji];
   item.kanji = getCurrentPracticeChar(item);
 
-  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = 'Write the missing Kanji';
+  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = currentPracticeIsKana(item) ? 'Write the kana' : 'Write the Kanji';
   updatePracticeModalHeader(item);
 
   document.body.classList.add('modal-open');
   $('practiceModal').classList.remove('hidden');
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      loadHanzi(item.kanji);
-      setTimeout(() => { if (hanziWriter) practiceStartGuidedWrite(); }, 350);
+      loadPracticeCharacter(item.kanji);
+      setTimeout(() => { if (hanziWriter || currentPracticeIsKana(item)) practiceStartGuidedWrite(); }, 350);
     });
   });
 }
@@ -3932,6 +4027,11 @@ function closePracticeModal() {
 }
 
 function practiceStartGuidedWrite() {
+  const item = state.practice.items[state.practice.i];
+  if (currentPracticeIsKana(item)) {
+    // Kana uses the drawing pad; completion is recorded by its Check writing button.
+    return;
+  }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.hideCharacter();
@@ -3954,7 +4054,7 @@ function practiceStartGuidedWrite() {
         item.kanji = chars[item.charIndex];
         updatePracticeModalHeader(item);
         requestAnimationFrame(() => {
-          loadHanzi(item.kanji);
+          loadPracticeCharacter(item.kanji);
           setTimeout(() => practiceStartGuidedWrite(), 300);
         });
       } else {
@@ -3979,6 +4079,8 @@ function practiceStartGuidedWrite() {
 }
 
 function practiceAnimate() {
+  const item = state.practice.items[state.practice.i];
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.hideCharacter();
@@ -3987,6 +4089,8 @@ function practiceAnimate() {
 }
 
 function practiceWrite() {
+  const item = state.practice.items[state.practice.i];
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
   practiceStartGuidedWrite();
 }
 
@@ -3996,7 +4100,7 @@ function practiceRewrite() {
   if (!item) return;
   item.kanji = getCurrentPracticeChar(item);
   renderPracticeSlots(item);
-  loadHanzi(item.kanji);
+  loadPracticeCharacter(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
 
@@ -4069,6 +4173,8 @@ function renderPracticeHistory() {
 }
 
 function practiceShow() {
+  const item = state.practice.items[state.practice.i];
+  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item)); return; }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.showCharacter();
