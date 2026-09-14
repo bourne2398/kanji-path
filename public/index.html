@@ -3606,11 +3606,10 @@ function kanaPracticeCanvas() { return null; }
 // kana-svg-data uses the same CharacterJson shape HanziWriter expects:
 // { strokes: string[], medians: number[][][] }.
 const kanaDataCache = new Map();
-let kanaWriterGeneration = 0;
 
 function loadKanaStrokeData(char, onLoad, onError) {
-  // HanziWriter 3.5.0 uses the callback form of charDataLoader. Do not rely on
-  // a returned Promise here: the writer waits for onLoad/onError internally.
+  // Same callback-style charDataLoader as kanji (HanziWriter default API).
+  // Returning plain objects from an async function can race; callbacks are reliable.
   const cached = kanaDataCache.get(char);
   if (cached) {
     onLoad(cached);
@@ -3624,32 +3623,26 @@ function loadKanaStrokeData(char, onLoad, onError) {
 
   fetch(url, { cache: 'force-cache', signal: controller.signal })
     .then(res => {
-      if (!res.ok) throw new Error('Kana stroke data HTTP ' + res.status);
+      if (!res.ok) throw new Error('Kana HanziWriter data unavailable (' + res.status + ')');
       return res.json();
     })
     .then(data => {
+      clearTimeout(timeout);
       if (!data || !Array.isArray(data.strokes) || !Array.isArray(data.medians)) {
-        throw new Error('Invalid HanziWriter CharacterJson for ' + char);
+        throw new Error('Invalid HanziWriter kana data');
       }
-      if (!data.strokes.length || data.strokes.length !== data.medians.length) {
-        throw new Error('Stroke/median count mismatch for ' + char);
+      if (data.strokes.length !== data.medians.length || !data.strokes.length) {
+        throw new Error('Incomplete HanziWriter kana data');
       }
-
-      // Keep the dataset untouched. In particular, NEVER merge or split kana
-      // strokes manually. HanziWriter's grading data is paired with its stroke
-      // paths and must remain exactly as supplied by the dataset.
-      const clean = {
-        strokes: data.strokes,
-        medians: data.medians
-      };
+      const clean = { strokes: data.strokes, medians: data.medians };
       kanaDataCache.set(char, clean);
       onLoad(clean);
     })
     .catch(err => {
-      console.error('[Kana] failed to load', char, err);
-      if (onError) onError(err);
-    })
-    .finally(() => clearTimeout(timeout));
+      clearTimeout(timeout);
+      console.warn('Kana HanziWriter data failed for', char, err);
+      if (typeof onError === 'function') onError(err);
+    });
 }
 
 function setupKanaCanvas(char, options = {}) {
@@ -3657,19 +3650,17 @@ function setupKanaCanvas(char, options = {}) {
   const box = $('practiceHwBox');
   if (!target || !box) return;
 
-  // Mode switches must invalidate every callback/animation belonging to the
-  // previous writer. HanziWriter 3.5 exposes cancelQuiz/pauseAnimation rather
-  // than a public destroy() method, so use only its public API.
-  kanaWriterGeneration = (kanaWriterGeneration || 0) + 1;
-  const generation = kanaWriterGeneration;
+  // Destroy any previous writer so Animate / Write / Show never stack instances.
   if (hanziWriter) {
     try { if (typeof hanziWriter.cancelQuiz === 'function') hanziWriter.cancelQuiz(); } catch (_) {}
-    try { if (typeof hanziWriter.pauseAnimation === 'function') hanziWriter.pauseAnimation(); } catch (_) {}
+    try { if (typeof hanziWriter.cancelAnimation === 'function') hanziWriter.cancelAnimation(); } catch (_) {}
+    try { if (typeof hanziWriter._hanziWriterRenderer?.destroy === 'function') hanziWriter._hanziWriterRenderer.destroy(); } catch (_) {}
     hanziWriter = null;
   }
 
   box.classList.add('is-kana');
   target.innerHTML = '';
+  target.removeAttribute('data-character');
 
   if (typeof HanziWriter === 'undefined') {
     target.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#64748b;font-weight:700">Loading kana writing engine…</div>';
@@ -3689,11 +3680,12 @@ function setupKanaCanvas(char, options = {}) {
   box.style.overflow = 'hidden';
 
   let completed = false;
-  let writer = null;
   const mode = options.mode || 'quiz';
   const showGuide = mode !== 'show';
-  const animate = mode === 'animate';
   const item = state.practice.items[state.practice.i];
+  // Capture writer instance for callbacks; assign to global immediately after create
+  // so onLoadCharDataSuccess never sees a null hanziWriter.
+  let writer = null;
 
   try {
     writer = HanziWriter.create(target, char, {
@@ -3702,108 +3694,118 @@ function setupKanaCanvas(char, options = {}) {
       padding: Math.max(10, Math.round(size * 0.055)),
       renderer: 'svg',
       showOutline: showGuide,
-      showCharacter: false,
+      showCharacter: mode === 'show',
       strokeAnimationSpeed: 0.9,
       strokeHighlightSpeed: 2,
       strokeFadeDuration: 400,
       delayBetweenStrokes: 180,
       drawingFadeDuration: 180,
-      drawingWidth: Math.max(12, Math.round(size * 0.055)),
-      strokeWidth: Math.max(2, Math.round(size * 0.012)),
-      strokeColor: '#cbd5e1',
+      drawingWidth: Math.max(14, Math.round(size * 0.075)),
+      strokeWidth: Math.max(3, Math.round(size * 0.018)),
+      // Match kanji colors so animation and completed strokes are clearly visible
+      strokeColor: '#0f172a',
       outlineColor: '#cbd5e1',
-      drawingColor: '#111111',
-      highlightColor: '#16803c',
+      drawingColor: '#0f172a',
+      highlightColor: '#0d7a6f',
       highlightCompleteColor: '#16803c',
       showHintAfterMisses: 2,
-      leniency: 1,
+      leniency: 1.2,
       charDataLoader: loadKanaStrokeData,
       onLoadCharDataSuccess: () => {
+        if (!writer) return;
+        hanziWriter = writer;
         target.setAttribute('data-character', char);
-        resizePracticeHanzi();
+        try { resizePracticeHanzi(); } catch (_) {}
 
-        // Wait one paint so the SVG renderer is mounted before starting an
-        // animation/quiz. This prevents a newly-created Kana writer from
-        // appearing blank when the previous mode was just destroyed.
+        // Two RAFs: ensure SVG is mounted and dimensions applied before animating/quizzing
         requestAnimationFrame(() => {
-          if (generation !== kanaWriterGeneration || !writer || hanziWriter !== writer) return;
-          if (mode === 'show') {
-            writer.showOutline({ duration: 0 });
-            writer.showCharacter({ duration: 250 });
-          } else if (mode === 'animate') {
-            writer.hideCharacter({ duration: 0 });
-            writer.showOutline({ duration: 0 });
-            writer.animateCharacter({
-              strokeAnimationSpeed: 1,
-              delayBetweenStrokes: 180
-            });
-          } else {
-            // EXACTLY the Kanji writing behavior: HanziWriter grades one stroke at a time,
-            // advances automatically after a correct stroke, and completes the character.
-            writer.quiz({
-            leniency: 1,
-            showHintAfterMisses: 2,
-            highlightOnComplete: true,
-            drawingColor: '#111111',
-            strokeColor: '#cbd5e1',
-            outlineColor: '#cbd5e1',
-            highlightColor: '#16803c',
-            onCorrectStroke: (strokeData) => {
-              if ($('practiceProgress')) {
-                const done = Number(strokeData.strokesRemaining || 0) === 0;
-                $('practiceProgress').textContent = done
-                  ? `${char}: stroke ${strokeData.strokeNum + 1} correct — complete!`
-                  : `${char}: stroke ${strokeData.strokeNum + 1} correct — next stroke`;
+          requestAnimationFrame(() => {
+            if (!writer || hanziWriter !== writer) return;
+            try {
+              if (mode === 'show') {
+                writer.showOutline({ duration: 0 });
+                writer.showCharacter({ duration: 250 });
+              } else if (mode === 'animate') {
+                writer.hideCharacter({ duration: 0 });
+                writer.showOutline({ duration: 0 });
+                writer.animateCharacter({
+                  strokeAnimationSpeed: 1,
+                  delayBetweenStrokes: 200
+                });
+              } else {
+                // Guided write — same quiz behavior as kanji
+                writer.hideCharacter({ duration: 0 });
+                writer.showOutline({ duration: 0 });
+                writer.quiz({
+                  leniency: 1.2,
+                  showHintAfterMisses: 2,
+                  highlightOnComplete: true,
+                  drawingColor: '#0f172a',
+                  strokeColor: '#0f172a',
+                  outlineColor: '#cbd5e1',
+                  highlightColor: '#0d7a6f',
+                  onCorrectStroke: (strokeData) => {
+                    if ($('practiceProgress')) {
+                      const done = Number(strokeData?.strokeNum ?? 0) + 1;
+                      const total = Number(strokeData?.strokesRemaining ?? 0) + done;
+                      $('practiceProgress').textContent = `${char}: stroke ${done}/${total} correct — next stroke`;
+                    }
+                  },
+                  onMistake: (strokeData) => {
+                    if ($('practiceProgress')) {
+                      const n = Number(strokeData?.strokeNum ?? 0) + 1;
+                      $('practiceProgress').textContent = `${char}: stroke ${n} — try again`;
+                    }
+                  },
+                  onComplete: async () => {
+                    if (completed) return;
+                    completed = true;
+                    const s = state.practice;
+                    const currentItem = s.items[s.i] || item;
+                    if (!currentItem) return;
+                    const writtenChar = char;
+                    const count = await recordKanjiWrite(writtenChar, currentItem.setId);
+                    savePracticeHistory({ ...currentItem, kanji: writtenChar });
+                    try { renderPractice(); } catch (_) {}
+                    try { renderWords(); } catch (_) {}
+                    try { if (typeof renderPath === 'function') renderPath(); } catch (_) {}
+                    const msg = count >= PRACTICE_GOAL
+                      ? `${writtenChar}: Goal complete! ${PRACTICE_GOAL}/${PRACTICE_GOAL}`
+                      : `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
+                    if ($('practiceProgress')) $('practiceProgress').textContent = msg;
+                    if ($('wordsProgress')) $('wordsProgress').textContent = msg;
+                    setTimeout(() => {
+                      if (state.practice.items[state.practice.i] === currentItem) {
+                        advanceWordPracticeCharacter();
+                      }
+                    }, 350);
+                  }
+                });
               }
-            },
-            onMistake: (strokeData) => {
-              if ($('practiceProgress')) {
-                const n = Number(strokeData?.strokeNum ?? 0) + 1;
-                $('practiceProgress').textContent = `${char}: stroke ${n} — try again`;
-              }
-            },
-            onComplete: async () => {
-              if (completed) return;
-              completed = true;
-              const s = state.practice;
-              const currentItem = s.items[s.i] || item;
-              if (!currentItem) return;
-              const writtenChar = char;
-              const count = await recordKanjiWrite(writtenChar, currentItem.setId);
-              savePracticeHistory({...currentItem, kanji: writtenChar});
-              try { renderPractice(); } catch (_) {}
-              try { renderWords(); } catch (_) {}
-              const msg = count >= PRACTICE_GOAL
-                ? `${writtenChar}: Goal complete! ${PRACTICE_GOAL}/${PRACTICE_GOAL}`
-                : `${writtenChar}: ${count}/${PRACTICE_GOAL} writings`;
-              if ($('practiceProgress')) $('practiceProgress').textContent = msg;
-              if ($('wordsProgress')) $('wordsProgress').textContent = msg;
-              setTimeout(() => {
-                if (state.practice.items[state.practice.i] === currentItem) {
-                  advanceWordPracticeCharacter();
-                }
-              }, 350);
+            } catch (err) {
+              console.warn('Kana writer post-load action failed', err);
             }
           });
-        }
         });
       },
       onLoadCharDataError: (err) => {
         target.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#64748b;text-align:center;padding:20px">Could not load kana stroke data.<br>Please check your internet connection.</div>';
         if ($('practiceProgress')) $('practiceProgress').textContent = `${char}: stroke data failed to load`;
         console.warn('Kana HanziWriter load error', err);
+        hanziWriter = null;
       }
     });
     hanziWriter = writer;
   } catch (err) {
     console.error('Kana HanziWriter creation failed', err);
     target.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#64748b;text-align:center;padding:20px">Kana writing could not be initialized.</div>';
+    hanziWriter = null;
   }
 }
 
 function loadPracticeCharacter(char) {
   const s=state.practice, item=s.items[s.i];
-  if(isKanaChar(char)) { setupKanaCanvas(char); return; }
+  if(isKanaChar(char)) { destroyHanzi(); setupKanaCanvas(char); return; }
   loadHanzi(char);
 }
 
@@ -4179,6 +4181,10 @@ function practiceGoToChar(charIndex) {
   item.charIndex = next;
   item.kanji = chars[next];
   updatePracticeModalHeader(item);
+  if (isKanaChar(item.kanji)) {
+    setupKanaCanvas(item.kanji, { mode: 'quiz' });
+    return;
+  }
   loadPracticeCharacter(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
@@ -4207,8 +4213,12 @@ function openPracticeModal(idx) {
   $('practiceModal').classList.remove('hidden');
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      loadPracticeCharacter(item.kanji);
-      setTimeout(() => { if (hanziWriter || currentPracticeIsKana(item)) practiceStartGuidedWrite(); }, 350);
+      if (currentPracticeIsKana(item)) {
+        setupKanaCanvas(item.kanji, { mode: 'quiz' });
+      } else {
+        loadPracticeCharacter(item.kanji);
+        setTimeout(() => { if (hanziWriter) practiceStartGuidedWrite(); }, 350);
+      }
     });
   });
 }
@@ -4305,6 +4315,10 @@ function practiceRewrite() {
   if (!item) return;
   item.kanji = getCurrentPracticeChar(item);
   renderPracticeSlots(item);
+  if (currentPracticeIsKana(item)) {
+    setupKanaCanvas(item.kanji, { mode: 'quiz' });
+    return;
+  }
   loadPracticeCharacter(item.kanji);
   setTimeout(() => practiceStartGuidedWrite(), 280);
 }
