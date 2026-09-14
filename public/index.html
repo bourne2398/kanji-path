@@ -2603,6 +2603,44 @@ html[data-theme="dark"] .study-level-btn.active {
 .word-progress-track { height:7px; width:100%; border-radius:999px; background:#ece9f7; overflow:hidden; }
 .word-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#c2185b,#7c3aed); }
 
+/* Kana guided writing practice — centered, responsive, with real stroke-order guide */
+.practice-hw-box.is-kana{display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}
+.practice-hw-box.is-kana #hanziTarget{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0}
+.kana-practice-panel{box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:16px;background:#fff;border:1px solid #d7dce5;overflow:hidden}
+.kana-reference{font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:clamp(2.5rem,9vw,3.6rem);font-weight:900;line-height:1;color:#18244b;display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+.kana-reference small{display:block;font-size:.68rem;font-weight:800;color:#786ba1;text-align:center;margin-top:3px;line-height:1.1}
+.kana-guide-stage{position:relative;width:min(170px,54vw);height:min(170px,54vw);max-width:170px;max-height:170px;aspect-ratio:1;flex:0 0 auto;border:2px solid #cbd5e1;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(15,23,42,.04);overflow:hidden}
+.kana-guide-svg,.kana-writing-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.kana-guide-svg{pointer-events:none}
+.kana-guide-fill{fill:#d7dde7;opacity:.48}
+.kana-guide-line{fill:none;stroke:#94a3b8;stroke-width:34;stroke-linecap:round;stroke-linejoin:round;opacity:.72;transition:stroke .18s ease,opacity .18s ease}
+.kana-guide-line.is-current{stroke:#64748b;opacity:.95}
+.kana-guide-line.is-completed{stroke:#111827;opacity:.92}
+.kana-stroke-number.is-current-number{fill:#111827;font-size:34px}
+.kana-guide-line.is-hidden{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.kana-guide-line.is-animated{animation:kanaStrokeGuide .65s ease forwards;animation-delay:var(--delay,0s)}
+@keyframes kanaStrokeGuide{to{stroke-dashoffset:0;opacity:.95}}
+.kana-stroke-number{font:700 30px/1 Arial,sans-serif;fill:#475569;opacity:.9}
+.kana-writing-canvas{z-index:2;background:transparent;border:0;touch-action:none;cursor:crosshair}
+.kana-guide-label{position:absolute;left:8px;top:7px;z-index:3;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.94);color:#475569;font-size:.62rem;font-weight:800;pointer-events:none}
+.kana-pad-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:0 0 auto}
+.kana-pad-actions .btn{min-height:34px;padding:6px 10px;font-size:.76rem}
+.kana-pad-hint{font-size:.64rem;color:#7183a9;text-align:center;line-height:1.15;max-width:245px;flex:0 0 auto}
+@media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(152px,48vw);height:min(152px,48vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
+
+/* Kana uses the exact same white HanziWriter writing surface as Kanji. */
+.practice-hw-box.is-kana{background:#fff !important;border:2px solid #e2e8f0 !important;border-radius:16px !important;overflow:hidden !important;position:relative !important}
+.practice-hw-box.is-kana #hanziTarget{width:100% !important;height:100% !important;display:block !important;position:relative !important;min-width:0;min-height:0;touch-action:none}
+.practice-hw-box.is-kana #hanziTarget svg{width:100% !important;height:100% !important;display:block !important;background:#fff;touch-action:none;cursor:crosshair}
+html[data-theme="dark"] .practice-hw-box.is-kana{background:#fff !important;border-color:#cbd5e1 !important}
+
+html[data-theme="dark"] .kana-practice-panel{background:#fff;border-color:#cbd5e1}
+html[data-theme="dark"] .kana-reference{color:#111827}
+html[data-theme="dark"] .kana-guide-stage{background:#fff;border-color:#cbd5e1}
+html[data-theme="dark"] .kana-guide-fill{fill:#d7dde7;opacity:.48}
+html[data-theme="dark"] .kana-guide-line{stroke:#94a3b8}
+html[data-theme="dark"] .kana-guide-label{background:rgba(255,255,255,.94);color:#475569}
+html[data-theme="dark"] .kana-pad-hint{color:#a9b8d8}
 html[data-theme="dark"] .word-flashcard { background:linear-gradient(145deg,#172033,#141a2b); border-color:var(--border); }
 html[data-theme="dark"] .word-flashcard .word-art { background:#20263a; }
 html[data-theme="dark"] .word-flashcard .pt-kanji { color:#eef2ff; }
@@ -2686,6 +2724,71 @@ body {
   align-items: center;
   gap: 1rem;
 }
+/* Mobile hamburger navigation */
+.nav-hamburger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 12px;
+  background: rgba(255,255,255,.10);
+  color: #fff;
+  cursor: pointer;
+  place-items: center;
+  padding: 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+}
+.nav-hamburger svg { width: 24px; height: 24px; }
+.nav-hamburger:active { transform: scale(.96); }
+
+@media (max-width: 640px) {
+  .top-nav { position: sticky; top: 0; }
+  .top-nav-inner {
+    position: relative;
+    min-height: 54px;
+    padding: 0 .75rem;
+    flex-wrap: nowrap;
+  }
+  .top-brand { min-width: 0; font-size: 1rem; }
+  .top-brand-mark { width: 2rem; height: 2rem; font-size: .95rem; }
+  .nav-hamburger {
+    display: grid;
+    margin-left: auto;
+    z-index: 62;
+  }
+  .top-nav-pills {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 10px;
+    width: min(180px, calc(100vw - 20px));
+    margin: 0;
+    padding: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    background: #2A1B4E;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 16px;
+    box-shadow: 0 16px 38px rgba(0,0,0,.32);
+    z-index: 61;
+  }
+  .top-nav-pills.nav-open { display: flex; }
+  .top-pill {
+    width: 100%;
+    min-height: 44px;
+    justify-content: flex-start;
+    padding: 9px 14px;
+    border-radius: 11px;
+    font-size: .92rem;
+    text-align: left;
+  }
+  .top-pill.active { background: rgba(255,255,255,.16) !important; color: #fff !important; box-shadow: none; }
+  .top-actions { gap: .35rem; }
+  .top-actions .top-icon-btn { width: 40px; height: 40px; }
+}
+
 .top-brand {
   display: flex;
   align-items: center;
@@ -3487,83 +3590,45 @@ html[data-theme="dark"] .nav-btn.active {
 }
 
 
-/* ========== MOBILE HAMBURGER NAV ========== */
-.nav-hamburger {
-  display: none;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 12px;
-  background: rgba(255,255,255,.10);
-  color: #fff;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.nav-hamburger svg { width: 24px; height: 24px; }
-.mobile-nav-menu { display: none; }
-@media (max-width: 700px) {
-  .top-nav { padding: .45rem 0; }
-  .top-nav-inner { position: relative; min-height: 48px; padding: 0 .7rem; gap: .55rem; flex-wrap: nowrap; }
-  .top-brand { font-size: .98rem; gap: .5rem; min-width: 0; }
-  .top-brand-mark { width: 2rem; height: 2rem; border-radius: .65rem; }
-  .nav-hamburger { display: inline-flex; order: 2; margin-left: auto; }
-  .top-nav-pills { display: none; }
-  .top-actions { order: 3; margin-left: 0; }
-  .top-icon-btn { width: 2.65rem; height: 2.65rem; }
-  .mobile-nav-menu {
-    position: absolute;
-    top: calc(100% + .55rem);
-    left: .7rem;
-    right: .7rem;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: .35rem;
-    padding: .6rem;
-    border-radius: 18px;
-    background: #2A1B4E;
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 18px 45px rgba(20,10,40,.38);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px) scale(.98);
-    pointer-events: none;
-    transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+/* Final mobile navigation override: compact hamburger + right-side vertical menu */
+@media (max-width: 640px) {
+  .top-nav-inner { flex-wrap: nowrap !important; }
+  .top-brand { order: 1; }
+  .top-actions { order: 2; margin-left: auto; }
+  .nav-hamburger { order: 3; display: grid !important; margin-left: 0 !important; }
+  .top-nav-pills {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 7px) !important;
+    right: 8px !important;
+    left: auto !important;
+    width: 142px !important;
+    max-width: 142px !important;
+    margin: 0 !important;
+    padding: 7px !important;
+    flex-direction: column !important;
+    background: #2A1B4E !important;
+    border: 1px solid rgba(255,255,255,.20) !important;
+    border-radius: 15px !important;
+    box-shadow: 0 18px 42px rgba(0,0,0,.38) !important;
   }
-  .mobile-nav-menu.nav-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
+  .top-nav-pills.nav-open { display: flex !important; }
+  .top-pill {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    border-radius: 10px !important;
+    font-size: .86rem !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
   }
-  .mobile-nav-item {
-    width: 100%;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    padding: .7rem .85rem;
-    border: 0;
-    border-radius: 12px;
-    background: transparent;
-    color: #fff;
-    font: inherit;
-    font-weight: 750;
-    text-align: left;
-    cursor: pointer;
-  }
-  .mobile-nav-item:hover, .mobile-nav-item:focus-visible { background: rgba(255,255,255,.10); outline: none; }
-  .mobile-nav-item.active { background: #fff; color: #2A1B4E; }
+  .top-pill.active { background: #fff !important; color: #2A1B4E !important; }
+  .top-actions .top-icon-btn { width: 38px !important; height: 38px !important; }
+  .nav-hamburger { width: 42px !important; height: 42px !important; border-radius: 11px !important; }
 }
-@media (max-width: 380px) {
-  .top-brand span:last-child { display: none; }
-  .top-nav-inner { padding: 0 .55rem; }
-  .mobile-nav-menu { left: .55rem; right: .55rem; }
-}
-html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
@@ -3584,16 +3649,12 @@ html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
         <line x1="4" y1="17" x2="20" y2="17"/>
       </svg>
     </button>
-    <div class="top-nav-pills" id="topNavPills">
-      <button type="button" class="top-pill active" data-home-nav="study" id="topStudyBtn">📖 Study</button>
-      <button type="button" class="top-pill" data-home-nav="practice" id="topPracticeBtn">✏️ Practice</button>
-    </div>
-    <div class="mobile-nav-menu" id="mobileNavMenu" aria-hidden="true">
-      <button type="button" class="mobile-nav-item" data-mode="home">⌂ <span>Home</span></button>
-      <button type="button" class="mobile-nav-item" data-mode="path">漢 <span>Kanji Path</span></button>
-      <button type="button" class="mobile-nav-item active" data-mode="study">📖 <span>Study</span></button>
-      <button type="button" class="mobile-nav-item" data-mode="practice">✏️ <span>Practice</span></button>
-      <button type="button" class="mobile-nav-item" data-mode="words">語 <span>Words</span></button>
+    <div class="top-nav-pills" id="topNavPills" aria-label="Main navigation">
+      <button type="button" class="top-pill" data-home-nav="home">⌂&nbsp;&nbsp;Home</button>
+      <button type="button" class="top-pill" data-home-nav="path">門&nbsp;&nbsp;Kanji Path</button>
+      <button type="button" class="top-pill active" data-home-nav="study">📖&nbsp;&nbsp;Study</button>
+      <button type="button" class="top-pill" data-home-nav="practice">✎&nbsp;&nbsp;Practice</button>
+      <button type="button" class="top-pill" data-home-nav="words">▣&nbsp;&nbsp;Words</button>
     </div>
     <div class="top-actions">
       <button type="button" class="top-icon-btn" id="themeToggle" aria-label="Switch theme">☾</button>
@@ -3725,6 +3786,10 @@ html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
             <span class="pill-label"><span class="pill-glyph">語</span> Vocabulary</span>
             <small id="homeVocabCount">259</small>
           </button>
+          <button type="button" class="bento-pill kana" data-go="kana-study">
+            <span class="pill-label"><span class="pill-glyph">あ</span> Kana</span>
+            <small>182</small>
+          </button>
         </div>
       </article>
 
@@ -3734,7 +3799,7 @@ html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
           <div class="bento-icon practice">✏️</div>
           <div style="min-width:0;flex:1">
             <h2>Practice</h2>
-            <p>Practice kanji stroke order with guided writing, animation, and progress tracking.</p>
+            <p>Reinforce what you've learned with interactive writing and recognition exercises.</p>
           </div>
           <button type="button" class="bento-go" data-go="practice" aria-label="Open Practice">→</button>
         </div>
@@ -3746,6 +3811,10 @@ html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
           <button type="button" class="bento-pill vocab" data-go="words">
             <span class="pill-label"><span class="pill-glyph">語</span> Vocabulary</span>
             <small id="homeVocabCount2">259</small>
+          </button>
+          <button type="button" class="bento-pill kana" data-go="kana-practice">
+            <span class="pill-label"><span class="pill-glyph">あ</span> Kana</span>
+            <small>182</small>
           </button>
         </div>
       </article>
@@ -3762,6 +3831,16 @@ html[data-theme="dark"] .mobile-nav-menu { background: #1a102e; }
           <button type="button" class="bento-quick-item vocab" data-go="words">
             <span class="q-icon">語</span>
             <span><strong>Vocabulary</strong><small id="homeVocabCount3">259 words</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+          <button type="button" class="bento-quick-item hira" data-go="hiragana">
+            <span class="q-icon">あ</span>
+            <span><strong>Hiragana</strong><small>46 characters</small></span>
+            <span class="q-arrow">›</span>
+          </button>
+          <button type="button" class="bento-quick-item kata" data-go="katakana">
+            <span class="q-icon">ア</span>
+            <span><strong>Katakana</strong><small>46 characters</small></span>
             <span class="q-arrow">›</span>
           </button>
         </div>
@@ -4507,7 +4586,7 @@ function renderWords() {
         <span class="word-action word-speak" title="Listen" aria-label="Listen to ${esc(item.word)}">🔊</span>
         <span class="word-action word-write" title="Practice writing" aria-label="Practice writing ${esc(item.word)}">✎</span>
         <span class="word-progress-wrap">
-          <span class="word-progress-label"><span>${chars.length ? 'Writing progress' : 'Kanji word'}</span><span>${chars.length ? `${count}/${PRACTICE_GOAL}` : 'Ready'}</span></span>
+          <span class="word-progress-label"><span>${chars.length ? 'Writing progress' : 'Kana word'}</span><span>${chars.length ? `${count}/${PRACTICE_GOAL}` : 'Ready'}</span></span>
           <span class="word-progress-track"><span class="word-progress-fill" style="width:${percent}%"></span></span>
         </span>
       </span>`;
@@ -4630,11 +4709,13 @@ function isKatakanaChar(ch) {
 }
 
 function isJapanesePracticeChar(ch) {
-  return isKanjiChar(ch) || isKanaChar(ch);
+  // Writing practice is intentionally Kanji-only.
+  return isKanjiChar(ch);
 }
 
 function currentPracticeIsKana(item) {
-  return !!item && isKanaChar(getCurrentPracticeChar(item));
+  // Kana writing has been removed from Practice and Words.
+  return false;
 }
 
 function kanaPracticeCanvas() { return null; }
@@ -4869,12 +4950,14 @@ function advanceWordPracticeCharacter() {
 }
 
 function getWordWritingCharacters(word) {
-  // Kanji-only writing practice. Kana in a vocabulary word is never a writing target.
-  return [...String(word || '')].filter(isKanjiChar);
+  // Practice EVERY written Japanese character in the vocabulary word:
+  // Kanji + Hiragana + Katakana. Ignore punctuation/spaces only.
+  return [...String(word || '')].filter(isJapanesePracticeChar);
 }
 
 function openWordWrite(idx) {
-  // Vocabulary writing targets Kanji only. Kana remains visible as part of the word but is never a writing target.
+  // Vocabulary writing must include kana that are part of the written word.
+  // Example: 食べ物屋 becomes [食, べ, 物, 屋], so べ gets its own writing box.
   const w = state.words;
   const v = w.items[idx];
   if (!v) return;
@@ -5235,7 +5318,9 @@ function updatePracticeModalHeader(item) {
   const current = getCurrentPracticeChar(item);
   item.kanji = current;
   if ($('practiceModalTitle')) {
-    $('practiceModalTitle').textContent = 'Write the missing Kanji';
+    $('practiceModalTitle').textContent = isKanaChar(current)
+      ? (isKatakanaChar(current) ? 'Write the missing Katakana' : 'Write the missing Hiragana')
+      : 'Write the missing Kanji';
   }
   if ($('practiceReading')) $('practiceReading').textContent = item.reading || '';
   if ($('practiceModalKanji')) $('practiceModalKanji').textContent = item.word || item.kanji;
@@ -5243,7 +5328,11 @@ function updatePracticeModalHeader(item) {
     const parts = [];
     if (item.english) parts.push(item.english);
     if (item.word && chars.length > 1) parts.push('Char ' + (item.charIndex + 1) + '/' + chars.length);
-    parts.push('Kanji');
+    if (currentPracticeIsKana(item)) {
+      parts.push(isKatakanaChar(current) ? 'Katakana' : 'Hiragana');
+    } else {
+      parts.push('Kanji');
+    }
     parts.push(item.vocabularyWord ? 'Vocabulary' : 'Set ' + item.setId);
     $('practiceModalMeta').textContent = parts.join(' · ');
   }
@@ -5289,7 +5378,7 @@ function openPracticeModal(idx) {
   if (!item.chars || !item.chars.length) item.chars = [item.kanji];
   item.kanji = getCurrentPracticeChar(item);
 
-  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = 'Write the Kanji';
+  if ($('practiceModalTitle')) $('practiceModalTitle').textContent = currentPracticeIsKana(item) ? 'Write the kana' : 'Write the Kanji';
   updatePracticeModalHeader(item);
 
   document.body.classList.add('modal-open');
@@ -7604,6 +7693,31 @@ function handleHomeGo(target) {
   if (target === 'study') return showMode('study');
   if (target === 'practice') return showMode('practice');
   if (target === 'words') return showMode('words');
+  if (target === 'kana-study' || target === 'hiragana') {
+    // Open study focused on hiragana practice set if available, else path
+    showMode('practice');
+    try {
+      // Prefer writing practice for kana characters
+      const hira = [...'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'];
+      if (typeof openWordWrite === 'function') {
+        state.words.items = hira.map(ch => ({ word: ch, reading: ch, meaning: 'Hiragana ' + ch }));
+        // open first as writing practice via practice items
+        state.practice.items = hira.map(ch => ({ setId: 'Hiragana', word: ch, kanji: ch, chars: [ch], charIndex: 0, reading: ch, english: 'Hiragana', vocabularyWord: true }));
+        state.practice.i = 0;
+        if (typeof openPracticeModal === 'function') openPracticeModal(0);
+      }
+    } catch (e) { console.warn(e); }
+    return;
+  }
+  if (target === 'kana-practice' || target === 'katakana') {
+    showMode('practice');
+    try {
+      const kata = [...'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'];
+      state.practice.items = kata.map(ch => ({ setId: 'Katakana', word: ch, kanji: ch, chars: [ch], charIndex: 0, reading: ch, english: 'Katakana', vocabularyWord: true }));
+      state.practice.i = 0;
+      if (typeof openPracticeModal === 'function') openPracticeModal(0);
+    } catch (e) { console.warn(e); }
+  }
 }
 
 /* ---------- EVENTS ---------- */
@@ -8004,52 +8118,30 @@ window.addEventListener('resize', () => {
   const ham = document.getElementById('navHamburger');
   const nav = document.getElementById('mainNav');
   toggle(ham, nav);
-
   const topHam = document.getElementById('topNavHamburger');
-  const mobileMenu = document.getElementById('mobileNavMenu');
-  if (topHam && mobileMenu) {
-    topHam.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const open = mobileMenu.classList.toggle('nav-open');
-      topHam.setAttribute('aria-expanded', open ? 'true' : 'false');
-      topHam.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
-    });
-  }
-
-  document.querySelectorAll('.mobile-nav-item').forEach((el) => {
-    el.addEventListener('click', () => {
-      const mode = el.dataset.mode;
-      if (mode) showMode(mode);
-      document.querySelectorAll('.mobile-nav-item').forEach(x => x.classList.toggle('active', x === el));
-      if (mobileMenu) mobileMenu.classList.remove('nav-open');
-      if (topHam) {
-        topHam.setAttribute('aria-expanded', 'false');
-        topHam.setAttribute('aria-label', 'Open menu');
-      }
-      if (mobileMenu) mobileMenu.setAttribute('aria-hidden', 'true');
-    });
-  });
+  const topPills = document.getElementById('topNavPills');
+  toggle(topHam, topPills);
 
   document.addEventListener('click', (e) => {
     if (nav && ham && !nav.contains(e.target) && !ham.contains(e.target)) {
       nav.classList.remove('nav-open');
       ham.setAttribute('aria-expanded', 'false');
     }
-    if (mobileMenu && topHam && !mobileMenu.contains(e.target) && !topHam.contains(e.target)) {
-      mobileMenu.classList.remove('nav-open');
+    if (topPills && topHam && !topPills.contains(e.target) && !topHam.contains(e.target)) {
+      topPills.classList.remove('nav-open');
       topHam.setAttribute('aria-expanded', 'false');
-      topHam.setAttribute('aria-label', 'Open menu');
-      mobileMenu.setAttribute('aria-hidden', 'true');
     }
   });
 
-  // Close the mobile menu after using the compact Study/Practice pills too.
-  document.querySelectorAll('#topNavPills .top-pill').forEach((el) => {
+  // Close drawer after navigating
+  document.querySelectorAll('#mainNav .nav-btn, #topNavPills .top-pill').forEach((el) => {
     el.addEventListener('click', () => {
-      if (mobileMenu) mobileMenu.classList.remove('nav-open');
+      if (nav) nav.classList.remove('nav-open');
+      if (ham) ham.setAttribute('aria-expanded', 'false');
+      if (topPills) topPills.classList.remove('nav-open');
       if (topHam) topHam.setAttribute('aria-expanded', 'false');
-      if (mobileMenu) mobileMenu.setAttribute('aria-hidden', 'true');
+      const target = el.getAttribute('data-home-nav');
+      if (target) showMode(target);
     });
   });
 })();
