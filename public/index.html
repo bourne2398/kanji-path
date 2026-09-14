@@ -2624,9 +2624,9 @@ html[data-theme="dark"] .study-level-btn.active {
 @media(max-width:430px){.practice-hw-box.is-kana{width:min(300px,calc(100vw - 36px));height:min(300px,calc(100vw - 36px))}.kana-guide-stage{width:min(152px,48vw);height:min(152px,48vw)}.kana-reference{font-size:2.8rem}.kana-pad-actions .btn{min-height:32px;padding:5px 9px}}
 
 /* Kana uses the exact same white HanziWriter writing surface as Kanji. */
-.practice-hw-box.is-kana{background:#fff !important;border:2px solid #e2e8f0 !important;border-radius:16px !important;overflow:hidden !important}
-.practice-hw-box.is-kana #hanziTarget{width:100%;height:100%;display:block}
-.practice-hw-box.is-kana svg{background:#fff}
+.practice-hw-box.is-kana{background:#fff !important;border:2px solid #e2e8f0 !important;border-radius:16px !important;overflow:hidden !important;position:relative !important}
+.practice-hw-box.is-kana #hanziTarget{width:100% !important;height:100% !important;display:block !important;position:relative !important;min-width:0;min-height:0;touch-action:none}
+.practice-hw-box.is-kana #hanziTarget svg{width:100% !important;height:100% !important;display:block !important;background:#fff;touch-action:none;cursor:crosshair}
 html[data-theme="dark"] .practice-hw-box.is-kana{background:#fff !important;border-color:#cbd5e1 !important}
 
 html[data-theme="dark"] .kana-practice-panel{background:#fff;border-color:#cbd5e1}
@@ -3815,7 +3815,10 @@ function advanceWordPracticeCharacter() {
   const chars=item.chars;
   if(item.charIndex < chars.length-1) {
     item.charIndex++; item.kanji=chars[item.charIndex]; updatePracticeModalHeader(item);
-    requestAnimationFrame(()=>loadPracticeCharacter(item.kanji));
+    requestAnimationFrame(() => {
+      if (isKanaChar(item.kanji)) setupKanaCanvas(item.kanji, { mode: 'quiz' });
+      else loadPracticeCharacter(item.kanji);
+    });
   } else {
     item.charIndex=chars.length; renderPracticeSlots(item);
     const slotsEl=$('practiceSlots'); if(slotsEl) slotsEl.querySelectorAll('.practice-slot').forEach((el,i)=>{el.classList.remove('current');el.classList.add('filled');el.textContent=chars[i]||'';});
@@ -4295,7 +4298,13 @@ function practiceStartGuidedWrite() {
 
 function practiceAnimate() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {mode:'animate'}); return; }
+  if (!item) return;
+  const ch = getCurrentPracticeChar(item);
+  if (isKanaChar(ch)) {
+    if ($('practiceProgress')) $('practiceProgress').textContent = ch + ': playing stroke animation…';
+    setupKanaCanvas(ch, { mode: 'animate' });
+    return;
+  }
   if (!hanziWriter) return;
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.hideCharacter();
@@ -4305,7 +4314,13 @@ function practiceAnimate() {
 
 function practiceWrite() {
   const item = state.practice.items[state.practice.i];
-  if (currentPracticeIsKana(item)) { setupKanaCanvas(getCurrentPracticeChar(item), {mode:'quiz'}); return; }
+  if (!item) return;
+  const ch = getCurrentPracticeChar(item);
+  if (isKanaChar(ch)) {
+    if ($('practiceProgress')) $('practiceProgress').textContent = ch + ': draw the strokes in order';
+    setupKanaCanvas(ch, { mode: 'quiz' });
+    return;
+  }
   practiceStartGuidedWrite();
 }
 
