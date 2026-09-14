@@ -2418,6 +2418,59 @@ html[data-theme="dark"] .path-node.due {
   font-size: 1.05rem;
   margin: 12px 0 4px;
 }
+
+.study-level-filter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-left: 4px;
+}
+.study-level-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .88rem;
+  min-height: 40px;
+  min-width: 48px;
+  cursor: pointer;
+}
+.study-level-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+html[data-theme="dark"] .study-level-btn {
+  background: var(--panel);
+  border-color: var(--border);
+  color: var(--text);
+}
+html[data-theme="dark"] .study-level-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+@media (max-width: 640px) {
+  .study-level-filter { width: 100%; margin: 4px 0 0; }
+  .study-level-btn { flex: 1 1 auto; min-width: 0; }
+}
+
+/* Vocabulary flashcards */
+.words-toolbar { align-items: center; }
+.word-level-filter { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.word-level-btn { border:1px solid var(--border); background:#fff; color:var(--text); padding:8px 13px; border-radius:999px; font-weight:800; min-height:40px; min-width:46px; }
+.word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.word-flashcard { aspect-ratio:auto !important; min-height:190px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 12px; }
+.word-flashcard .pt-kanji { font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; font-size:clamp(1.8rem,5vw,2.8rem); font-weight:900; line-height:1.1; }
+.word-flashcard .pt-meta { font-size:.95rem; }
+.word-flashcard .word-level-badge { margin-top:3px; }
+html[data-theme="dark"] .word-level-btn { background:var(--panel); color:var(--text); border-color:var(--border); }
+html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+@media (max-width:640px){ .word-level-filter { width:100%; } .word-level-btn { flex:1 1 42px; } .words-toolbar .spacer { display:none; } }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
@@ -2572,21 +2625,21 @@ html[data-theme="dark"] .path-node.due {
   <section id="studyMode" class="hidden">
     <h1 id="studyTitle">Study</h1>
     <p class="subtitle" id="studySubtitle">Tap a card to flip. Shuffle or reverse anytime.</p>
-    <div class="toolbar">
+    <div class="toolbar" style="flex-wrap:wrap">
       <button class="btn primary" id="studyChooseSets">Choose sets</button>
       <button class="btn" id="studyShuffle">Shuffle</button>
       <button class="btn" id="studyKanjiBtn" style="display:none">📖 Study Kanji</button>
       <label class="check"><input type="checkbox" id="studyReverse"> Reverse</label>
+      <div class="study-level-filter" id="studyLevelFilter" role="group" aria-label="JLPT level">
+        <button type="button" class="study-level-btn active" data-study-level="N5">N5</button>
+        <button type="button" class="study-level-btn" data-study-level="N4">N4</button>
+        <button type="button" class="study-level-btn" data-study-level="N3">N3</button>
+        <button type="button" class="study-level-btn" data-study-level="N2">N2</button>
+        <button type="button" class="study-level-btn" data-study-level="N1">N1</button>
+      </div>
       <div class="spacer"></div>
       <span class="badge" id="studySetSummary"></span>
       <span class="badge" id="studyCount"></span>
-    </div>
-    <div class="path-level-filter study-level-filter" id="studyLevelFilter" style="margin:0 0 12px">
-      <button type="button" class="path-level-btn active" data-study-level="N5">N5</button>
-      <button type="button" class="path-level-btn" data-study-level="N4">N4</button>
-      <button type="button" class="path-level-btn" data-study-level="N3">N3</button>
-      <button type="button" class="path-level-btn" data-study-level="N2">N2</button>
-      <button type="button" class="path-level-btn" data-study-level="N1">N1</button>
     </div>
     <div class="study-grid" id="studyGrid"></div>
     <div class="progress" id="studyProgress"></div>
@@ -2614,13 +2667,22 @@ html[data-theme="dark"] .path-node.due {
   <section id="wordsMode" class="hidden">
     <h1>Write Words</h1>
     <p class="subtitle">Study vocabulary for the Jōyō kanji. Words are served from your vocabulary database — search and practice without loading everything at once.</p>
-    <div class="toolbar">
-      <button class="btn primary" id="wordsChooseSets">Choose sets</button>
-      <button class="btn" id="vocabBankShow" type="button">Show Vocabulary Bank</button>
+    <div class="toolbar words-toolbar">
+      <button class="btn primary" id="wordsLoadAll" type="button">Load 40,000 Vocabulary</button>
+      <button class="btn" id="vocabBankShow" type="button">Vocabulary Search</button>
+      <div class="word-level-filter" id="wordLevelFilter" role="group" aria-label="Vocabulary JLPT level">
+        <button type="button" class="word-level-btn active" data-word-level="ALL">All</button>
+        <button type="button" class="word-level-btn" data-word-level="N5">N5</button>
+        <button type="button" class="word-level-btn" data-word-level="N4">N4</button>
+        <button type="button" class="word-level-btn" data-word-level="N3">N3</button>
+        <button type="button" class="word-level-btn" data-word-level="N2">N2</button>
+        <button type="button" class="word-level-btn" data-word-level="N1">N1</button>
+      </div>
       <div class="spacer"></div>
-      <span class="badge" id="wordsSetSummary"></span>
-      <span class="badge" id="wordsCount"></span>
+      <span class="badge" id="wordsSetSummary">Vocabulary database</span>
+      <span class="badge" id="wordsCount">0 words</span>
     </div>
+    <div class="progress" id="wordsProgress">Vocabulary is loaded from the database and cached on this device for instant future opens.</div>
     <div class="practice-grid" id="wordsGrid"></div>
     <div class="progress" id="wordsProgress"></div>
     <div class="vocab-bank hidden" id="vocabBank">
@@ -2887,7 +2949,7 @@ let quitTarget = null;
 const state = {
   study: { sets: [1], cards: [], allCards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '', levelFilter: 'N5' },
   practice: { sets: [1], items: [], i: 0 },
-  words: { sets: [1], items: [], i: 0 },
+  words: { sets: [1], items: [], allItems: [], i: 0, levelFilter: 'ALL', vocabLoading: false },
   // stubs so leftover quiz/games helpers do not crash if called
   quiz:  { sets: [1], cards: [], i: 0, reverse: false, score: 0, answered: false, playing: false,
            timerSeconds: 0, timer: null, endAt: 0, results: [], lastMsg: '', settingsConfigured: false },
@@ -3082,55 +3144,186 @@ function setupPractice(ids) {
 function setupWords(ids) {
   const s = state.words;
   s.sets = [...ids];
-  s.items = getWordPracticeItems(ids);
+  s.items = [];
   s.i = 0;
   closePracticeModal();
   renderWords();
+  ensureVocabularyLoaded();
+}
+
+function normalizeVocabRow(r) {
+  if (!r) return null;
+  const word = String(r.word ?? r[0] ?? '').trim();
+  if (!word) return null;
+  const reading = String(r.reading ?? r[1] ?? '').trim();
+  const meaning = String(r.meaning ?? r[2] ?? '').trim();
+  const level = String(r.level ?? r.jlpt_level ?? r.jlpt ?? r.jlptLevel ?? '').toUpperCase();
+  return { word, reading, meaning, level: /^N[1-5]$/.test(level) ? level : vocabLevelOf(word) };
+}
+
+function vocabLevelOf(word) {
+  const chars = [...String(word || '')].filter(isKanjiChar);
+  const explicit = null;
+  if (!chars.length) return 'N5';
+  const known = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[JLPT_LEVEL_MAP[k]] || null)).filter(Boolean);
+  if (!known.length) return 'N5';
+  const hardest = Math.min(...known);
+  return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N5';
+}
+
+function getWordLevelFilter() {
+  return state.words.levelFilter || 'ALL';
+}
+
+function filteredVocabularyItems() {
+  const all = Array.isArray(state.words.allItems) ? state.words.allItems : [];
+  const level = getWordLevelFilter();
+  return level === 'ALL' ? all : all.filter(x => (x.level || vocabLevelOf(x.word)) === level);
 }
 
 function renderWords() {
   const s = state.words;
   const grid = $('wordsGrid');
   if (!grid) return;
+  const all = Array.isArray(s.allItems) ? s.allItems : [];
+  const filtered = filteredVocabularyItems();
+  s.items = filtered;
   grid.innerHTML = '';
-  if (!s.items.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Choose sets that include compound words (2+ kanji), e.g. 富士山, 登山, 火山.</div>';
-    if ($('wordsProgress')) $('wordsProgress').textContent = '';
-    if ($('wordsSetSummary')) $('wordsSetSummary').textContent = 'No sets';
+  if (!all.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Click <b>Load 40,000 Vocabulary</b>. The vocabulary is cached in your browser after the first load, so future opens are instant.</div>';
     if ($('wordsCount')) $('wordsCount').textContent = '0 words';
     return;
   }
-  s.items.forEach((item, idx) => {
+  const maxVisible = 120;
+  filtered.slice(0, maxVisible).forEach((item, idx) => {
     const tile = document.createElement('button');
     tile.type = 'button';
-    tile.className = 'practice-tile';
-    const counts = item.chars.map(ch => getKanjiWriteCount(ch));
-    const count = Math.min(...counts);
-    const percent = Math.round((count / PRACTICE_GOAL) * 100);
-    if (count >= PRACTICE_GOAL) tile.classList.add('practice-complete');
+    tile.className = 'practice-tile word-flashcard';
+    const chars = [...item.word].filter(isKanjiChar);
+    const count = chars.length ? Math.min(...chars.map(ch => getKanjiWriteCount(ch))) : 0;
+    const percent = chars.length ? Math.round((count / PRACTICE_GOAL) * 100) : 0;
+    if (count >= PRACTICE_GOAL && chars.length) tile.classList.add('practice-complete');
     tile.style.setProperty('--practice-fill', percent + '%');
-    tile.setAttribute('aria-label', `${item.word}, ${practiceProgressLabel(count)}`);
-    tile.innerHTML =
-      '<span class="pt-kanji">' + esc(item.word) + '</span>' +
-      '<span class="pt-meta">' + esc(item.reading || '') + (item.english ? ' · ' + esc(item.english) : '') + '</span>' +
-      '<span class="pt-progress">' + esc(practiceProgressLabel(count)) + '</span>';
+    tile.setAttribute('aria-label', `${item.word}, ${item.reading}, ${item.meaning}`);
+    tile.innerHTML = '<span class="pt-kanji">' + esc(item.word) + '</span>' +
+      '<span class="pt-meta">' + esc(item.reading || '') + (item.meaning ? ' · ' + esc(item.meaning) : '') + '</span>' +
+      '<span class="badge word-level-badge">' + esc(item.level || 'N5') + '</span>' +
+      '<span class="pt-progress">' + (chars.length ? esc(practiceProgressLabel(count)) : 'Kana word') + '</span>';
     tile.onclick = () => openWordWrite(idx);
     grid.appendChild(tile);
   });
-  if ($('wordsProgress')) $('wordsProgress').textContent = 'Tap a word → write each kanji in order with stroke guidance.';
-  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = setSummary(s.sets);
-  if ($('wordsCount')) $('wordsCount').textContent = JOYO_VOCAB_TOTAL ? JOYO_VOCAB_TOTAL.toLocaleString() + ' vocabulary' : (s.items.length + ' words');
+  const hidden = Math.max(0, filtered.length - maxVisible);
+  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} ${getWordLevelFilter() === 'ALL' ? 'vocabulary' : getWordLevelFilter() + ' vocabulary'} · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} flashcards${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to write it.`;
+  if ($('wordsCount')) $('wordsCount').textContent = `${filtered.length.toLocaleString()} words`;
+  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = getWordLevelFilter() === 'ALL' ? 'All levels' : getWordLevelFilter();
+}
+
+async function ensureVocabularyLoaded(force = false) {
+  if (state.words.vocabLoading && !force) return state.words.vocabLoading;
+  state.words.vocabLoading = true;
+  const button = $('wordsLoadAll');
+  if (button) { button.disabled = true; button.textContent = 'Loading vocabulary…'; }
+  const cacheKey = 'kanjiPathVocabulary40kV3';
+  const readCache = () => new Promise(resolve => {
+    try {
+      const req = indexedDB.open('kanjiPathVocabularyDB', 1);
+      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains('vocab')) req.result.createObjectStore('vocab'); };
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('vocab','readonly');
+        const get = tx.objectStore('vocab').get(cacheKey);
+        get.onsuccess = () => { resolve(get.result || null); db.close(); };
+        get.onerror = () => { resolve(null); db.close(); };
+      };
+      req.onerror = () => resolve(null);
+    } catch (_) { resolve(null); }
+  });
+  const writeCache = data => new Promise(resolve => {
+    try {
+      const req = indexedDB.open('kanjiPathVocabularyDB', 1);
+      req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains('vocab')) req.result.createObjectStore('vocab'); };
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('vocab','readwrite');
+        tx.objectStore('vocab').put(data, cacheKey);
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); resolve(); };
+      };
+      req.onerror = () => resolve();
+    } catch (_) { resolve(); }
+  });
+  try {
+    const cached = await readCache();
+    if (cached && Array.isArray(cached.items) && cached.items.length) {
+      state.words.allItems = cached.items.map(normalizeVocabRow).filter(Boolean);
+      renderWords();
+      if (button) button.textContent = state.words.allItems.length >= 40000 ? 'Refresh Vocabulary' : 'Load 40,000 Vocabulary';
+      state.words.vocabLoading = false;
+      // Refresh in the background only when the cache is older than 24h.
+      if (!force && cached.ts && Date.now() - cached.ts < 86400000) return state.words.allItems;
+    }
+
+    const first = await fetch('/api/vocab?page=0&limit=300', { credentials:'include', cache:'no-store' });
+    if (!first.ok) throw new Error('Vocabulary API ' + first.status);
+    const firstData = await first.json();
+    const total = Number(firstData.total || 0);
+    let items = (firstData.items || []).map(normalizeVocabRow).filter(Boolean);
+    state.words.allItems = items;
+    renderWords();
+
+    // Fetch the remaining database pages without blocking the Word tab.
+    const pageSize = Math.max(1, Number(firstData.items?.length || 300));
+    const pages = Math.ceil(total / pageSize);
+    for (let page = 1; page < pages && items.length < 40000; page++) {
+      try {
+        const res = await fetch(`/api/vocab?page=${page}&limit=${pageSize}`, { credentials:'include', cache:'no-store' });
+        if (!res.ok) break;
+        const data = await res.json();
+        const batch = (data.items || []).map(normalizeVocabRow).filter(Boolean);
+        if (!batch.length) break;
+        items.push(...batch);
+        if (page % 3 === 0 || items.length >= 40000) {
+          state.words.allItems = items.slice(0,40000);
+          renderWords();
+          if ($('wordsProgress')) $('wordsProgress').textContent = `Loading vocabulary: ${Math.min(items.length,40000).toLocaleString()} / ${Math.min(total || 40000,40000).toLocaleString()}…`;
+        }
+      } catch (e) { console.warn('Vocabulary page failed', page, e); break; }
+    }
+    state.words.allItems = items.slice(0,40000);
+    await writeCache({ ts:Date.now(), total:Math.max(total,state.words.allItems.length), items:state.words.allItems });
+    renderWords();
+    if ($('wordsProgress')) $('wordsProgress').textContent = `${state.words.allItems.length.toLocaleString()} vocabulary entries ready and cached on this device. Filters are instant.`;
+    if (button) button.textContent = state.words.allItems.length >= 40000 ? 'Refresh Vocabulary' : 'Retry Vocabulary Load';
+  } catch (e) {
+    console.error('Vocabulary load failed:', e);
+    if ($('wordsProgress')) $('wordsProgress').textContent = 'Could not load vocabulary. Make sure /api/vocab is deployed and the database contains the vocabulary table.';
+    if (button) button.textContent = 'Retry Vocabulary Load';
+  } finally {
+    state.words.vocabLoading = false;
+    if (button) button.disabled = false;
+  }
+  return state.words.allItems || [];
 }
 
 function openWordWrite(idx) {
-  // Reuse the shared writing modal + practice state for the selected word list
+  // Convert the vocabulary flashcard into the shared multi-kanji writing item.
   const w = state.words;
-  const item = w.items[idx];
-  if (!item) return;
-  state.practice.items = w.items;
-  state.practice.sets = w.sets;
-  state.practice.i = idx;
-  openPracticeModal(idx);
+  const v = w.items[idx];
+  if (!v) return;
+  const item = {
+    setId: 'Vocabulary',
+    word: v.word,
+    kanji: [...v.word].filter(isKanjiChar)[0] || v.word,
+    chars: [...v.word].filter(isKanjiChar),
+    charIndex: 0,
+    reading: v.reading || '',
+    english: v.meaning || ''
+  };
+  if (!item.chars.length) return;
+  state.practice.items = [item];
+  state.practice.sets = [];
+  state.practice.i = 0;
+  openPracticeModal(0);
 }
 
 function destroyHanzi() {
@@ -3693,7 +3886,7 @@ function applyStudyLevelFilter() {
   const all = Array.isArray(s.allCards) ? s.allCards : [];
   s.cards = all.filter(c => studyCardLevel(c) === level);
   s.flips = new Array(s.cards.length).fill(false);
-  document.querySelectorAll('#studyLevelFilter .path-level-btn').forEach(b => {
+  document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-study-level') === level);
   });
 }
@@ -3728,10 +3921,11 @@ function setupStudyWords(rows, sourceKanji = '') {
 
 function wordJlptLevel(word, fallbackKanji = '') {
   const chars = [...String(word || '')].filter(isKanjiChar);
-  if (!chars.length && fallbackKanji) return pathLevelOf(fallbackKanji);
-  const ranks = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[pathLevelOf(k)] || 1));
+  if (!chars.length) return fallbackKanji ? (JLPT_LEVEL_MAP[fallbackKanji] || 'N5') : 'N5';
+  const ranks = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[JLPT_LEVEL_MAP[k]] || null)).filter(Boolean);
+  if (!ranks.length) return 'N5';
   const hardest = Math.min(...ranks);
-  return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N1';
+  return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N5';
 }
 
 function renderStudy() {
@@ -5459,25 +5653,8 @@ async function fetchVocabPage(opts){
 }
 async function loadAllJoyoVocabulary(){ await fetchVocabPage(); }
 function prefetchVocabBank(){
-  // warm first pages in background for instant open
-  const pages=[0,1,2];
-  (async()=>{
-    for(const p of pages){
-      const key=vocabCacheKey('',p);
-      if(JOYO_VOCAB_CACHE[key]&&Date.now()-(JOYO_VOCAB_CACHE[key].ts||0)<1000*60*60*12)continue;
-      try{
-        const res=await fetch('/api/vocab?page='+p+'&limit=50',{credentials:'include'});
-        if(!res.ok)continue;
-        const data=await res.json();
-        JOYO_VOCAB_CACHE[key]={items:data.items||[],total:data.total||0,ts:Date.now()};
-        if(p===0){
-          JOYO_VOCAB_TOTAL=data.total||0;
-          if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
-        }
-      }catch(e){}
-    }
-    saveVocabCacheToStorage();
-  })();
+  // Vocabulary is loaded by ensureVocabularyLoaded() when the Word tab is opened.
+  // IndexedDB keeps the full 40,000-entry dataset available for instant future opens.
 }
 
 function renderPathVocabulary(item,info){
@@ -5648,7 +5825,7 @@ function showMode(next) {
     b.classList.toggle('active', b.dataset.mode === mode);
   });
   if (mode === 'path') renderPath();
-  if (mode === 'words') renderWords();
+  if (mode === 'words') { renderWords(); ensureVocabularyLoaded(); }
   if (mode === 'practice') renderPractice();
 }
 
@@ -5670,7 +5847,7 @@ bind('gameSetupStart', 'onclick', startSelectedGame);
 bind('gameQuit', 'onclick', () => askQuit('games'));
 
 
-document.querySelectorAll('#studyLevelFilter .path-level-btn').forEach(btn => {
+document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(btn => {
   btn.onclick = () => {
     state.study.levelFilter = btn.getAttribute('data-study-level') || 'N5';
     applyStudyLevelFilter();
@@ -5694,10 +5871,10 @@ bind('reviewRememberBtn', 'onclick', reviewRemember);
 bind('reviewForgotBtn', 'onclick', reviewForgot);
 
 bind('pathReviewToggle', 'onclick', () => { pathReviewMode = !pathReviewMode; renderPath(); });
-document.querySelectorAll('.path-level-btn').forEach(btn => {
+document.querySelectorAll('#pathLevelFilter .path-level-btn').forEach(btn => {
   btn.onclick = () => {
     pathLevelFilter = btn.getAttribute('data-level') || 'N5';
-    document.querySelectorAll('.path-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('#pathLevelFilter .path-level-btn').forEach(b => b.classList.toggle('active', b === btn));
     pathReviewMode = false;
     const items = pathItems();
     const visible = pathLevelItems(items);
@@ -5856,7 +6033,6 @@ bind('practicePrevious', 'onclick', practicePreviousKanji);
 bind('practiceRewrite', 'onclick', practiceRewrite);
 bind('practiceNext', 'onclick', practiceNextKanji);
 bind('practiceSkip', 'onclick', practiceSkip);
-bind('wordsChooseSets', 'onclick', () => openModal('words'));
 bind('vocabBankHide', 'onclick', ()=>{
   const bank=$('vocabBank'),show=$('vocabBankShow');
   if(bank)bank.classList.add('hidden');
@@ -5878,6 +6054,15 @@ bind('vocabBankShow', 'onclick', ()=>{
 bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; fetchVocabPage(); });
 bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
 bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; fetchVocabPage(); });
+
+document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(btn => {
+  btn.onclick = () => {
+    state.words.levelFilter = btn.getAttribute('data-word-level') || 'ALL';
+    document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderWords();
+  };
+});
+bind('wordsLoadAll', 'onclick', () => ensureVocabularyLoaded(true));
 
 // Prevent clicks inside the practice dialog from being treated as backdrop clicks.
 $('practiceModal').addEventListener('click', e => {
@@ -6000,7 +6185,7 @@ window.addEventListener('resize', () => {
 (() => {
   setupStudy([1], true);
   setupPractice([1]);
-  setupWords([1]);
+  setupWords([]);
   showMode('path');
   loadFullJoyoPath();
   if (typeof bindAuthUi === 'function') bindAuthUi();
