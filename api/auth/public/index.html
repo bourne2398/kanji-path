@@ -163,11 +163,11 @@ h1 { font-size: 1.35rem; margin: 0 0 4px; }
 /* Study grid */
 .study-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
 }
 .study-card {
-  height: 180px;
+  height: 210px;
   perspective: 1000px;
   user-select: none;
   touch-action: manipulation;
@@ -201,7 +201,7 @@ h1 { font-size: 1.35rem; margin: 0 0 4px; }
 .kanji {
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
   font-weight: 800;
-  font-size: clamp(1.8rem, 8vw, 3.2rem);
+  font-size: clamp(2rem, 8.5vw, 3.6rem);
   line-height: 1.05;
   max-width: 100%;
   overflow: hidden;
@@ -1249,8 +1249,8 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   .header-inner { flex-direction: row; align-items: center; justify-content: space-between; }
   nav { width: auto; grid-template-columns: repeat(5, auto); }
   .nav-btn { padding: 8px 14px; font-size: .88rem; }
-  .study-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-  .study-card { height: 200px; }
+  .study-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .study-card { height: 230px; }
   .modal-backdrop { align-items: center; padding: 16px; }
   .modal {
     border-radius: 18px;
@@ -1260,7 +1260,8 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   .modal-foot { border-radius: 0 0 18px 18px; }
 }
 @media (min-width: 900px) {
-  .study-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .study-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .study-card { height: 250px; }
 }
 
 /* Practice mode */
@@ -1843,9 +1844,9 @@ html[data-theme="dark"] .play-modal-backdrop {
 
   .study-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
   }
-  .study-card { height: 160px; }
+  .study-card { height: 190px; }
   .kanji { font-size: clamp(1.5rem, 9vw, 2.4rem); }
   .reading { font-size: clamp(1rem, 5vw, 1.35rem); }
 
@@ -2179,11 +2180,13 @@ html[data-theme="dark"] .play-modal-backdrop {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
-  padding: 8px 12px;
+  padding: 10px 16px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: .82rem;
-  min-height: 36px;
+  font-size: .9rem;
+  min-height: 44px;
+  min-width: 52px;
+  cursor: pointer;
 }
 .path-level-btn.active {
   background: var(--accent);
@@ -2201,6 +2204,8 @@ html[data-theme="dark"] .play-modal-backdrop {
   gap: 7px;
 }
 .path-node {
+  min-width: 64px;
+  min-height: 64px;
   min-height: 64px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -2404,13 +2409,12 @@ html[data-theme="dark"] .path-node.due {
       <div class="path-roadmap-head">
         <div>
           <h2>Your Kanji Path</h2>
-          <p>Follow the full path or filter by JLPT level. Learned items return for review with spaced repetition.</p>
+          <p>Learn step by step by JLPT level (start with N5). Learned items return for review with spaced repetition.</p>
         </div>
         <span class="badge" id="pathRoadmapCount"></span>
       </div>
       <div class="path-level-filter" id="pathLevelFilter">
-        <button type="button" class="path-level-btn active" data-level="ALL">All</button>
-        <button type="button" class="path-level-btn" data-level="N5">N5</button>
+        <button type="button" class="path-level-btn active" data-level="N5">N5</button>
         <button type="button" class="path-level-btn" data-level="N4">N4</button>
         <button type="button" class="path-level-btn" data-level="N3">N3</button>
         <button type="button" class="path-level-btn" data-level="N2">N2</button>
@@ -2459,18 +2463,16 @@ html[data-theme="dark"] .path-node.due {
   <!-- WORDS (multi-character compounds — screenshot-style write missing kanji) -->
   <section id="wordsMode" class="hidden">
     <h1>Write Words</h1>
-    <p class="subtitle">Study vocabulary for the full 2,136 Jōyō kanji. The dictionary is loaded in the background and cached on your device. Words can be searched and practiced without rendering thousands of cards at once.</p>
+    <p class="subtitle">Study vocabulary for the Jōyō kanji. Words are served from your vocabulary database — search and practice without loading everything at once.</p>
     <div class="toolbar">
-      <button class="btn primary" id="wordsLoadAll">Load 40,000+ Words</button>
-      <button class="btn" id="wordsExportSql" disabled title="Load 40,000+ words first">Export 40,000 Words to SQL</button>
-      <button class="btn" id="wordsChooseSets">Choose sets</button>
+      <button class="btn primary" id="wordsChooseSets">Choose sets</button>
+      <button class="btn" id="vocabBankShow" type="button">Show Vocabulary Bank</button>
       <div class="spacer"></div>
       <span class="badge" id="wordsSetSummary"></span>
       <span class="badge" id="wordsCount"></span>
     </div>
     <div class="practice-grid" id="wordsGrid"></div>
     <div class="progress" id="wordsProgress"></div>
-    <button class="btn hidden" id="vocabBankShow" type="button" style="margin-top:12px">Show Vocabulary Bank</button>
     <div class="vocab-bank hidden" id="vocabBank">
       <div class="vocab-bank-head">
         <h2>Jōyō Vocabulary Bank</h2>
@@ -2479,7 +2481,7 @@ html[data-theme="dark"] .path-node.due {
           <button class="btn" id="vocabBankHide" type="button" title="Hide the vocabulary list">Hide</button>
         </div>
       </div>
-      <div class="vocab-bank-status" id="vocabBankStatus">Vocabulary has not been loaded yet.</div>
+      <div class="vocab-bank-status" id="vocabBankStatus">Loading vocabulary from database…</div>
       <div class="vocab-bank-grid" id="vocabBankGrid"></div>
       <div class="vocab-bank-pages">
         <button class="btn" id="vocabPrevPage">← Previous</button>
@@ -2967,8 +2969,7 @@ function renderWords() {
   });
   if ($('wordsProgress')) $('wordsProgress').textContent = 'Tap a word → write each kanji in order with stroke guidance.';
   if ($('wordsSetSummary')) $('wordsSetSummary').textContent = setSummary(s.sets);
-  if ($('wordsCount')) $('wordsCount').textContent = JOYO_VOCAB.length ? JOYO_VOCAB.length.toLocaleString() + ' vocabulary' : s.items.length + ' words';
-  if (JOYO_VOCAB.length) renderVocabBank();
+  if ($('wordsCount')) $('wordsCount').textContent = JOYO_VOCAB_TOTAL ? JOYO_VOCAB_TOTAL.toLocaleString() + ' vocabulary' : (s.items.length + ' words');
 }
 
 function openWordWrite(idx) {
@@ -5018,9 +5019,9 @@ const PATH_MEMORY={
 const JLPT_LEVEL_MAP=Object.create(null);
 const JLPT_LEVELS={N5:"日一国人年大十二本中長出三時行見月後前生五間上東四今金九入学高円子外八六下来気小七山話女北午百書先名川千水半男西電校語土木聞食車何南万毎白天母火右読友左休父雨",N4:"会同事自社発者地業方新場員立開手力問代明動京目通言理体田主題意不作用度強公持野以思家世多正安院心界教文元重近考画海売知道集別物使品計死特私始朝運終台広住真有口少町料工建空急止送切転研足究楽起着店病質待試族銀早映親験英医仕去味写字答夜音注帰古歌買悪図週室歩風紙黒花春赤青館屋色走秋夏習駅洋旅服夕借曜飲肉貸堂鳥飯勉冬昼茶弟牛魚兄犬妹姉漢",N3:"政議民連対部合市内相定回選米実関決全表戦経最現調化当約首法性要制治務成期取都和機平加受続進数記初指権支産点報済活原共得解交資予向際勝面告反判認参利組信在件側任引求所次昨論官増係感情投示変打直両式確果容必演歳争談能位置流格疑過局放常状球職与供役構割費付由説難優夫収断石違消神番規術備宅害配警育席訪乗残想声念助労例然限追商葉伝働形景落好退頭負渡失差末守若種美命福望非観察段横深申様財港識呼達良候程満敗値突光路科積他処太客否師登易速存飛殺号単座破除完降責捕危給苦迎園具辞因馬愛富彼未舞亡冷適婦寄込顔類余王返妻背熱宿薬険頼覚船途許抜便留罪努精散静婚喜浮絶幸押倒等老曲払庭徒勤遅居雑招困欠更刻賛抱犯恐息遠戻願絵越欲痛笑互束似列探逃遊迷夢君閉緒折草暮酒悲晴掛到寝暗盗吸陽御歯忘雪吹娘誤洗慣礼窓昔貧怒泳祖杯疲皆鳴腹煙眠怖耳頂箱晩寒髪忙才靴恥偶偉猫幾",N2:"党協総区領県設改府査委軍団各島革村勢減再税営比防補境導副算輸述線農州武象域額欧担準賞辺造被技低復移個門課脳極含蔵量型況針専谷史階管兵接細効丸湾録省旧橋岸周材戸央券編捜竹超並療採森競介根販歴将幅般貿講林装諸劇河航鉄児禁印逆換久短油暴輪占植清倍均億圧芸署伸停爆陸玉波帯延羽固則乱普測豊厚齢囲卒略承順岩練軽了庁城患層版令角絡損募裏仏績築貨混昇池血温季星永著誌庫刊像香坂底布寺宇巨震希触依籍汚枚複郵仲栄札板骨傾届巻燃跡包駐弱紹雇替預焼簡章臓律贈照薄群秒奥詰双刺純翌快片敬悩泉皮漁荒貯硬埋柱祭袋筆訓浴童宝封胸砂塩賢腕兆床毛緑尊祝柔殿濃液衣肩零幼荷泊黄甘臣浅掃雲掘捨軟沈凍乳恋紅郊腰炭踊冊勇械菜珍卵湖喫干虫刷湯溶鉱涙匹孫鋭枝塗軒毒叫拝氷乾棒祈拾粉糸綿汗銅湿瓶咲召缶隻脂蒸肌耕鈍泥隅灯辛磨麦姓筒鼻粒詞胃畳机膚濯塔沸灰菓帽枯涼舟貝符憎皿肯燥畜挟曇滴伺"};
 for(const[l,c]of Object.entries(JLPT_LEVELS))for(const ch of[...c])if(!JLPT_LEVEL_MAP[ch])JLPT_LEVEL_MAP[ch]=l;
-let pathLevelFilter='ALL',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false;
+let pathLevelFilter='N5',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false;
 function pathLevelOf(k){return JLPT_LEVEL_MAP[k]||'N1'}
-function pathLevelItems(items){return pathLevelFilter==='ALL'?items:items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter)}
+function pathLevelItems(items){return items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter)}
 function pathItems(){
   const byKanji=new Map(SETS.map(s=>[s.kanji,s]));
   return PATH_JOYO_ORDER.map((kanji,i)=>{
@@ -5150,8 +5151,7 @@ async function ensurePathMeta(kanji){
 function srsSchedule(entry,quality){const now=Date.now();let{stage=0,ease=2.5,interval=0,reps=0,lapses=0}=entry||{};if(quality===0){stage=Math.max(0,stage-2);lapses++;interval=0;reps=0}else{reps++;if(stage<=0){stage=1;interval=quality>=3?1:0}else if(stage===1){stage=2;interval=quality>=3?3:1}else if(stage===2){stage=3;interval=quality>=3?7:3}else{stage=Math.min(8,stage+1);ease=Math.max(1.3,ease+(0.1-(3-quality)*(0.08+(3-quality)*0.02)));interval=Math.max(1,Math.round(interval*ease*(quality===1?0.8:quality===3?1.3:1)))}}const due=now+(interval<=0?10*60*1000:interval*864e5);return{stage,ease,interval,due,reps,lapses,last:now}}
 const PATH_WORDS_CACHE=Object.create(null);
 const PATH_WORDS_LOADING=Object.create(null);
-const JOYO_VOCAB_STORAGE='kanjiPathJoyoVocabularyV2';
-let JOYO_VOCAB=[],JOYO_VOCAB_BY_KANJI=Object.create(null),JOYO_VOCAB_LOADING=false,JOYO_VOCAB_PAGE=0,JOYO_VOCAB_QUERY='';
+let JOYO_VOCAB_PAGE=0,JOYO_VOCAB_QUERY='',JOYO_VOCAB_TOTAL=0,JOYO_VOCAB_ITEMS=[],JOYO_VOCAB_LOADING=false;
 function pathWordEntryToRow(entry,kanji){
   if(!entry||!Array.isArray(entry.variants))return [];
   const rows=[];
@@ -5173,135 +5173,69 @@ async function ensurePathWords(kanji){
   if(!kanji)return [];
   if(Array.isArray(PATH_WORDS_CACHE[kanji]))return PATH_WORDS_CACHE[kanji];
   if(PATH_WORDS_LOADING[kanji])return PATH_WORDS_LOADING[kanji];
-  PATH_WORDS_LOADING[kanji]=fetch('https://kanjiapi.dev/v1/words/'+encodeURIComponent(kanji),{cache:'force-cache'})
-    .then(r=>{if(!r.ok)throw new Error('Vocabulary request failed: '+r.status);return r.json()})
-    .then(data=>{const rows=normalizePathWords(data,kanji);PATH_WORDS_CACHE[kanji]=rows;return rows})
-    .catch(e=>{PATH_WORDS_CACHE[kanji]=[];console.warn('Vocabulary load failed for',kanji,e);return []})
-    .finally(()=>{delete PATH_WORDS_LOADING[kanji]});
+  PATH_WORDS_LOADING[kanji]=(async()=>{
+    try{
+      const r=await fetch('https://kanjiapi.dev/v1/words/'+encodeURIComponent(kanji),{cache:'force-cache'});
+      if(r.ok){
+        const data=await r.json();
+        const rows=normalizePathWords(data,kanji);
+        if(rows.length){PATH_WORDS_CACHE[kanji]=rows;return rows;}
+      }
+    }catch(e){console.warn('kanjiapi failed for',kanji,e);}
+    try{
+      const r=await fetch('/api/vocab?kanji='+encodeURIComponent(kanji)+'&limit=80',{credentials:'include'});
+      if(r.ok){
+        const data=await r.json();
+        const rows=(data.items||[]).map(x=>[x.word,x.reading||'',x.meaning||'']);
+        PATH_WORDS_CACHE[kanji]=rows;return rows;
+      }
+    }catch(e){console.warn('vocab API failed for',kanji,e);}
+    PATH_WORDS_CACHE[kanji]=[];
+    return [];
+  })().finally(()=>{delete PATH_WORDS_LOADING[kanji]});
   return PATH_WORDS_LOADING[kanji];
 }
-function saveJoyoVocabCache(){
-  try{localStorage.setItem(JOYO_VOCAB_STORAGE,JSON.stringify(JOYO_VOCAB.slice(0,40000)))}catch(e){console.warn('Vocabulary cache could not be saved:',e)}
-}
-function updateSqlExportButton(){
-  const btn=$('wordsExportSql');
-  if(!btn)return;
-  const ready=JOYO_VOCAB.length>=40000;
-  btn.disabled=!ready;
-  btn.textContent=ready?'Export 40,000 Words to SQL':'Export 40,000 Words to SQL';
-  btn.title=ready?'Download a UTF-8 SQL dump of the first 40,000 vocabulary entries.':'Load 40,000+ words first.';
-}
+function saveJoyoVocabCache(){ /* vocabulary is stored in Neon; no client export */ }
+function updateSqlExportButton(){ /* removed: SQL export no longer needed */ }
 function sqlQuote(value){return "'"+String(value??'').replace(/'/g,"''")+"'";}
-function exportJoyoVocabularySql(){
-  if(JOYO_VOCAB.length<40000){alert('Please load 40,000+ vocabulary entries first.');return;}
-  const rows=JOYO_VOCAB.slice(0,40000);
-  const out=[];
-  out.push('-- Kanji Path Jōyō Vocabulary Export');
-  out.push('-- UTF-8 SQL dump; 40,000 vocabulary entries');
-  out.push('-- Columns: id, word, reading, meaning, kanji');
-  out.push('BEGIN TRANSACTION;');
-  out.push('CREATE TABLE IF NOT EXISTS joyo_vocabulary (id INTEGER PRIMARY KEY, word TEXT NOT NULL, reading TEXT, meaning TEXT, kanji TEXT);');
-  out.push('CREATE INDEX IF NOT EXISTS idx_joyo_vocabulary_word ON joyo_vocabulary(word);');
-  out.push('CREATE INDEX IF NOT EXISTS idx_joyo_vocabulary_kanji ON joyo_vocabulary(kanji);');
-  for(let i=0;i<rows.length;i+=500){
-    const batch=rows.slice(i,i+500);
-    const values=batch.map((r,j)=>{
-      const word=String(r[0]||'');
-      const reading=String(r[1]||'');
-      const meaning=String(r[2]||'');
-      const kanji=[...word].filter(isKanjiChar).join('');
-      return `(${i+j+1},${sqlQuote(word)},${sqlQuote(reading)},${sqlQuote(meaning)},${sqlQuote(kanji)})`;
-    }).join(',\n');
-    out.push(`INSERT INTO joyo_vocabulary (id,word,reading,meaning,kanji) VALUES\n${values};`);
-  }
-  out.push('COMMIT;');
-  const blob=new Blob([out.join('\n')+'\n'],{type:'application/sql;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='kanji-path-joyo-vocabulary-40000.sql';
-  document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-}
-function loadJoyoVocabCache(){
-  try{const raw=JSON.parse(localStorage.getItem(JOYO_VOCAB_STORAGE)||'[]');if(!Array.isArray(raw))return;JOYO_VOCAB=raw;JOYO_VOCAB_BY_KANJI=Object.create(null);for(const row of JOYO_VOCAB){for(const k of [...(row[0]||'')].filter(isKanjiChar)){(JOYO_VOCAB_BY_KANJI[k] ||= []).push(row);}}}catch(e){JOYO_VOCAB=[];JOYO_VOCAB_BY_KANJI=Object.create(null)}}
-updateSqlExportButton();
-function vocabBankFiltered(){
-  const q=JOYO_VOCAB_QUERY.trim().toLowerCase();
-  if(!q)return JOYO_VOCAB;
-  return JOYO_VOCAB.filter(r=>(r[0]+' '+r[1]+' '+r[2]).toLowerCase().includes(q));
-}
+function exportJoyoVocabularySql(){ alert("Vocabulary is already stored in the database."); }
+function loadJoyoVocabCache(){ /* use API */ }
+
+function vocabBankFiltered(){ return JOYO_VOCAB_ITEMS; }
 function renderVocabBank(){
   const bank=$('vocabBank'),grid=$('vocabBankGrid'),status=$('vocabBankStatus');if(!bank||!grid)return;
   bank.classList.remove('hidden');
-  const filtered=vocabBankFiltered(),size=100,totalPages=Math.max(1,Math.ceil(filtered.length/size));
-  JOYO_VOCAB_PAGE=Math.max(0,Math.min(JOYO_VOCAB_PAGE,totalPages-1));
-  const rows=filtered.slice(JOYO_VOCAB_PAGE*size,(JOYO_VOCAB_PAGE+1)*size);
-  grid.innerHTML=rows.map((r,i)=>`<button type="button" class="vocab-bank-item" data-vocab-index="${JOYO_VOCAB.indexOf(r)}"><strong>${esc(r[0])}</strong><small>${esc(r[1])}${r[2]?' · '+esc(r[2]):''}</small></button>`).join('');
-  grid.querySelectorAll('.vocab-bank-item').forEach(b=>b.onclick=()=>{const r=JOYO_VOCAB[Number(b.dataset.vocabIndex)];if(r)openWordFromVocab(r)});
-  if(status)status.textContent=`${JOYO_VOCAB.length.toLocaleString()} vocabulary entries loaded · ${filtered.length.toLocaleString()} shown · page ${JOYO_VOCAB_PAGE+1}/${totalPages}`;
-  const prev=$('vocabPrevPage'),next=$('vocabNextPage');if(prev)prev.disabled=JOYO_VOCAB_PAGE<=0;if(next)next.disabled=JOYO_VOCAB_PAGE>=totalPages-1;
+  const rows=JOYO_VOCAB_ITEMS;
+  grid.innerHTML=rows.map((r,i)=>`<button type="button" class="vocab-bank-item" data-vocab-i="${i}"><strong>${esc(r.word||r[0]||'')}</strong><small>${esc(r.reading||r[1]||'')}${(r.meaning||r[2])?' · '+esc(r.meaning||r[2]):''}</small></button>`).join('');
+  grid.querySelectorAll('.vocab-bank-item').forEach(b=>b.onclick=()=>{const r=JOYO_VOCAB_ITEMS[Number(b.dataset.vocabI)];if(!r)return;openWordFromVocab([r.word||r[0],r.reading||r[1]||'',r.meaning||r[2]||'']);});
+  const totalPages=Math.max(1,Math.ceil((JOYO_VOCAB_TOTAL||rows.length)/50));
+  if(status)status.textContent=JOYO_VOCAB_LOADING?'Loading…':`${(JOYO_VOCAB_TOTAL||0).toLocaleString()} words in database · page ${JOYO_VOCAB_PAGE+1}/${totalPages}`;
+  const prev=$('vocabPrevPage'),next=$('vocabNextPage');if(prev)prev.disabled=JOYO_VOCAB_PAGE<=0||JOYO_VOCAB_LOADING;if(next)next.disabled=JOYO_VOCAB_LOADING||!((JOYO_VOCAB_PAGE+1)*50<JOYO_VOCAB_TOTAL);
 }
-function openWordFromVocab(row){
-  const chars=[...(row[0]||'')].filter(isKanjiChar);if(!chars.length)return;
-  const item={setId:0,word:row[0],kanji:chars[0],chars,charIndex:0,reading:row[1]||'',english:row[2]||''};
-  state.words.items=[item];state.words.i=0;openWordWrite(0);
-}
-async function loadAllJoyoVocabulary(){
+async function fetchVocabPage(){
   if(JOYO_VOCAB_LOADING)return;
-  if(PATH_JOYO_ORDER.length!==2136){ applyJoyoList(STATIC_JOYO_LIST); renderPath(); }
-  if(PATH_JOYO_ORDER.length!==2136){alert('The embedded 2,136-kanji Jōyō list could not be initialized.');return;}
   JOYO_VOCAB_LOADING=true;
-  const btn=$('wordsLoadAll');if(btn){btn.disabled=true;btn.textContent='Loading vocabulary…';}
-  const seen=new Set(JOYO_VOCAB.map(r=>r[0]+'\u0000'+r[1]));
-  const represented=new Set();
-  for(const row of JOYO_VOCAB)for(const k of [...(row[0]||'')].filter(isKanjiChar))represented.add(k);
-  const targets=PATH_JOYO_ORDER.filter(k=>!represented.has(k));
-  let cursor=0,completed=0;
-  const worker=async()=>{
-    while(cursor<targets.length){
-      const k=targets[cursor++];
-      const rows=await ensurePathWords(k);
-      // First pass: guarantee at least one real dictionary word for every Jōyō kanji that has one.
-      if(rows.length){
-        const preferred=rows.find(r=>r[0].includes(k))||rows[0];
-        const key=preferred[0]+'\u0000'+preferred[1];
-        if(!seen.has(key)){seen.add(key);JOYO_VOCAB.push(preferred);}
-        represented.add(k);
-      }
-      completed++;
-      if(completed%12===0){const p=$('wordsProgress');if(p)p.textContent=`Assigning vocabulary: ${completed.toLocaleString()}/${targets.length.toLocaleString()} kanji checked · ${JOYO_VOCAB.length.toLocaleString()} words`;}
-    }
-  };
-  await Promise.all(Array.from({length:8},worker));
-
-  // Second pass: fill the bank with additional dictionary words until 40,000 entries or all fetched data is exhausted.
-  if(JOYO_VOCAB.length<40000){
-    let fillCursor=0;
-    const allKanji=[...PATH_JOYO_ORDER];
-    const filler=async()=>{
-      while(fillCursor<allKanji.length && JOYO_VOCAB.length<40000){
-        const k=allKanji[fillCursor++];
-        const rows=await ensurePathWords(k);
-        for(const row of rows){
-          if(JOYO_VOCAB.length>=40000)break;
-          const key=row[0]+'\u0000'+row[1];
-          if(seen.has(key))continue;
-          seen.add(key);JOYO_VOCAB.push(row);
-        }
-      }
-    };
-    await Promise.all(Array.from({length:8},filler));
+  const status=$('vocabBankStatus');if(status)status.textContent='Loading vocabulary from database…';
+  try{
+    const q=encodeURIComponent(JOYO_VOCAB_QUERY.trim());
+    const url=`/api/vocab?page=${JOYO_VOCAB_PAGE}&limit=50${q?`&q=${q}`:''}`;
+    const res=await fetch(url,{credentials:'include'});
+    if(!res.ok)throw new Error('API '+res.status);
+    const data=await res.json();
+    JOYO_VOCAB_ITEMS=Array.isArray(data.items)?data.items:[];
+    JOYO_VOCAB_TOTAL=data.total||JOYO_VOCAB_ITEMS.length;
+    if($('wordsCount'))$('wordsCount').textContent=(JOYO_VOCAB_TOTAL||0).toLocaleString()+' words';
+  }catch(e){
+    console.warn('Vocab API failed',e);
+    JOYO_VOCAB_ITEMS=[];JOYO_VOCAB_TOTAL=0;
+    if(status)status.textContent='Could not load vocabulary. Check database connection.';
+  }finally{
+    JOYO_VOCAB_LOADING=false;
+    renderVocabBank();
   }
-
-  JOYO_VOCAB.sort((a,b)=>a[0].localeCompare(b[0])||a[1].localeCompare(b[1]));
-  saveJoyoVocabCache();
-  JOYO_VOCAB_LOADING=false;
-  if(btn){btn.disabled=false;btn.textContent=JOYO_VOCAB.length>=40000?'Refresh Vocabulary':'Retry Vocabulary Load';}
-  updateSqlExportButton();
-  if($('wordsCount'))$('wordsCount').textContent=JOYO_VOCAB.length.toLocaleString()+' words';
-  if($('wordsProgress'))$('wordsProgress').textContent=`Vocabulary ready: ${JOYO_VOCAB.length.toLocaleString()} entries from the 2,136 Jōyō kanji.`;
-  renderVocabBank();
 }
+async function loadAllJoyoVocabulary(){ await fetchVocabPage(); }
+
 function renderPathVocabulary(item,info){
   const el=$('pathVocabList');if(!el)return;
   const rows=Array.isArray(PATH_WORDS_CACHE[item.kanji])?PATH_WORDS_CACHE[item.kanji]:null;
@@ -5313,15 +5247,14 @@ function renderPathVocabulary(item,info){
   if(!el)return;
   el.innerHTML=words.slice(0,120).map(x=>`<span class="path-vocab-chip"><strong>${esc(x[0])}</strong><small>${esc(x[1]||'')} · ${esc(x[2]||'')}</small></span>`).join('');
 }
-loadJoyoVocabCache();
 function renderPath(){const items=pathItems(),p=loadPathProgress(),due=pathDueList(items,p),learned=items.filter(x=>pathIsLearned(p,x.kanji)).length;if(!items.length)return;if(pathReviewMode&&due.length){const idx=items.findIndex(x=>x.kanji===due[0].kanji);pathCurrent=idx>=0?idx:pathCurrent}else{pathCurrent=Math.max(0,Math.min(pathCurrent,items.length-1));if(!PATH_JOYO_READY&&pathCurrent===0){const first=items.findIndex(x=>!pathIsLearned(p,x.kanji));if(first>=0)pathCurrent=first}}const item=items[pathCurrent];if(!item)return;const info=pathInfo(item),isDue=pathIsDue(p,item.kanji),isLearned=pathIsLearned(p,item.kanji);if($('pathLearnedCount'))$('pathLearnedCount').textContent=learned;if($('pathCurrentNumber'))$('pathCurrentNumber').textContent=pathCurrent+1;if($('pathDueCount'))$('pathDueCount').textContent=due.length;if($('pathProgressLabel'))$('pathProgressLabel').textContent=`${learned.toLocaleString()} of 2,136 learned`+(due.length?` · ${due.length} due`:'');if($('pathProgressFill'))$('pathProgressFill').style.width=Math.min(100,(learned/2136)*100)+'%';if($('pathSetBadge'))$('pathSetBadge').textContent=`Kanji ${pathCurrent+1}`;if($('pathLessonNumber'))$('pathLessonNumber').textContent=`Lesson ${pathCurrent+1} · ${pathLevelOf(item.kanji)}`+(isDue?' · REVIEW':'');if($('pathKanji'))$('pathKanji').textContent=item.kanji;if($('pathMeaning'))$('pathMeaning').textContent=item.english||'Loading English meaning…';if($('pathReading'))$('pathReading').textContent=item.reading||'Loading Japanese reading…';if($('pathStory'))$('pathStory').textContent=info.story;if($('pathHook'))$('pathHook').textContent=info.hook;renderPathVocabulary(item,info);
 // Radical-first display
 const rads=info.radicals||[];
 const radWrap=$('pathRadicals'),radList=$('pathRadicalsList'),radNote=$('pathRadicalsNote');
 if(radWrap&&radList){if(rads.length){radWrap.style.display='';radList.innerHTML=rads.map(r=>`<span class="path-radical-chip"><strong>${esc(r.radical)}</strong><small>${esc(r.meaning)}</small></span>`).join('');if(radNote)radNote.textContent=rads.filter(r=>r.story).map(r=>r.radical+' = '+r.story).join(' · ')||'Learn these building blocks first, then combine them into the kanji.';}else{radWrap.style.display='none';radList.innerHTML='';if(radNote)radNote.textContent='';}}
 const writeCount=getKanjiWriteCount(item.kanji);const writesDone=writeCount>=PRACTICE_GOAL;const learnBtn=$('pathLearnBtn');if(learnBtn){if(isDue){learnBtn.textContent='✓ I remembered it';learnBtn.dataset.mode='review-good';learnBtn.disabled=false;learnBtn.title=''}else if(isLearned){learnBtn.textContent='✓ Learned — continue →';learnBtn.dataset.mode='continue';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.dataset.mode='learn';if(writesDone){learnBtn.textContent='Mark as learned →';learnBtn.disabled=false;learnBtn.title=''}else{learnBtn.textContent=`Write ${writeCount}/${PRACTICE_GOAL} to unlock →`;learnBtn.disabled=true;learnBtn.title=`Write this kanji ${PRACTICE_GOAL} times in Practice before marking learned`}}}const writeHint=$('pathWriteHint');if(writeHint){if(isDue||isLearned){writeHint.style.display='none'}else{writeHint.style.display='';writeHint.textContent=writesDone?`Writing goal complete (${PRACTICE_GOAL}/${PRACTICE_GOAL})`:`Writing progress: ${writeCount} / ${PRACTICE_GOAL}`}}const revBtn=$('pathReviewToggle');if(revBtn){revBtn.style.display=due.length?'':'none';revBtn.textContent=pathReviewMode?'← Back to new kanji':`🔄 ${due.length} reviews due`}const againBtn=$('pathAgainBtn');if(againBtn)againBtn.style.display=isDue?'':'none';renderPathRoadmap(items,p);if(!item.reading||!item.english)ensurePathMeta(item.kanji).then(()=>renderPath());if(!PATH_WORDS_CACHE[item.kanji]){renderPathVocabulary(item,info);ensurePathWords(item.kanji).then(()=>{if(pathItems()[pathCurrent]?.kanji===item.kanji)renderPathVocabulary(item,pathInfo(item));});}}
-function renderPathRoadmap(items,p){const grid=$('pathRoadmap');if(!grid)return;const visible=pathLevelItems(items),counts=pathLevelCounts(items);grid.innerHTML='';for(const x of visible){const i=items.indexOf(x),b=document.createElement('button');b.type='button';b.className='path-node';if(pathIsLearned(p,x.kanji))b.classList.add('learned');if(pathIsDue(p,x.kanji))b.classList.add('due');if(i===pathCurrent)b.classList.add('current');const unlocked=i===0||pathIsLearned(p,items[i-1].kanji)||pathIsLearned(p,x.kanji);if(!unlocked)b.classList.add('locked');b.disabled=!unlocked;b.innerHTML=`<strong>${esc(x.kanji)}</strong><small>${i+1} · ${pathLevelOf(x.kanji)}</small>`;b.onclick=()=>{pathReviewMode=false;pathCurrent=i;renderPath()};grid.appendChild(b)}if($('pathRoadmapCount'))$('pathRoadmapCount').textContent=`${visible.length.toLocaleString()} kanji`;if($('pathLevelSummary'))$('pathLevelSummary').innerHTML=`<strong>N5 ${counts.N5}</strong> · <strong>N4 ${counts.N4}</strong> · <strong>N3 ${counts.N3}</strong> · <strong>N2 ${counts.N2}</strong> · <strong>N1 ${counts.N1}</strong>`}
-function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);if(quality===0){renderPath();return}pathReviewMode=false;if(pathCurrent<items.length-1)pathCurrent++;renderPath()}
+function renderPathRoadmap(items,p){const grid=$('pathRoadmap');if(!grid)return;const visible=pathLevelItems(items),counts=pathLevelCounts(items);grid.innerHTML='';for(let vi=0;vi<visible.length;vi++){const x=visible[vi],i=items.indexOf(x),b=document.createElement('button');b.type='button';b.className='path-node';if(pathIsLearned(p,x.kanji))b.classList.add('learned');if(pathIsDue(p,x.kanji))b.classList.add('due');if(i===pathCurrent)b.classList.add('current');const prevInLevel=vi>0?visible[vi-1]:null;const unlocked=vi===0||(prevInLevel&&pathIsLearned(p,prevInLevel.kanji))||pathIsLearned(p,x.kanji);if(!unlocked)b.classList.add('locked');b.disabled=!unlocked;b.innerHTML=`<strong>${esc(x.kanji)}</strong><small>${vi+1} · ${pathLevelOf(x.kanji)}</small>`;b.onclick=()=>{pathReviewMode=false;pathCurrent=i;renderPath()};grid.appendChild(b)}if($('pathRoadmapCount'))$('pathRoadmapCount').textContent=`${visible.length.toLocaleString()} kanji · ${pathLevelFilter}`;if($('pathLevelSummary'))$('pathLevelSummary').innerHTML=`Learning <strong>${pathLevelFilter}</strong> · N5 ${counts.N5} · N4 ${counts.N4} · N3 ${counts.N3} · N2 ${counts.N2} · N1 ${counts.N1}`}
+function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);if(quality===0){renderPath();return}pathReviewMode=false;const visible=pathLevelItems(items);const vi=visible.findIndex(v=>v.kanji===x.kanji);if(vi>=0&&vi<visible.length-1){pathCurrent=items.indexOf(visible[vi+1]);}else if(pathCurrent<items.length-1){pathCurrent++;}renderPath()}
 function pathMarkLearned(){
   const btn = $('pathLearnBtn');
   const mode = (btn && btn.dataset && btn.dataset.mode) || 'learn';
@@ -5404,8 +5337,18 @@ bind('pathAgainBtn', 'onclick', () => pathAnswer(0));
 bind('pathReviewToggle', 'onclick', () => { pathReviewMode = !pathReviewMode; renderPath(); });
 document.querySelectorAll('.path-level-btn').forEach(btn => {
   btn.onclick = () => {
-    pathLevelFilter = btn.getAttribute('data-level') || 'ALL';
+    pathLevelFilter = btn.getAttribute('data-level') || 'N5';
     document.querySelectorAll('.path-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    pathReviewMode = false;
+    const items = pathItems();
+    const visible = pathLevelItems(items);
+    const p = loadPathProgress();
+    let idx = -1;
+    for (const x of visible) {
+      if (!pathIsLearned(p, x.kanji)) { idx = items.indexOf(x); break; }
+    }
+    if (idx < 0 && visible.length) idx = items.indexOf(visible[0]);
+    if (idx >= 0) pathCurrent = idx;
     renderPath();
   };
 });
@@ -5550,8 +5493,6 @@ bind('practiceRewrite', 'onclick', practiceRewrite);
 bind('practiceNext', 'onclick', practiceNextKanji);
 bind('practiceSkip', 'onclick', practiceSkip);
 bind('wordsChooseSets', 'onclick', () => openModal('words'));
-bind('wordsLoadAll', 'onclick', loadAllJoyoVocabulary);
-bind('wordsExportSql', 'onclick', exportJoyoVocabularySql);
 bind('vocabBankHide', 'onclick', ()=>{
   const bank=$('vocabBank'),show=$('vocabBankShow');
   if(bank)bank.classList.add('hidden');
@@ -5562,9 +5503,9 @@ bind('vocabBankShow', 'onclick', ()=>{
   if(bank)bank.classList.remove('hidden');
   if(show)show.classList.add('hidden');
 });
-bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; renderVocabBank(); });
-bind('vocabPrevPage', 'onclick', () => { JOYO_VOCAB_PAGE--; renderVocabBank(); });
-bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; renderVocabBank(); });
+bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; fetchVocabPage(); });
+bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
+bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; fetchVocabPage(); });
 
 // Prevent clicks inside the practice dialog from being treated as backdrop clicks.
 $('practiceModal').addEventListener('click', e => {

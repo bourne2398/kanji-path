@@ -2,9 +2,10 @@
 
 Self-contained Jōyō kanji study app with:
 
-- Static frontend (`public/index.html`)
+- Static frontend (`public/index.html`) — responsive, radical-first Path mode, JLPT N5→N1 step-by-step
 - Serverless API on Vercel (`/api/*`)
-- Neon Postgres (users + 40,000 vocabulary rows)
+- Neon Postgres (users + vocabulary)
+- Spaced-repetition reviews for learned kanji
 - Admin panel at `/admin.html`
 
 ---
@@ -75,7 +76,9 @@ This creates tables and an **admin** row in `users`.
 
 ---
 
-## 5. Load the 40,000 vocabulary SQL
+## 5. Load vocabulary into Neon (one-time)
+
+If vocabulary is not already seeded:
 
 ```bash
 export DATABASE_URL="postgresql://..."
@@ -85,9 +88,7 @@ export DATABASE_URL="postgresql://..."
 npm run seed:vocab
 ```
 
-Expect ~40,000 rows in `joyo_vocabulary`. Takes a few minutes depending on network.
-
-You can also paste `scripts/joyo-vocabulary.sql` into the Neon SQL Editor, but the Node script is more reliable for the large dump.
+Expect ~40,000 rows in `joyo_vocabulary`. The app reads vocabulary from the API (`/api/vocab`); there is no client-side “Load 40,000 words” or SQL export button.
 
 ---
 
