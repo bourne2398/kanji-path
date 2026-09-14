@@ -3537,7 +3537,14 @@ html[data-theme="dark"] .nav-btn.active {
       <span class="top-brand-mark">門</span>
       <span>Kanji Path</span>
     </div>
-    <div class="top-nav-pills">
+    <button type="button" class="nav-hamburger" id="topNavHamburger" aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <line x1="4" y1="7" x2="20" y2="7"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <line x1="4" y1="17" x2="20" y2="17"/>
+      </svg>
+    </button>
+    <div class="top-nav-pills" id="topNavPills">
       <button type="button" class="top-pill active" data-home-nav="study" id="topStudyBtn">📖 Study</button>
       <button type="button" class="top-pill" data-home-nav="practice" id="topPracticeBtn">✏️ Practice</button>
     </div>
@@ -3852,7 +3859,7 @@ html[data-theme="dark"] .nav-btn.active {
   <!-- WORDS (multi-character compounds — screenshot-style write missing kanji) -->
   <section id="wordsMode" class="hidden">
     <h1>Write Words</h1>
-
+    <p class="subtitle">Study vocabulary for the Jōyō kanji. Words are served from your vocabulary database — search and practice without loading everything at once.</p>
     <div class="words-search-wrap">
       <span class="words-search-icon" aria-hidden="true">⌕</span>
       <input class="words-search" id="wordsSearch" type="search" placeholder="Search words, kanji, reading or meaning…" autocomplete="off" enterkeyhint="search" aria-label="Search vocabulary">
@@ -7982,6 +7989,45 @@ window.addEventListener('resize', () => {
   }
 });
 // Boot — guest works offline; login optional (admin at /admin.html).
+
+(function bindMobileNav() {
+  function toggle(btn, panel) {
+    if (!btn || !panel) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = panel.classList.toggle('nav-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  const ham = document.getElementById('navHamburger');
+  const nav = document.getElementById('mainNav');
+  toggle(ham, nav);
+  const topHam = document.getElementById('topNavHamburger');
+  const topPills = document.getElementById('topNavPills');
+  toggle(topHam, topPills);
+
+  document.addEventListener('click', (e) => {
+    if (nav && ham && !nav.contains(e.target) && !ham.contains(e.target)) {
+      nav.classList.remove('nav-open');
+      ham.setAttribute('aria-expanded', 'false');
+    }
+    if (topPills && topHam && !topPills.contains(e.target) && !topHam.contains(e.target)) {
+      topPills.classList.remove('nav-open');
+      topHam.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Close drawer after navigating
+  document.querySelectorAll('#mainNav .nav-btn, #topNavPills .top-pill').forEach((el) => {
+    el.addEventListener('click', () => {
+      if (nav) nav.classList.remove('nav-open');
+      if (ham) ham.setAttribute('aria-expanded', 'false');
+      if (topPills) topPills.classList.remove('nav-open');
+      if (topHam) topHam.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
 (async () => {
   setupStudy([1], true);
   setupPractice([1]);
