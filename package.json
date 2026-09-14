@@ -1,0 +1,21 @@
+{
+  "name": "kanji-path",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kanji Path — Jōyō kanji study app with admin and Neon Postgres",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static HTML + serverless API — no build step'",
+    "seed:admin": "node scripts/seed-admin.mjs",
+    "seed:vocab": "node scripts/seed-vocab.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6",
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
