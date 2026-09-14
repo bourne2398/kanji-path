@@ -3606,41 +3606,50 @@ function kanaPracticeCanvas() { return null; }
 // kana-svg-data uses the same CharacterJson shape HanziWriter expects:
 // { strokes: string[], medians: number[][][] }.
 const kanaDataCache = new Map();
+let kanaWriterGeneration = 0;
 
-async function loadKanaStrokeData(char) {
-  // HanziWriter 3.x supports a Promise-returning charDataLoader. Use that
-  // interface directly instead of mixing it with the old callback form.
-  // This is important because the Kana database is remote and the writer must
-  // receive the CharacterJson before it can animate or start grading strokes.
+function loadKanaStrokeData(char, onLoad, onError) {
+  // HanziWriter 3.5.0 uses the callback form of charDataLoader. Do not rely on
+  // a returned Promise here: the writer waits for onLoad/onError internally.
   const cached = kanaDataCache.get(char);
-  if (cached) return cached;
+  if (cached) {
+    onLoad(cached);
+    return;
+  }
 
   const url = 'https://cdn.jsdelivr.net/gh/MadLadSquad/hanzi-writer-data-youyin@latest/data/'
     + encodeURIComponent(char) + '.json';
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);
 
-  try {
-    const res = await fetch(url, { cache: 'force-cache', signal: controller.signal });
-    if (!res.ok) throw new Error('Kana HanziWriter data unavailable (' + res.status + ')');
-    const data = await res.json();
+  fetch(url, { cache: 'force-cache', signal: controller.signal })
+    .then(res => {
+      if (!res.ok) throw new Error('Kana stroke data HTTP ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      if (!data || !Array.isArray(data.strokes) || !Array.isArray(data.medians)) {
+        throw new Error('Invalid HanziWriter CharacterJson for ' + char);
+      }
+      if (!data.strokes.length || data.strokes.length !== data.medians.length) {
+        throw new Error('Stroke/median count mismatch for ' + char);
+      }
 
-    if (!data || !Array.isArray(data.strokes) || !Array.isArray(data.medians)) {
-      throw new Error('Invalid HanziWriter kana data');
-    }
-    if (data.strokes.length !== data.medians.length || !data.strokes.length) {
-      throw new Error('Incomplete HanziWriter kana data');
-    }
-
-    const clean = {
-      strokes: data.strokes,
-      medians: data.medians
-    };
-    kanaDataCache.set(char, clean);
-    return clean;
-  } finally {
-    clearTimeout(timeout);
-  }
+      // Keep the dataset untouched. In particular, NEVER merge or split kana
+      // strokes manually. HanziWriter's grading data is paired with its stroke
+      // paths and must remain exactly as supplied by the dataset.
+      const clean = {
+        strokes: data.strokes,
+        medians: data.medians
+      };
+      kanaDataCache.set(char, clean);
+      onLoad(clean);
+    })
+    .catch(err => {
+      console.error('[Kana] failed to load', char, err);
+      if (onError) onError(err);
+    })
+    .finally(() => clearTimeout(timeout));
 }
 
 function setupKanaCanvas(char, options = {}) {
@@ -3648,12 +3657,14 @@ function setupKanaCanvas(char, options = {}) {
   const box = $('practiceHwBox');
   if (!target || !box) return;
 
-  // A mode switch (Animate -> Write -> Show) must never leave the previous
-  // HanziWriter instance attached to the same target. Cancel/destroy it first.
+  // Mode switches must invalidate every callback/animation belonging to the
+  // previous writer. HanziWriter 3.5 exposes cancelQuiz/pauseAnimation rather
+  // than a public destroy() method, so use only its public API.
+  kanaWriterGeneration = (kanaWriterGeneration || 0) + 1;
+  const generation = kanaWriterGeneration;
   if (hanziWriter) {
     try { if (typeof hanziWriter.cancelQuiz === 'function') hanziWriter.cancelQuiz(); } catch (_) {}
-    try { if (typeof hanziWriter.cancelAnimation === 'function') hanziWriter.cancelAnimation(); } catch (_) {}
-    try { if (typeof hanziWriter._hanziWriterRenderer?.destroy === 'function') hanziWriter._hanziWriterRenderer.destroy(); } catch (_) {}
+    try { if (typeof hanziWriter.pauseAnimation === 'function') hanziWriter.pauseAnimation(); } catch (_) {}
     hanziWriter = null;
   }
 
@@ -3715,7 +3726,7 @@ function setupKanaCanvas(char, options = {}) {
         // animation/quiz. This prevents a newly-created Kana writer from
         // appearing blank when the previous mode was just destroyed.
         requestAnimationFrame(() => {
-          if (!writer || hanziWriter !== writer) return;
+          if (generation !== kanaWriterGeneration || !writer || hanziWriter !== writer) return;
           if (mode === 'show') {
             writer.showOutline({ duration: 0 });
             writer.showCharacter({ duration: 250 });
@@ -3792,7 +3803,7 @@ function setupKanaCanvas(char, options = {}) {
 
 function loadPracticeCharacter(char) {
   const s=state.practice, item=s.items[s.i];
-  if(isKanaChar(char)) { destroyHanzi(); setupKanaCanvas(char); return; }
+  if(isKanaChar(char)) { setupKanaCanvas(char); return; }
   loadHanzi(char);
 }
 
