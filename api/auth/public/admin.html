@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · Kanji Path</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c1412;
+    --panel: #15201c;
+    --text: #e8f2ee;
+    --muted: #8aa399;
+    --border: #2a3a34;
+    --accent: #2ec4b6;
+    --bad: #f07178;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Source Sans 3", system-ui, sans-serif;
+  }
+  header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  header a { color: var(--accent); text-decoration: none; font-weight: 700; }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  h1 { margin: 0 0 4px; font-size: 1.4rem; }
+  .muted { color: var(--muted); font-size: .9rem; }
+  label { display: block; font-weight: 700; margin: 12px 0 6px; font-size: .9rem; }
+  input, select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #0c1412;
+    color: var(--text);
+    font: inherit;
+  }
+  button {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #042;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .err { color: var(--bad); font-weight: 700; margin-top: 10px; min-height: 1.2em; }
+  .ok { color: var(--accent); font-weight: 700; margin-top: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 700; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(46,196,182,.2);
+    color: var(--accent);
+    font-size: .75rem;
+    font-weight: 800;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <strong>墨道 · Admin</strong>
+  <a href="/">← App</a>
+  <span class="muted" id="who"></span>
+  <button class="secondary" id="logoutBtn" style="width:auto;margin:0;padding:8px 14px;margin-left:auto">Log out</button>
+</header>
+<main>
+  <div class="card" id="loginCard">
+    <h1>Admin login</h1>
+    <p class="muted">Sign in with the admin account created by <code>seed-admin</code>.</p>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username" placeholder="admin@example.com">
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button id="loginBtn">Sign in</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+
+  <div class="card hidden" id="dashCard">
+    <h1>Dashboard</h1>
+    <p class="muted" id="healthLine">Checking database…</p>
+    <p class="ok" id="createMsg"></p>
+  </div>
+
+  <div class="card hidden" id="usersCard">
+    <h1>Users</h1>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>ID</th><th>Email</th><th>Name</th><th>Role</th><th>Last login</th></tr></thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card hidden" id="createCard">
+    <h1>Create user</h1>
+    <label>Email</label>
+    <input id="newEmail" type="email">
+    <label>Name</label>
+    <input id="newName" type="text">
+    <label>Password (min 8)</label>
+    <input id="newPass" type="password">
+    <label>Role</label>
+    <select id="newRole">
+      <option value="student">student</option>
+      <option value="admin">admin</option>
+    </select>
+    <button id="createBtn">Create user</button>
+    <div class="err" id="createErr"></div>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    ...opts,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { res, data };
+}
+
+function showLoggedIn(user) {
+  $('loginCard').classList.add('hidden');
+  $('dashCard').classList.remove('hidden');
+  $('usersCard').classList.remove('hidden');
+  $('createCard').classList.remove('hidden');
+  $('who').textContent = user ? `${user.email} (${user.role})` : '';
+  loadHealth();
+  loadUsers();
+}
+
+function showLoggedOut() {
+  $('loginCard').classList.remove('hidden');
+  $('dashCard').classList.add('hidden');
+  $('usersCard').classList.add('hidden');
+  $('createCard').classList.add('hidden');
+  $('who').textContent = '';
+}
+
+async function loadMe() {
+  const { data } = await api('/api/auth/me');
+  if (data.user && data.user.role === 'admin') {
+    showLoggedIn(data.user);
+  } else {
+    showLoggedOut();
+  }
+}
+
+async function loadHealth() {
+  const { data } = await api('/api/health');
+  if (data.ok) {
+    $('healthLine').textContent =
+      `DB connected · ${Number(data.vocabulary_entries || 0).toLocaleString()} vocabulary rows · ${data.users} users`;
+  } else {
+    $('healthLine').textContent = 'DB error: ' + (data.error || 'unknown');
+  }
+}
+
+async function loadUsers() {
+  const { res, data } = await api('/api/admin/users');
+  if (!res.ok) {
+    $('usersBody').innerHTML = `<tr><td colspan="5">${data.error || 'Failed'}</td></tr>`;
+    return;
+  }
+  $('usersBody').innerHTML = (data.users || []).map(u => `
+    <tr>
+      <td>${u.id}</td>
+      <td>${escapeHtml(u.email)}</td>
+      <td>${escapeHtml(u.name || '')}</td>
+      <td><span class="badge">${escapeHtml(u.role)}</span></td>
+      <td>${u.last_login_at ? new Date(u.last_login_at).toLocaleString() : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+$('loginBtn').onclick = async () => {
+  $('loginErr').textContent = '';
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  const { res, data } = await api('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    $('loginErr').textContent = data.error || 'Login failed';
+    return;
+  }
+  if (data.user?.role !== 'admin') {
+    $('loginErr').textContent = 'This account is not an admin.';
+    await api('/api/auth/logout', { method: 'POST' });
+    return;
+  }
+  showLoggedIn(data.user);
+};
+
+$('logoutBtn').onclick = async () => {
+  await api('/api/auth/logout', { method: 'POST' });
+  showLoggedOut();
+};
+
+$('createBtn').onclick = async () => {
+  $('createErr').textContent = '';
+  $('createMsg').textContent = '';
+  const body = {
+    email: $('newEmail').value.trim(),
+    name: $('newName').value.trim(),
+    password: $('newPass').value,
+    role: $('newRole').value,
+  };
+  const { res, data } = await api('/api/admin/users', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    $('createErr').textContent = data.error || 'Create failed';
+    return;
+  }
+  $('createMsg').textContent = `Created ${data.user.email} (id ${data.user.id})`;
+  $('newEmail').value = '';
+  $('newName').value = '';
+  $('newPass').value = '';
+  loadUsers();
+  loadHealth();
+};
+
+loadMe();
+</script>
+</body>
+</html>
