@@ -1,14 +1,20 @@
-import { getSessionUser, json } from '../../lib/auth.js';
+import { getSessionUser } from '../../lib/auth.js';
 
-export const config = { runtime: 'edge' };
+export const config = { runtime: 'nodejs20.x' };
 
-export default async function handler(req) {
+export default async function handler(req, res) {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
   if (req.method !== 'GET') {
-    return json({ error: 'Method not allowed' }, 405);
+    res.statusCode = 405;
+    return res.end(JSON.stringify({ error: 'Method not allowed' }));
   }
-  const user = await getSessionUser(req);
-  if (!user) {
-    return json({ user: null }, 200);
+  try {
+    const user = await getSessionUser(req);
+    res.statusCode = 200;
+    return res.end(JSON.stringify({ user }));
+  } catch (err) {
+    console.error('me error:', err);
+    res.statusCode = 200;
+    return res.end(JSON.stringify({ user: null }));
   }
-  return json({ user }, 200);
 }

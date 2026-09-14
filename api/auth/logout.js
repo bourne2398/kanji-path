@@ -1,14 +1,15 @@
-import { clearSessionCookie, json } from '../../lib/auth.js';
+import { clearSessionCookie } from '../../lib/auth.js';
 
-export const config = { runtime: 'edge' };
+export const config = { runtime: 'nodejs20.x' };
 
-export default async function handler(req) {
+export default async function handler(req, res) {
   if (req.method !== 'POST' && req.method !== 'GET') {
-    return json({ error: 'Method not allowed' }, 405);
+    res.statusCode = 405;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.end(JSON.stringify({ error: 'Method not allowed' }));
   }
-  return json(
-    { ok: true },
-    200,
-    { 'Set-Cookie': clearSessionCookie() }
-  );
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Set-Cookie', clearSessionCookie());
+  return res.end(JSON.stringify({ ok: true }));
 }
