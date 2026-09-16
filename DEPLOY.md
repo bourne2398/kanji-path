@@ -1,41 +1,68 @@
-# Deploy to Vercel (Hobby plan)
+# Deploy Kanji Path to Vercel (zero-config ready)
 
-## Why builds failed
-1. Hobby plan allows **max 12 serverless functions**.
-2. Older uploads included a **nested copy** of the project under `api/auth/`, which created too many functions.
-3. Commits named "Update index.html" only change the frontend — **they do not remove** the old nested API files on the server.
+## Prerequisites
+- Neon Postgres project → copy the connection string
+- Vercel account (Hobby plan is enough — 10 serverless functions)
 
-## Fix (do this once)
+## 1. Environment variables (Vercel → Project → Settings → Environment Variables)
 
-### Option A — Vercel Dashboard upload
-1. Download `Kanji-Path-Deploy-Clean.zip` from this release.
-2. In Vercel → Project → **Settings → General**, note the connected Git repo (or use CLI).
-3. **Delete every file** in the GitHub repo (or create a fresh empty repo).
-4. Upload/extract this zip so the root contains:
-   ```
-   api/
-   lib/
-   public/
-   scripts/
-   package.json
-   vercel.json
-   ```
-5. Push to `main` and redeploy.
-6. Set Environment Variables:
-   - `DATABASE_URL` = Neon connection string
-   - `JWT_SECRET` = any random string, 16+ characters
-   - `RESEND_API_KEY` = Resend API key for password-reset emails
-   - `RESEND_FROM` = verified sender, e.g. `Kanji Path <no-reply@yourdomain.com>`
-   - `APP_URL` = your public Vercel URL, e.g. `https://your-app.vercel.app`
+| Name | Required | Example |
+|------|----------|---------|
+| `DATABASE_URL` | **Yes** | `postgresql://user:pass@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require` |
+| `JWT_SECRET` | **Yes** | any random string ≥ 16 characters |
+| `RESEND_API_KEY` | Optional (password reset emails) | `re_...` |
+| `RESEND_FROM` | Optional | `Kanji Path <no-reply@yourdomain.com>` |
+| `APP_URL` | Optional | `https://your-app.vercel.app` |
 
-### Option B — CLI
+Apply to Production, Preview, and Development.
+
+## 2. Database setup (one-time)
+
+In the Neon SQL Editor run the contents of `lib/schema.sql`.
+
+Then from your machine (with Node 20+):
+
 ```bash
-unzip Kanji-Path-Deploy-Clean.zip
-cd kanji-path-main
+export DATABASE_URL="postgresql://..."
+export ADMIN_EMAIL="you@example.com"
+export ADMIN_PASSWORD="YourStrongPassword123!"
+export ADMIN_NAME="Admin"
+
+npm install
+npm run seed:admin
+npm run seed:vocab   # loads ~40k vocabulary rows (takes a minute)
+```
+
+## 3. Deploy
+
+### Option A — GitHub
+```bash
+git init
+git add .
+git commit -m "Kanji Path production ready"
+# create repo and push, then import in Vercel dashboard
+# Framework Preset: Other
+# Root Directory: leave blank (repo root)
+```
+
+### Option B — Vercel CLI
+```bash
 npx vercel --prod
 ```
 
-## Serverless functions in this package (10 total)
+## 4. Verify
+
+After deploy open:
+
+- `https://YOUR-APP.vercel.app/api/health`  
+  → must return JSON with `"ok": true` and non-null `vocabulary_entries` / `users`.
+
+- `https://YOUR-APP.vercel.app/`  
+  → Path mode loads, practice writing works offline.
+
+- Sign in / register → progress should sync (check Network tab for `/api/progress`).
+
+## Function count (Hobby limit = 12)
 - /api/auth/login
 - /api/auth/register
 - /api/auth/logout
@@ -47,11 +74,10 @@ npx vercel --prod
 - /api/vocab
 - /api/progress
 
-Do **not** add more files under `api/` unless you stay under 12.
+Do not add more files under `api/` unless you stay under 12.
 
-
-## Database update
-Run `lib/schema.sql` in the Neon SQL Editor after deploying this version. It adds password-reset fields, the `everyday` vocabulary flag, and indexes. The Kanji Path client now loads/saves path progress through `/api/progress` whenever the user is signed in.
-
-## Vocabulary
-The vocabulary API defaults to everyday-use entries (`everyday = TRUE`) instead of exposing the old N5–N1 flashcard filter. The seed SQL also classifies specialist/obscure entries out of the default flashcard pool. The classification is intentionally conservative and can be further curated by changing `joyo_vocabulary.everyday` in Neon.
+## Troubleshooting 404 on /api/*
+1. Confirm Root Directory in Vercel is empty (not `public`).
+2. Confirm `api/` folder is at the repository root.
+3. Redeploy after a clean push (no nested old `api/auth/...` copies).
+4. Check Function logs in the Vercel dashboard.

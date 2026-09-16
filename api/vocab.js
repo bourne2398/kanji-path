@@ -1,8 +1,26 @@
 import { getDb } from '../lib/db.js';
 
+/**
+ * GET /api/vocab
+ * Query params:
+ *   q       – search text
+ *   kanji   – filter by kanji contained in word
+ *   everyday=0 to include non-everyday entries
+ *   page    – 0-based page
+ *   limit   – 1–200 (default 50)
+ */
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 'public, max-age=60');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
+    res.setHeader('Allow', 'GET, OPTIONS');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -20,28 +38,75 @@ export default async function handler(req, res) {
     let rows;
     let total;
 
-    const filter = !everydayOnly;
+    // everydayOnly=true → only everyday = TRUE
+    // everydayOnly=false → all rows
     if (kanji) {
-      rows = await sql`
-        SELECT id, word, reading, meaning, kanji, everyday
-        FROM joyo_vocabulary
-        WHERE (kanji LIKE ${'%' + kanji + '%'} OR word LIKE ${'%' + kanji + '%'}) AND (${filter} OR everyday = TRUE)
-        ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
-      const countRows = await sql`SELECT COUNT(*)::int AS c FROM joyo_vocabulary WHERE (kanji LIKE ${'%' + kanji + '%'} OR word LIKE ${'%' + kanji + '%'}) AND (${filter} OR everyday = TRUE)`;
-      total = countRows[0]?.c ?? rows.length;
+      const pattern = '%' + kanji + '%';
+      if (everydayOnly) {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          WHERE (kanji LIKE ${pattern} OR word LIKE ${pattern}) AND everyday = TRUE
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary
+          WHERE (kanji LIKE ${pattern} OR word LIKE ${pattern}) AND everyday = TRUE`;
+        total = countRows[0]?.c ?? rows.length;
+      } else {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          WHERE kanji LIKE ${pattern} OR word LIKE ${pattern}
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary
+          WHERE kanji LIKE ${pattern} OR word LIKE ${pattern}`;
+        total = countRows[0]?.c ?? rows.length;
+      }
     } else if (q) {
       const like = '%' + q + '%';
-      rows = await sql`
-        SELECT id, word, reading, meaning, kanji, everyday
-        FROM joyo_vocabulary
-        WHERE (word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like}) AND (${filter} OR everyday = TRUE)
-        ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
-      const countRows = await sql`SELECT COUNT(*)::int AS c FROM joyo_vocabulary WHERE (word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like}) AND (${filter} OR everyday = TRUE)`;
-      total = countRows[0]?.c ?? rows.length;
+      if (everydayOnly) {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          WHERE (word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like})
+            AND everyday = TRUE
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary
+          WHERE (word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like})
+            AND everyday = TRUE`;
+        total = countRows[0]?.c ?? rows.length;
+      } else {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          WHERE word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like}
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary
+          WHERE word ILIKE ${like} OR reading ILIKE ${like} OR meaning ILIKE ${like}`;
+        total = countRows[0]?.c ?? rows.length;
+      }
     } else {
-      rows = await sql`SELECT id, word, reading, meaning, kanji, everyday FROM joyo_vocabulary WHERE 1=1 AND (${filter} OR everyday = TRUE) ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
-      const countRows = await sql`SELECT COUNT(*)::int AS c FROM joyo_vocabulary WHERE 1=1 AND (${filter} OR everyday = TRUE)`;
-      total = countRows[0]?.c ?? 0;
+      if (everydayOnly) {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          WHERE everyday = TRUE
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary WHERE everyday = TRUE`;
+        total = countRows[0]?.c ?? 0;
+      } else {
+        rows = await sql`
+          SELECT id, word, reading, meaning, kanji, everyday
+          FROM joyo_vocabulary
+          ORDER BY id LIMIT ${limit} OFFSET ${offset}`;
+        const countRows = await sql`
+          SELECT COUNT(*)::int AS c FROM joyo_vocabulary`;
+        total = countRows[0]?.c ?? 0;
+      }
     }
 
     return res.status(200).json({
@@ -53,6 +118,9 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('VOCAB ERROR:', err);
-    return res.status(500).json({ error: 'Failed to query vocabulary. Has the SQL been loaded?' });
+    return res.status(500).json({
+      error: 'Failed to query vocabulary. Has the schema and seed been applied?',
+      detail: String(err.message || err),
+    });
   }
 }
