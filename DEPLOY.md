@@ -24,6 +24,9 @@
 6. Set Environment Variables:
    - `DATABASE_URL` = Neon connection string
    - `JWT_SECRET` = any random string, 16+ characters
+   - `RESEND_API_KEY` = Resend API key for password-reset emails
+   - `RESEND_FROM` = verified sender, e.g. `Kanji Path <no-reply@yourdomain.com>`
+   - `APP_URL` = your public Vercel URL, e.g. `https://your-app.vercel.app`
 
 ### Option B — CLI
 ```bash
@@ -32,13 +35,23 @@ cd kanji-path-main
 npx vercel --prod
 ```
 
-## Serverless functions in this package (7 total)
+## Serverless functions in this package (10 total)
 - /api/auth/login
+- /api/auth/register
 - /api/auth/logout
 - /api/auth/me
+- /api/auth/forgot
+- /api/auth/reset
 - /api/admin/users
 - /api/health
 - /api/vocab
 - /api/progress
 
 Do **not** add more files under `api/` unless you stay under 12.
+
+
+## Database update
+Run `lib/schema.sql` in the Neon SQL Editor after deploying this version. It adds password-reset fields, the `everyday` vocabulary flag, and indexes. The Kanji Path client now loads/saves path progress through `/api/progress` whenever the user is signed in.
+
+## Vocabulary
+The vocabulary API defaults to everyday-use entries (`everyday = TRUE`) instead of exposing the old N5–N1 flashcard filter. The seed SQL also classifies specialist/obscure entries out of the default flashcard pool. The classification is intentionally conservative and can be further curated by changing `joyo_vocabulary.everyday` in Neon.

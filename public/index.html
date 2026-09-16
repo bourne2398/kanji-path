@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 :root {
   --bg: #faf6f8;
@@ -761,10 +762,10 @@ html[data-theme="dark"] .user-banner .btn:hover {
   background: #e11d48;
   color: #fff;
 }
-html[data-theme="dark"] .admin-link {
+html[data-theme="dark"] .admin-link-unused {
   color: #7eb8e0 !important;
 }
-html[data-theme="dark"] .admin-link:hover {
+html[data-theme="dark"] .admin-link-unused:hover {
   color: #fff !important;
 }
 html[data-theme="dark"] .btn,
@@ -889,6 +890,12 @@ html[data-theme="dark"] .match-card.matched {
   border-color: #3dd68c;
   color: #3dd68c;
 }
+.learning-panel{margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow)}
+.learning-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.learning-stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}.learning-stat strong{display:block;font-size:1.35rem}.learning-stat small{color:var(--muted)}
+.learning-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.learning-empty{padding:18px;text-align:center;color:var(--muted)}
+.vocab-category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.vocab-category-btn{border:1px solid var(--line);border-radius:999px;padding:7px 11px;background:var(--bg);color:var(--text);cursor:pointer}.vocab-category-btn.active{font-weight:700;box-shadow:0 0 0 2px rgba(124,92,255,.2)}
+.study-card-actions{display:flex;gap:7px;justify-content:center;margin-top:10px}.study-card-actions button{border:1px solid var(--line);border-radius:999px;padding:7px 11px;background:var(--bg);color:var(--text);cursor:pointer;font-weight:700}.study-card-actions button.primary{font-weight:800}
+@media(max-width:720px){.learning-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Study cards stay white so kanji remains high-contrast */
 html[data-theme="dark"] .study-card {
   background: transparent;
@@ -1157,7 +1164,7 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
 .user-banner .btn:hover {
   filter: brightness(1.08);
 }
-.admin-link {
+.admin-link-unused {
   color: var(--muted);
   font-size: .85rem;
   font-weight: 700;
@@ -1165,7 +1172,7 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
   margin-left: auto;
   padding: 6px 10px;
 }
-.admin-link:hover { color: var(--accent); }
+.admin-link-unused:hover { color: var(--accent); }
 .start-hint {
   text-align: center;
   color: #b91c1c;
@@ -1852,7 +1859,7 @@ html[data-theme="dark"] .play-modal-backdrop {
     flex: 1 1 auto;
     min-height: 44px;
   }
-  .admin-link {
+  .admin-link-unused {
     margin-left: 0;
     width: 100%;
     text-align: center;
@@ -2471,6 +2478,22 @@ html[data-theme="dark"] .word-level-btn { background:var(--panel); color:var(--t
 html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 @media (max-width:640px){ .word-level-filter { width:100%; } .word-level-btn { flex:1 1 42px; } .words-toolbar .spacer { display:none; } }
 
+
+/* Anime × Bootstrap 5.3.8 redesign */
+.modal.fade{position:fixed;top:0;left:0;width:100%;height:100%;max-width:none;max-height:none;background:transparent;padding:0;border-radius:0;box-shadow:none;display:none;overflow-x:hidden;overflow-y:auto;z-index:1055}.modal.fade.show{display:block}.modal.fade .modal-dialog{width:auto;max-width:var(--bs-modal-width,500px);height:auto;max-height:none;margin:1.75rem auto;display:flex;flex-direction:column}.modal.fade .modal-content{width:100%;height:auto;max-height:calc(100dvh - 3.5rem);display:flex;flex-direction:column;overflow:hidden}.modal.fade .modal-body{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;padding:1rem}.modal.fade .modal-header,.modal.fade .modal-footer{display:flex;flex-shrink:0;padding:1rem 1rem}.modal.fade .modal-title{margin:0;text-align:left;color:inherit;font-size:1.25rem}.modal.fade .form-control{min-height:52px}@media(max-width:576px){.modal.fade .modal-dialog{margin:.5rem}.modal.fade .modal-content{max-height:calc(100dvh - 1rem)}}
+
+:root{--anime-pink:#ff4fa3;--anime-purple:#7c5cff;--anime-blue:#4cc9f0;--anime-ink:#241b35;--anime-soft:#fff1fa;--anime-border:#eadcf7}
+body{background:radial-gradient(circle at 10% 0%,#fff0f8 0,transparent 30%),radial-gradient(circle at 90% 5%,#eeeaff 0,transparent 28%),#fbf9ff;color:var(--anime-ink)}
+header{background:linear-gradient(135deg,#5d2de0,#8c4dff 48%,#ff4fa3)!important;box-shadow:0 10px 35px rgba(92,45,224,.24)}
+main{max-width:1120px}.anime-alert{background:linear-gradient(135deg,rgba(93,45,224,.96),rgba(255,79,163,.96));color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:15px 18px;box-shadow:0 14px 35px rgba(92,45,224,.16)}
+.anime-modal{border:1px solid rgba(124,92,255,.18);border-radius:28px;overflow:hidden;background:rgba(255,255,255,.97);box-shadow:0 30px 90px rgba(47,27,79,.25)}
+.anime-kicker{font-size:.72rem;letter-spacing:.16em;font-weight:900;color:#8b5cf6;margin-bottom:5px}.fw-black{font-weight:900}
+.btn-anime{background:linear-gradient(135deg,#7c5cff,#ff4fa3);color:#fff;border:0;box-shadow:0 10px 22px rgba(124,92,255,.24)}.btn-anime:hover{color:#fff;transform:translateY(-1px)}
+.account-tabs .nav-link{border-radius:14px;color:#655a77;background:#f5f1fb}.account-tabs .nav-link.active{background:#eee7ff;color:#6d3ff2}.form-control{border-radius:14px;border-color:#ded2ee;min-height:52px}.form-control:focus{border-color:#9b7bff;box-shadow:0 0 0 .25rem rgba(124,92,255,.12)}
+.anime-icon-circle{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#eee7ff,#ffe6f4);font-size:1.4rem}.anime-filter{display:flex;align-items:center;gap:8px}.anime-filter .badge{font-size:.78rem;padding:.55rem .8rem}
+.study-card .face,.word-flashcard,.practice-tile{border-radius:22px;border-color:#eadcf7;box-shadow:0 12px 30px rgba(73,39,112,.08)}
+.path-node{border-radius:18px!important}.path-node.learned{box-shadow:0 0 0 3px rgba(255,79,163,.13),0 8px 22px rgba(124,92,255,.12)}
+@media(max-width:576px){.anime-alert{border-radius:18px;padding:13px}.anime-modal{border-radius:22px}.modal-dialog{margin:.65rem}.form-control-lg{font-size:1rem}.btn-lg{font-size:1rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
 </head>
@@ -2490,7 +2513,7 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
     </div>
     <nav>
       <button class="nav-btn active" data-mode="path">Kanji Path</button>
-      <button class="nav-btn" data-mode="study">Study</button>
+      <button class="nav-btn" data-mode="study">Flash Cards</button>
       <button class="nav-btn" data-mode="practice">Practice</button>
       <button class="nav-btn" data-mode="words">Words</button>
     </nav>
@@ -2498,29 +2521,102 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
 
 </header>
 
-<div class="user-banner" id="userBanner" style="max-width:960px;margin:12px auto 0;padding-left:12px;padding-right:12px;">
-  <strong id="userBannerLabel">Guest · progress saved on this device</strong>
-  <button type="button" class="btn" id="loginOpenBtn">Log in</button>
-  <button type="button" class="btn hidden" id="logoutBtn">Log out</button>
-  <a class="admin-link" href="/admin.html">Admin</a>
+<div class="container-fluid px-3 px-md-4 mt-3" style="max-width:1120px">
+  <div class="anime-alert d-flex flex-column flex-sm-row align-items-sm-center gap-3 justify-content-between" id="userBanner">
+    <div>
+      <div class="fw-bold" id="userBannerLabel">Guest mode</div>
+      <div class="small opacity-75" id="userBannerHint">Sign in or create an account so your Kanji Path progress is saved to the database and follows you to another device.</div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-light fw-bold" id="loginOpenBtn">Sign in</button>
+      <button type="button" class="btn btn-outline-light fw-bold hidden" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
 </div>
 
-<!-- Login modal -->
-<div class="modal-backdrop center hidden" id="loginModal" aria-hidden="true">
-  <div class="modal" style="max-width:400px;height:auto;">
-    <div class="modal-head"><h2>Log in</h2>
-      <p class="subtitle" style="margin:0">Admin or student account</p>
+<!-- Account modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content anime-modal">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <div class="anime-kicker">KANJI PATH</div>
+          <h2 class="modal-title fw-black" id="accountTitle">Welcome back ✨</h2>
+          <p class="text-secondary mb-0" id="accountSubtitle">Sign in to save your learning journey.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-4">
+        <div class="account-tabs nav nav-pills nav-fill gap-2 mb-4" role="tablist">
+          <button class="nav-link active fw-bold" id="signInTab" type="button">Sign in</button>
+          <button class="nav-link fw-bold" id="registerTab" type="button">Create account</button>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" class="form-control form-control-lg" autocomplete="username" placeholder="you@example.com" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label fw-semibold" for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" class="form-control form-control-lg" autocomplete="current-password" placeholder="Your password" required>
+          </div>
+          <button type="button" class="btn btn-link px-0 fw-semibold" id="forgotOpenBtn">Forgot password?</button>
+          <div id="loginError" class="alert alert-danger d-none py-2 mt-2"></div>
+          <button type="submit" class="btn btn-anime btn-lg w-100 mt-2" id="loginSubmit">Sign in</button>
+        </form>
+
+        <form id="registerForm" class="d-none" novalidate>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="registerName">Name <span class="text-secondary fw-normal">(optional)</span></label>
+            <input id="registerName" type="text" class="form-control form-control-lg" autocomplete="name" placeholder="Your name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="registerEmail">Email</label>
+            <input id="registerEmail" type="email" class="form-control form-control-lg" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="registerPassword">Password</label>
+            <input id="registerPassword" type="password" class="form-control form-control-lg" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="registerPassword2">Confirm password</label>
+            <input id="registerPassword2" type="password" class="form-control form-control-lg" autocomplete="new-password" minlength="8" placeholder="Repeat your password" required>
+          </div>
+          <div id="registerError" class="alert alert-danger d-none py-2"></div>
+          <button type="submit" class="btn btn-anime btn-lg w-100" id="registerSubmit">Create account</button>
+        </form>
+
+        <form id="forgotForm" class="d-none" novalidate>
+          <div class="anime-icon-circle mb-3">🔑</div>
+          <h3 class="h5 fw-bold">Reset your password</h3>
+          <p class="text-secondary">Enter the email on your account. If it exists, we’ll send a secure reset link.</p>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="forgotEmail">Email</label>
+            <input id="forgotEmail" type="email" class="form-control form-control-lg" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div id="forgotMessage" class="alert d-none py-2"></div>
+          <button type="submit" class="btn btn-anime btn-lg w-100" id="forgotSubmit">Send reset link</button>
+          <button type="button" class="btn btn-link w-100 mt-2" id="backToSignIn">Back to sign in</button>
+        </form>
+      </div>
     </div>
-    <div class="modal-body">
-      <label class="config-label" style="color:inherit">Email</label>
-      <input id="loginEmail" type="email" class="set-search" autocomplete="username" placeholder="you@example.com">
-      <label class="config-label" style="color:inherit;margin-top:10px">Password</label>
-      <input id="loginPassword" type="password" class="set-search" autocomplete="current-password">
-      <p id="loginError" class="start-hint" style="margin-top:10px"></p>
-    </div>
-    <div class="modal-foot modal-actions">
-      <button type="button" class="btn" id="loginCancel">Cancel</button>
-      <button type="button" class="btn primary" id="loginSubmit">Sign in</button>
+  </div>
+</div>
+
+<!-- Password reset modal -->
+<div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content anime-modal">
+      <div class="modal-header border-0"><div><div class="anime-kicker">ACCOUNT RECOVERY</div><h2 class="modal-title fw-black">Choose a new password</h2></div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form id="resetForm">
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label fw-semibold">New password</label><input id="resetPassword" type="password" class="form-control form-control-lg" minlength="8" required></div>
+          <div class="mb-3"><label class="form-label fw-semibold">Confirm password</label><input id="resetPassword2" type="password" class="form-control form-control-lg" minlength="8" required></div>
+          <div id="resetMessage" class="alert d-none py-2"></div>
+        </div>
+        <div class="modal-footer border-0"><button class="btn btn-anime w-100" type="submit">Update password</button></div>
+      </form>
     </div>
   </div>
 </div>
@@ -2564,6 +2660,15 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
       </div>
       <div class="path-progress"><span id="pathProgressFill"></span></div>
       <div class="path-progress-label" id="pathProgressLabel">0 of 2,136 learned</div>
+<div class="learning-panel" id="learningPanel">
+  <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap"><div><strong>Today’s Learning</strong><div class="small opacity-75">Your Flash Cards and Words Practice share one learning schedule.</div></div><button class="btn primary" type="button" id="startLearningBtn">Start review →</button></div>
+  <div class="learning-stats" style="margin-top:12px">
+    <div class="learning-stat"><strong id="todayDueVocab">0</strong><small>vocab due</small></div>
+    <div class="learning-stat"><strong id="todayDueKanji">0</strong><small>kanji due</small></div>
+    <div class="learning-stat"><strong id="todayLearnedVocab">0</strong><small>vocab learned</small></div>
+    <div class="learning-stat"><strong id="todayMasteredVocab">0</strong><small>vocab mastered</small></div>
+  </div>
+</div>
     </div>
 
     <div class="path-lesson" id="pathLesson">
@@ -2623,19 +2728,34 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
 
 <!-- STUDY -->
   <section id="studyMode" class="hidden">
-    <h1 id="studyTitle">Study</h1>
+    <h1 id="studyTitle">Flash Cards</h1>
     <p class="subtitle" id="studySubtitle">Tap a card to flip. Shuffle or reverse anytime.</p>
     <div class="toolbar" style="flex-wrap:wrap">
       <button class="btn primary" id="studyChooseSets">Choose sets</button>
       <button class="btn" id="studyShuffle">Shuffle</button>
       <button class="btn" id="studyKanjiBtn" style="display:none">📖 Study Kanji</button>
       <label class="check"><input type="checkbox" id="studyReverse"> Reverse</label>
-      <div class="study-level-filter" id="studyLevelFilter" role="group" aria-label="JLPT level">
-        <button type="button" class="study-level-btn active" data-study-level="N5">N5</button>
-        <button type="button" class="study-level-btn" data-study-level="N4">N4</button>
-        <button type="button" class="study-level-btn" data-study-level="N3">N3</button>
-        <button type="button" class="study-level-btn" data-study-level="N2">N2</button>
-        <button type="button" class="study-level-btn" data-study-level="N1">N1</button>
+      <div id="studyLevelFilter" class="anime-filter" aria-label="Flash card category">
+        <button type="button" class="study-level-btn active" data-level="ALL">All</button>
+        <button type="button" class="study-level-btn" data-level="N5">N5</button>
+        <button type="button" class="study-level-btn" data-level="N4">N4</button>
+        <button type="button" class="study-level-btn" data-level="N3">N3</button>
+        <button type="button" class="study-level-btn" data-level="N2">N2</button>
+        <button type="button" class="study-level-btn" data-level="N1">N1</button>
+      </div>
+      <div id="studyCategoryFilter" class="vocab-category-filter" aria-label="Flash Card topic">
+        <button type="button" class="vocab-category-btn active" data-category="ALL">All topics</button>
+        <button type="button" class="vocab-category-btn" data-category="Daily Life">Daily Life</button>
+        <button type="button" class="vocab-category-btn" data-category="Food & Drinks">Food</button>
+        <button type="button" class="vocab-category-btn" data-category="People & Family">People & Family</button>
+        <button type="button" class="vocab-category-btn" data-category="Shopping & Money">Shopping</button>
+        <button type="button" class="vocab-category-btn" data-category="Travel & Transport">Travel</button>
+        <button type="button" class="vocab-category-btn" data-category="School & Work">School & Work</button>
+        <button type="button" class="vocab-category-btn" data-category="Time & Dates">Time & Dates</button>
+        <button type="button" class="vocab-category-btn" data-category="Places & Home">Places & Home</button>
+        <button type="button" class="vocab-category-btn" data-category="Health & Body">Health & Body</button>
+        <button type="button" class="vocab-category-btn" data-category="Common Verbs">Verbs</button>
+        <button type="button" class="vocab-category-btn" data-category="Common Adjectives">Adjectives</button>
       </div>
       <div class="spacer"></div>
       <span class="badge" id="studySetSummary"></span>
@@ -2665,26 +2785,38 @@ html[data-theme="dark"] .word-level-btn.active { background:var(--accent); color
 
   <!-- WORDS (multi-character compounds — screenshot-style write missing kanji) -->
   <section id="wordsMode" class="hidden">
-    <h1>Write Words</h1>
-    <p class="subtitle">Study vocabulary for the Jōyō kanji. Words are served from your vocabulary database — search and practice without loading everything at once.</p>
+    <h1>Words Practice</h1>
+    <p class="subtitle">Practice useful Japanese words from everyday life. Choose an N5–N1 category, then tap a word to practice writing it.</p>
     <div class="toolbar words-toolbar">
-      <button class="btn primary" id="wordsLoadAll" type="button">Load 40,000 Vocabulary</button>
       <button class="btn" id="vocabBankShow" type="button">Vocabulary Search</button>
-      <div class="word-level-filter" id="wordLevelFilter" role="group" aria-label="Vocabulary JLPT level">
-        <button type="button" class="word-level-btn active" data-word-level="ALL">All</button>
-        <button type="button" class="word-level-btn" data-word-level="N5">N5</button>
-        <button type="button" class="word-level-btn" data-word-level="N4">N4</button>
-        <button type="button" class="word-level-btn" data-word-level="N3">N3</button>
-        <button type="button" class="word-level-btn" data-word-level="N2">N2</button>
-        <button type="button" class="word-level-btn" data-word-level="N1">N1</button>
+      <div id="wordLevelFilter" class="anime-filter" aria-label="Vocabulary JLPT level">
+        <button type="button" class="word-level-btn active" data-level="ALL">All</button>
+        <button type="button" class="word-level-btn" data-level="N5">N5</button>
+        <button type="button" class="word-level-btn" data-level="N4">N4</button>
+        <button type="button" class="word-level-btn" data-level="N3">N3</button>
+        <button type="button" class="word-level-btn" data-level="N2">N2</button>
+        <button type="button" class="word-level-btn" data-level="N1">N1</button>
+      </div>
+      <div id="wordCategoryFilter" class="vocab-category-filter" aria-label="Everyday vocabulary category">
+        <button type="button" class="vocab-category-btn active" data-category="ALL">All topics</button>
+        <button type="button" class="vocab-category-btn" data-category="Daily Life">Daily Life</button>
+        <button type="button" class="vocab-category-btn" data-category="Food & Drinks">Food</button>
+        <button type="button" class="vocab-category-btn" data-category="People & Family">People & Family</button>
+        <button type="button" class="vocab-category-btn" data-category="Shopping & Money">Shopping</button>
+        <button type="button" class="vocab-category-btn" data-category="Travel & Transport">Travel</button>
+        <button type="button" class="vocab-category-btn" data-category="School & Work">School & Work</button>
+        <button type="button" class="vocab-category-btn" data-category="Time & Dates">Time & Dates</button>
+        <button type="button" class="vocab-category-btn" data-category="Places & Home">Places & Home</button>
+        <button type="button" class="vocab-category-btn" data-category="Health & Body">Health & Body</button>
+        <button type="button" class="vocab-category-btn" data-category="Common Verbs">Verbs</button>
+        <button type="button" class="vocab-category-btn" data-category="Common Adjectives">Adjectives</button>
       </div>
       <div class="spacer"></div>
-      <span class="badge" id="wordsSetSummary">Vocabulary database</span>
+      <span class="badge" id="wordsSetSummary">Everyday vocabulary</span>
       <span class="badge" id="wordsCount">0 words</span>
     </div>
-    <div class="progress" id="wordsProgress">Vocabulary is loaded from the database and cached on this device for instant future opens.</div>
+    <div class="progress" id="wordsProgress">Loading everyday vocabulary automatically…</div>
     <div class="practice-grid" id="wordsGrid"></div>
-    <div class="progress" id="wordsProgress"></div>
     <div class="vocab-bank hidden" id="vocabBank">
       <div class="vocab-bank-head">
         <h2>Jōyō Vocabulary Bank</h2>
@@ -2947,9 +3079,10 @@ let historyEntries = [];
 let quitTarget = null;
 
 const state = {
-  study: { sets: [1], cards: [], allCards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '', levelFilter: 'N5' },
+  study: { sets: [1], cards: [], allCards: [], flips: [], reverse: false, wordMode: false, wordSourceKanji: '', levelFilter: 'ALL', category: 'ALL' },
   practice: { sets: [1], items: [], i: 0 },
-  words: { sets: [1], items: [], allItems: [], i: 0, levelFilter: 'ALL', vocabLoading: false },
+  words: { sets: [1], items: [], allItems: [], i: 0, levelFilter: 'ALL', category: 'ALL', vocabLoading: false },
+  vocabLearning: { progress: {}, loaded: false, saving: null },
   // stubs so leftover quiz/games helpers do not crash if called
   quiz:  { sets: [1], cards: [], i: 0, reverse: false, score: 0, answered: false, playing: false,
            timerSeconds: 0, timer: null, endAt: 0, results: [], lastMsg: '', settingsConfigured: false },
@@ -2960,84 +3093,92 @@ let hanziWriter = null;
 let hanziDataCache = new Map();
 let practiceResizeObserver = null;
 
-// Auth: optional login (admin / student). Guest mode still works offline via localStorage.
+// Account state. Guests may study locally, but cloud progress requires an account.
 let currentUser = null;
+let accountModal = null;
 
-function requireAuth() { return true; }
+function showAccountModal(view='login') {
+  const modalEl = document.getElementById('loginModal');
+  if (!modalEl) return;
+  if (!accountModal && window.bootstrap) accountModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  switchAccountView(view);
+  if (accountModal) accountModal.show(); else modalEl.classList.remove('hidden');
+}
+function switchAccountView(view) {
+  const login=document.getElementById('loginForm'), reg=document.getElementById('registerForm'), forgot=document.getElementById('forgotForm');
+  const sign=document.getElementById('signInTab'), create=document.getElementById('registerTab');
+  login?.classList.toggle('d-none',view!=='login'); reg?.classList.toggle('d-none',view!=='register'); forgot?.classList.toggle('d-none',view!=='forgot');
+  sign?.classList.toggle('active',view==='login'); create?.classList.toggle('active',view==='register');
+  const title=document.getElementById('accountTitle'), sub=document.getElementById('accountSubtitle');
+  if(view==='register'){title.textContent='Create your account ✨';sub.textContent='Your progress will be saved securely to your account.'}
+  else if(view==='forgot'){title.textContent='Password recovery';sub.textContent='We’ll help you get back into your account.'}
+  else {title.textContent='Welcome back ✨';sub.textContent='Sign in to save your learning journey.'}
+}
+function setAccountMessage(id,msg,kind='danger') { const el=document.getElementById(id); if(!el)return; el.textContent=msg||''; el.className='alert alert-'+kind+' py-2'+(msg?'':' d-none'); }
 
 async function refreshCurrentUser() {
-  try {
-    const res = await fetch('/api/auth/me', { credentials: 'include' });
-    const data = await res.json();
-    currentUser = data.user || null;
-  } catch (_) {
-    currentUser = null;
-  }
+  try { const res=await fetch('/api/auth/me',{credentials:'include',cache:'no-store'}); const data=await res.json(); currentUser=data.user||null; }
+  catch(_){ currentUser=null; }
   updateUserBanner();
+  if(currentUser) { await syncPathProgressWithServer(); await loadVocabularyProgress(); }
+  renderLearningSummary();
   return currentUser;
 }
-
 function updateUserBanner() {
-  const label = document.getElementById('userBannerLabel');
-  const loginBtn = document.getElementById('loginOpenBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (!label) return;
-  if (currentUser) {
-    label.textContent = (currentUser.name || currentUser.email) + ' · ' + (currentUser.role || 'user');
-    if (loginBtn) loginBtn.classList.add('hidden');
-    if (logoutBtn) logoutBtn.classList.remove('hidden');
-  } else {
-    label.textContent = 'Guest · progress saved on this device';
-    if (loginBtn) loginBtn.classList.remove('hidden');
-    if (logoutBtn) logoutBtn.classList.add('hidden');
-  }
+  const label=document.getElementById('userBannerLabel'), hint=document.getElementById('userBannerHint'), login=document.getElementById('loginOpenBtn'), logout=document.getElementById('logoutBtn');
+  if(!label)return;
+  if(currentUser){ label.textContent='Signed in · '+(currentUser.name||currentUser.email); hint.textContent='Your Kanji Path progress is being saved to your account.'; login?.classList.add('hidden'); logout?.classList.remove('hidden'); }
+  else { label.textContent='Guest mode'; hint.textContent='Sign in or create an account so your progress is saved to the database and follows you to another device.'; login?.classList.remove('hidden'); logout?.classList.add('hidden'); }
 }
+function requireAuth() { if(currentUser)return true; showAccountModal('login'); return false; }
 
-async function apiGetHistory(type) {
-  if (type === 'games') return { games: loadHistory() };
-  if (type === 'practice') return { practice: loadPracticeHistory() };
-  return { games: loadHistory(), practice: loadPracticeHistory() };
+async function savePathProgressToServer(progress) {
+  if(!currentUser) return false;
+  const items=Object.entries(progress||{}).map(([kanji,v])=>({kanji,...v}));
+  if(!items.length)return true;
+  try { const r=await fetch('/api/progress?type=path',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})}); return r.ok; }
+  catch(e){ console.warn('Cloud progress save failed',e); return false; }
 }
-
-async function apiPostGame(entry) { return { ok: true, local: true, entry }; }
-async function apiPostPractice(item) { return { ok: true, local: true, item }; }
+async function syncPathProgressWithServer() {
+  if(!currentUser)return;
+  try {
+    const r=await fetch('/api/progress?type=path',{credentials:'include',cache:'no-store'});
+    if(!r.ok)return;
+    const data=await r.json();
+    const accountKey=pathStorageKey();
+    let local=loadPathProgress();
+    const legacyRaw=localStorage.getItem('kanjiMnemonicPath');
+    if(legacyRaw && !localStorage.getItem(accountKey)){ try { const legacy=JSON.parse(legacyRaw); if(legacy && typeof legacy==='object' && Object.keys(legacy).length) local={...legacy,...local}; } catch(_){} }
+    const merged={...data.items?.reduce((o,x)=>{o[x.kanji]={stage:x.stage,ease:x.ease,interval:x.interval,due:x.due,reps:x.reps,lapses:x.lapses,last:x.last};return o;},{}),...local};
+    // Prefer the more advanced local state when a guest had already studied before signing in.
+    for(const item of (data.items||[])){
+      const l=local[item.kanji], serverStage=Number(item.stage)||0;
+      if(l && Number(l.stage||0)>serverStage) merged[item.kanji]=l;
+    }
+    savePathProgress(merged);
+    try{localStorage.removeItem('kanjiMnemonicPath')}catch(_){}
+    await savePathProgressToServer(merged);
+    renderPath();
+  }catch(e){console.warn('Cloud progress sync failed',e)}
+}
 
 function bindAuthUi() {
-  const open = document.getElementById('loginOpenBtn');
-  const modal = document.getElementById('loginModal');
-  const cancel = document.getElementById('loginCancel');
-  const submit = document.getElementById('loginSubmit');
-  const logout = document.getElementById('logoutBtn');
-  if (open && modal) open.onclick = () => { modal.classList.remove('hidden'); document.body.classList.add('modal-open'); };
-  if (cancel && modal) cancel.onclick = () => { modal.classList.add('hidden'); document.body.classList.remove('modal-open'); };
-  if (modal) modal.addEventListener('click', e => { if (e.target === modal) { modal.classList.add('hidden'); document.body.classList.remove('modal-open'); } });
-  if (submit) submit.onclick = async () => {
-    const err = document.getElementById('loginError');
-    if (err) err.textContent = '';
-    const email = (document.getElementById('loginEmail') || {}).value || '';
-    const password = (document.getElementById('loginPassword') || {}).value || '';
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) { if (err) err.textContent = data.error || 'Login failed'; return; }
-      currentUser = data.user;
-      updateUserBanner();
-      if (modal) { modal.classList.add('hidden'); document.body.classList.remove('modal-open'); }
-    } catch (e) {
-      if (err) err.textContent = 'Network error';
-    }
-  };
-  if (logout) logout.onclick = async () => {
-    try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }); } catch (_) {}
-    currentUser = null;
-    updateUserBanner();
-  };
+  document.getElementById('loginOpenBtn')?.addEventListener('click',()=>showAccountModal('login'));
+  document.getElementById('signInTab')?.addEventListener('click',()=>switchAccountView('login'));
+  document.getElementById('registerTab')?.addEventListener('click',()=>switchAccountView('register'));
+  document.getElementById('forgotOpenBtn')?.addEventListener('click',()=>switchAccountView('forgot'));
+  document.getElementById('backToSignIn')?.addEventListener('click',()=>switchAccountView('login'));
+  document.getElementById('loginForm')?.addEventListener('submit',async e=>{e.preventDefault();setAccountMessage('loginError','');const email=document.getElementById('loginEmail').value.trim(),password=document.getElementById('loginPassword').value;try{const r=await fetch('/api/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok){setAccountMessage('loginError',d.error||'Sign in failed');return;}currentUser=d.user;updateUserBanner();await syncPathProgressWithServer();accountModal?.hide();if(currentUser?.role==='admin'){location.href='/admin.html';}}catch(_){setAccountMessage('loginError','Network error. Please try again.')}});
+  document.getElementById('registerForm')?.addEventListener('submit',async e=>{e.preventDefault();setAccountMessage('registerError','');const name=document.getElementById('registerName').value.trim(),email=document.getElementById('registerEmail').value.trim(),password=document.getElementById('registerPassword').value,password2=document.getElementById('registerPassword2').value;if(password!==password2){setAccountMessage('registerError','Passwords do not match.');return;}try{const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,email,password})});const d=await r.json();if(!r.ok){setAccountMessage('registerError',d.error||'Registration failed');return;}currentUser=d.user;updateUserBanner();await syncPathProgressWithServer();accountModal?.hide();}catch(_){setAccountMessage('registerError','Network error. Please try again.')}});
+  document.getElementById('forgotForm')?.addEventListener('submit',async e=>{e.preventDefault();setAccountMessage('forgotMessage','');const email=document.getElementById('forgotEmail').value.trim();try{const r=await fetch('/api/auth/forgot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();setAccountMessage('forgotMessage',d.message||'If the account exists, a reset link has been sent.','success');}catch(_){setAccountMessage('forgotMessage','Unable to send the reset request. Please try again.')}});
+  document.getElementById('resetForm')?.addEventListener('submit',async e=>{e.preventDefault();const params=new URLSearchParams(location.search),token=params.get('reset');const p1=document.getElementById('resetPassword').value,p2=document.getElementById('resetPassword2').value;if(!token){setAccountMessage('resetMessage','This reset link is invalid or expired.');return;}if(p1!==p2){setAccountMessage('resetMessage','Passwords do not match.');return;}try{const r=await fetch('/api/auth/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password:p1})});const d=await r.json();if(!r.ok){setAccountMessage('resetMessage',d.error||'Reset failed.');return;}setAccountMessage('resetMessage','Password updated. You can now sign in.','success');history.replaceState({},'',location.pathname);setTimeout(()=>{bootstrap.Modal.getOrCreateInstance(document.getElementById('resetModal')).hide();showAccountModal('login')},900);}catch(_){setAccountMessage('resetMessage','Network error. Please try again.')}});
+  document.getElementById('logoutBtn')?.addEventListener('click',async()=>{try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'})}catch(_){}currentUser=null;updateUserBanner();});
+  const token=new URLSearchParams(location.search).get('reset'); if(token){setTimeout(()=>{const m=document.getElementById('resetModal');if(m&&window.bootstrap)bootstrap.Modal.getOrCreateInstance(m).show();},0);}
 }
+
+async function apiGetHistory(type) { if(type==='games')return{games:loadHistory()}; if(type==='practice')return{practice:loadPracticeHistory()}; return{games:loadHistory(),practice:loadPracticeHistory()}; }
+async function apiPostGame(entry){return{ok:true,local:true,entry};}
+async function apiPostPractice(item){return{ok:true,local:true,item};}
 
 function speak(text, lang) {
   if (!text) return;
@@ -3141,6 +3282,24 @@ function setupPractice(ids) {
   renderPractice();
 }
 
+async function loadVocabularyProgress(){
+  if(!currentUser){state.vocabLearning.loaded=true;return state.vocabLearning.progress;}
+  try{const r=await fetch('/api/vocab-progress',{credentials:'include',cache:'no-store'});if(!r.ok)return{};const d=await r.json();const p={};for(const x of (d.items||[]))p[x.vocabulary_id]=x;state.vocabLearning.progress=p;state.vocabLearning.loaded=true;renderLearningSummary();return p;}catch(e){console.warn('Vocabulary progress load failed',e);return{};}
+}
+async function saveVocabularyProgress(item,quality=null,writingCount=null){
+  if(!currentUser||!item?.id)return false;
+  const existing=state.vocabLearning.progress[item.id]||{};
+  const body={vocabulary_id:Number(item.id),flash_seen:true,writing_count:writingCount==null?(existing.writing_count||0):writingCount}; if(quality!=null)body.quality=quality;
+  try{const r=await fetch('/api/vocab-progress',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)return false;const d=await r.json();if(d.saved?.[0])state.vocabLearning.progress[item.id]=d.saved[0];renderLearningSummary();return true;}catch(e){console.warn('Vocabulary progress save failed',e);return false;}
+}
+function vocabDueCount(){const now=Date.now();return Object.values(state.vocabLearning.progress||{}).filter(x=>Number(x.stage)>0 && (!x.due_at||new Date(x.due_at).getTime()<=now)).length;}
+function vocabLearnedCount(){return Object.values(state.vocabLearning.progress||{}).filter(x=>Number(x.stage)>0).length;}
+function vocabMasteredCount(){return Object.values(state.vocabLearning.progress||{}).filter(x=>Number(x.stage)>=5).length;}
+function renderLearningSummary(){
+  const p=state.vocabLearning.progress||{}; const due=vocabDueCount(); const path=loadPathProgress(); const dueK=pathDueList(pathItems(),path).length;
+  if($('todayDueVocab'))$('todayDueVocab').textContent=due; if($('todayDueKanji'))$('todayDueKanji').textContent=dueK; if($('todayLearnedVocab'))$('todayLearnedVocab').textContent=vocabLearnedCount(); if($('todayMasteredVocab'))$('todayMasteredVocab').textContent=vocabMasteredCount();
+}
+function categoryAndLevelCards(){return filteredVocabularyItems().filter(x=>x.id);}
 function setupWords(ids) {
   const s = state.words;
   s.sets = [...ids];
@@ -3151,34 +3310,29 @@ function setupWords(ids) {
   ensureVocabularyLoaded();
 }
 
+function isEverydayVocab(word, meaning='') {
+  const w=String(word||'').trim(), m=String(meaning||'').toLowerCase();
+  if(!w || w.length>14) return false;
+  if(/[＠※○〇×\[\]（）(){}<>]/.test(w)) return false;
+  const specialist=/\b(physics|chemistry|biology|botany|zoology|anatomy|surgery|medical|medicine|legal|law|jurisprud|linguistics|grammar|military|weapon|warfare|finance|financial|stock market|economics|geology|astronomy|engineering|mathematics|mathematical|computer science|software|programming|religion|buddh|shinto|buddhist|historical|archaeology|political|politics|government|taxation|court|criminal|disease|pathology|psychiatry|pharmac|agriculture|chemic|technical|telecommunication|algorithm|database|game development|adult|porn|sexual)/i;
+  if(specialist.test(m)) return false;
+  const bad=/\b(loan shark|point-blank|first graduates|research student|student movement|scholarship|terror|suicide|murder|protest|weapon|weaponry)\b/i;
+  if(bad.test(m)) return false;
+  return true;
+}
 function normalizeVocabRow(r) {
   if (!r) return null;
-  const word = String(r.word ?? r[0] ?? '').trim();
-  if (!word) return null;
-  const reading = String(r.reading ?? r[1] ?? '').trim();
-  const meaning = String(r.meaning ?? r[2] ?? '').trim();
-  const level = String(r.level ?? r.jlpt_level ?? r.jlpt ?? r.jlptLevel ?? '').toUpperCase();
-  return { word, reading, meaning, level: /^N[1-5]$/.test(level) ? level : vocabLevelOf(word) };
+  const word=String(r.word ?? r[0] ?? '').trim(); if(!word)return null;
+  const reading=String(r.reading ?? r[1] ?? '').trim(); const meaning=String(r.meaning ?? r[2] ?? '').trim();
+  const everyday=r.everyday !== undefined ? !!r.everyday : isEverydayVocab(word,meaning);
+  const level=String(r.jlpt_level ?? r.level ?? '').trim().toUpperCase() || wordJlptLevel(word,'');
+  const category=String(r.category||'Daily Life').trim()||'Daily Life';
+  return {id:Number(r.id||0),word,reading,meaning,everyday,jlpt_level:/^N[1-5]$/.test(level)?level:'N5',category};
 }
-
-function vocabLevelOf(word) {
-  const chars = [...String(word || '')].filter(isKanjiChar);
-  const explicit = null;
-  if (!chars.length) return 'N5';
-  const known = chars.map(k => ({N5:5,N4:4,N3:3,N2:2,N1:1}[JLPT_LEVEL_MAP[k]] || null)).filter(Boolean);
-  if (!known.length) return 'N5';
-  const hardest = Math.min(...known);
-  return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N5';
-}
-
-function getWordLevelFilter() {
-  return state.words.levelFilter || 'ALL';
-}
-
-function filteredVocabularyItems() {
-  const all = Array.isArray(state.words.allItems) ? state.words.allItems : [];
-  const level = getWordLevelFilter();
-  return level === 'ALL' ? all : all.filter(x => (x.level || vocabLevelOf(x.word)) === level);
+function filteredVocabularyItems(){
+  const all=(Array.isArray(state.words.allItems)?state.words.allItems:[]).filter(x=>x.everyday!==false);
+  const level=state.words.levelFilter||'ALL'; const category=state.words.category||'ALL';
+  return all.filter(x=>(level==='ALL'||x.jlpt_level===level)&&(category==='ALL'||x.category===category));
 }
 
 function renderWords() {
@@ -3190,7 +3344,7 @@ function renderWords() {
   s.items = filtered;
   grid.innerHTML = '';
   if (!all.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Click <b>Load 40,000 Vocabulary</b>. The vocabulary is cached in your browser after the first load, so future opens are instant.</div>';
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No vocabulary is available for this category yet.</div>'; 
     if ($('wordsCount')) $('wordsCount').textContent = '0 words';
     return;
   }
@@ -3207,23 +3361,22 @@ function renderWords() {
     tile.setAttribute('aria-label', `${item.word}, ${item.reading}, ${item.meaning}`);
     tile.innerHTML = '<span class="pt-kanji">' + esc(item.word) + '</span>' +
       '<span class="pt-meta">' + esc(item.reading || '') + (item.meaning ? ' · ' + esc(item.meaning) : '') + '</span>' +
-      '<span class="badge word-level-badge">' + esc(item.level || 'N5') + '</span>' +
+      '<span class="badge rounded-pill word-level-badge">' + esc(item.jlpt_level || 'N5') + '</span>' +
       '<span class="pt-progress">' + (chars.length ? esc(practiceProgressLabel(count)) : 'Kana word') + '</span>';
     tile.onclick = () => openWordWrite(idx);
     grid.appendChild(tile);
   });
   const hidden = Math.max(0, filtered.length - maxVisible);
-  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} ${getWordLevelFilter() === 'ALL' ? 'vocabulary' : getWordLevelFilter() + ' vocabulary'} · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} flashcards${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to write it.`;
+  if ($('wordsProgress')) $('wordsProgress').textContent = `${filtered.length.toLocaleString()} everyday ${state.words.levelFilter==='ALL'?'':' '+state.words.levelFilter+' '}vocabulary · showing ${Math.min(maxVisible, filtered.length).toLocaleString()} words${hidden ? ` · ${hidden.toLocaleString()} more available` : ''}. Tap a word to practice writing it.`;
   if ($('wordsCount')) $('wordsCount').textContent = `${filtered.length.toLocaleString()} words`;
-  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = getWordLevelFilter() === 'ALL' ? 'All levels' : getWordLevelFilter();
+  if ($('wordsSetSummary')) $('wordsSetSummary').textContent = `${state.words.levelFilter==='ALL'?'All levels':state.words.levelFilter} · ${state.words.category==='ALL'?'All topics':state.words.category}`;
 }
 
 async function ensureVocabularyLoaded(force = false) {
   if (state.words.vocabLoading && !force) return state.words.vocabLoading;
   state.words.vocabLoading = true;
-  const button = $('wordsLoadAll');
-  if (button) { button.disabled = true; button.textContent = 'Loading vocabulary…'; }
-  const cacheKey = 'kanjiPathVocabulary40kV3';
+  
+  const cacheKey = 'kanjiPathVocabulary40kV4';
   const readCache = () => new Promise(resolve => {
     try {
       const req = indexedDB.open('kanjiPathVocabularyDB', 1);
@@ -3257,7 +3410,6 @@ async function ensureVocabularyLoaded(force = false) {
     if (cached && Array.isArray(cached.items) && cached.items.length) {
       state.words.allItems = cached.items.map(normalizeVocabRow).filter(Boolean);
       renderWords();
-      if (button) button.textContent = state.words.allItems.length >= 40000 ? 'Refresh Vocabulary' : 'Load 40,000 Vocabulary';
       state.words.vocabLoading = false;
       // Refresh in the background only when the cache is older than 24h.
       if (!force && cached.ts && Date.now() - cached.ts < 86400000) return state.words.allItems;
@@ -3293,14 +3445,11 @@ async function ensureVocabularyLoaded(force = false) {
     await writeCache({ ts:Date.now(), total:Math.max(total,state.words.allItems.length), items:state.words.allItems });
     renderWords();
     if ($('wordsProgress')) $('wordsProgress').textContent = `${state.words.allItems.length.toLocaleString()} vocabulary entries ready and cached on this device. Filters are instant.`;
-    if (button) button.textContent = state.words.allItems.length >= 40000 ? 'Refresh Vocabulary' : 'Retry Vocabulary Load';
   } catch (e) {
     console.error('Vocabulary load failed:', e);
     if ($('wordsProgress')) $('wordsProgress').textContent = 'Could not load vocabulary. Make sure /api/vocab is deployed and the database contains the vocabulary table.';
-    if (button) button.textContent = 'Retry Vocabulary Load';
   } finally {
     state.words.vocabLoading = false;
-    if (button) button.disabled = false;
   }
   return state.words.allItems || [];
 }
@@ -3317,7 +3466,8 @@ function openWordWrite(idx) {
     chars: [...v.word].filter(isKanjiChar),
     charIndex: 0,
     reading: v.reading || '',
-    english: v.meaning || ''
+    english: v.meaning || '',
+    vocabId: Number(v.id||0)
   };
   if (!item.chars.length) return;
   state.practice.items = [item];
@@ -3708,6 +3858,7 @@ function practiceStartGuidedWrite() {
       const writtenChar = getCurrentPracticeChar(item);
       const count = await recordKanjiWrite(writtenChar, item.setId);
       savePracticeHistory({ ...item, kanji: writtenChar });
+      if(item.vocabId){ const v=(state.words.allItems||[]).find(x=>Number(x.id)===Number(item.vocabId)); if(v) await saveVocabularyProgress(v,2,count); }
       try { renderPractice(); } catch (_) {}
       try { renderWords(); } catch (_) {}
       try { if (typeof renderPath === 'function') renderPath(); } catch (_) {}
@@ -3875,21 +4026,8 @@ function quizRevealHTML(c, reverse) {
 }
 
 /* ---------- STUDY ---------- */
-function studyCardLevel(c) {
-  if (c && c[3]) return c[3];
-  const word = (c && c[0]) || '';
-  return wordJlptLevel(word, state.study.wordSourceKanji || '');
-}
-function applyStudyLevelFilter() {
-  const s = state.study;
-  const level = s.levelFilter || 'N5';
-  const all = Array.isArray(s.allCards) ? s.allCards : [];
-  s.cards = all.filter(c => studyCardLevel(c) === level);
-  s.flips = new Array(s.cards.length).fill(false);
-  document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-study-level') === level);
-  });
-}
+function studyCardLevel(c) { return isEverydayVocab(c?.[0]||'', c?.[2]||'') ? 'EVERYDAY' : 'OTHER'; }
+function applyStudyLevelFilter() { const s=state.study; const all=Array.isArray(s.allCards)?s.allCards:[]; s.cards=all.filter(c=>studyCardLevel(c)==='EVERYDAY'); s.flips=new Array(s.cards.length).fill(false); }
 function setupStudy(ids, shuffle = true) {
   const s = state.study;
   s.wordMode = false;
@@ -3902,7 +4040,7 @@ function setupStudy(ids, shuffle = true) {
     return row;
   });
   s.allCards = shuffle ? shuffled(raw) : raw;
-  if (!s.levelFilter) s.levelFilter = 'N5';
+  s.levelFilter='EVERYDAY';
   applyStudyLevelFilter();
   renderStudy();
 }
@@ -3914,7 +4052,7 @@ function setupStudyWords(rows, sourceKanji = '') {
   s.sets = [];
   const clean = (Array.isArray(rows) ? rows : []).filter(r => Array.isArray(r) && r[0]);
   s.allCards = shuffled(clean.map(r => [String(r[0] || ''), String(r[1] || ''), String(r[2] || ''), wordJlptLevel(r[0], sourceKanji)]));
-  if (!s.levelFilter) s.levelFilter = 'N5';
+  s.levelFilter='EVERYDAY';
   applyStudyLevelFilter();
   renderStudy();
 }
@@ -3928,13 +4066,33 @@ function wordJlptLevel(word, fallbackKanji = '') {
   return ['N1','N2','N3','N4','N5'][hardest - 1] || 'N5';
 }
 
+function setupStudyVocabulary() {
+  const s = state.study;
+  s.wordMode = true;
+  s.wordSourceKanji = '';
+  s.sets = [];
+  const level = s.levelFilter || 'ALL';
+  const category=s.category||'ALL';
+  const source = (Array.isArray(state.words.allItems) ? state.words.allItems : [])
+    .filter(v => v && v.everyday !== false && (level === 'ALL' || v.jlpt_level === level) && (category === 'ALL' || v.category === category) && v.id);
+  const now=Date.now();
+  const due=source.filter(v=>{const p=state.vocabLearning.progress[v.id];return p&&Number(p.stage)>0&&(!p.due_at||new Date(p.due_at).getTime()<=now);});
+  const fresh=source.filter(v=>!state.vocabLearning.progress[v.id]||Number(state.vocabLearning.progress[v.id].stage)===0);
+  const later=source.filter(v=>!due.includes(v)&&!fresh.includes(v));
+  const ordered=[...shuffled(due),...shuffled(fresh),...shuffled(later)];
+  s.allCards = ordered.map(v => [String(v.word||''), String(v.reading||''), String(v.meaning||''), String(v.jlpt_level||wordJlptLevel(v.word,'')), Number(v.id)]).filter(v => v[0]);
+  s.cards = s.allCards.slice(0, 120);
+  s.flips = new Array(s.cards.length).fill(false);
+  renderStudy();
+}
+
 function renderStudy() {
   const s = state.study;
   const grid = $('studyGrid');
   if (!grid) return;
   grid.innerHTML = '';
   if (!s.cards.length) {
-    grid.innerHTML = '<div class="empty-state">Choose at least one set.</div>';
+    grid.innerHTML = '<div class="empty-state">No everyday vocabulary is available for this category yet.</div>';
     return;
   }
   s.cards.forEach((c, i) => {
@@ -3942,9 +4100,11 @@ function renderStudy() {
     el.className = 'study-card' + (s.flips[i] ? ' flipped' : '');
     el.innerHTML = `<div class="card-inner">
       <div class="face front">${cardFaceHTML(c, true, s.reverse)}</div>
-      <div class="face back">${cardFaceHTML(c, false, s.reverse)}</div>
+      <div class="face back">${cardFaceHTML(c, false, s.reverse)}<div class="study-card-actions"><button type="button" data-vocab-quality="0">Again</button><button type="button" class="primary" data-vocab-quality="3">I know it ✓</button></div></div>
     </div>`;
     el.onclick = (ev) => {
+      const qualityBtn=ev.target.closest('[data-vocab-quality]');
+      if(qualityBtn){ev.preventDefault();ev.stopPropagation();const q=Number(qualityBtn.dataset.vocabQuality);const vocabId=Number(c[4]||0);const item=(state.words.allItems||[]).find(v=>Number(v.id)===vocabId);if(item&&requireAuth())saveVocabularyProgress(item,q);qualityBtn.textContent=q===0?'Again ✓':'Saved ✓';setTimeout(()=>{qualityBtn.textContent=q===0?'Again':'I know it ✓';},900);return;}
       const btn = ev.target.closest('[data-speak-ja],[data-speak-en]');
       if (btn) {
         ev.preventDefault();
@@ -3964,21 +4124,21 @@ function renderStudy() {
   const subtitle = $('studySubtitle');
   const backBtn = $('studyKanjiBtn');
   if (s.wordMode) {
-    if (title) title.textContent = 'Study Words';
-    if (subtitle) subtitle.textContent = s.wordSourceKanji ? `Useful vocabulary for ${s.wordSourceKanji} · tap a card to flip.` : 'Useful vocabulary · tap a card to flip.';
-    if (backBtn) backBtn.style.display = '';
+    if (title) title.textContent = 'Flash Cards';
+    if (subtitle) subtitle.textContent = s.wordSourceKanji ? `Useful vocabulary for ${s.wordSourceKanji} · tap a card to flip.` : 'Everyday Japanese vocabulary · tap a card to flip.';
+    if (backBtn) backBtn.style.display = s.wordSourceKanji ? '' : 'none';
     $('studySetSummary').textContent = s.wordSourceKanji ? `${s.wordSourceKanji} · ${pathLevelOf(s.wordSourceKanji)}` : 'Vocabulary';
   } else {
-    if (title) title.textContent = 'Study';
-    if (subtitle) subtitle.textContent = 'Tap a card to flip. Shuffle or reverse anytime.';
+    if (title) title.textContent = 'Flash Cards';
+    if (subtitle) subtitle.textContent = 'Everyday Japanese vocabulary · tap a card to flip. Shuffle or reverse anytime.';
     if (backBtn) backBtn.style.display = 'none';
-    $('studySetSummary').textContent = setSummary(s.sets);
+    $('studySetSummary').textContent = s.wordSourceKanji ? setSummary(s.sets) : (s.levelFilter==='ALL' ? 'Everyday vocabulary' : `Everyday · ${s.levelFilter}`);
   }
   const totalAll = (s.allCards && s.allCards.length) ? s.allCards.length : s.cards.length;
-  const level = s.levelFilter || 'N5';
+  const level = 'Everyday';
   $('studyCount').textContent = totalAll !== s.cards.length
     ? `${s.cards.length} · ${level} / ${totalAll}`
-    : `${s.cards.length} cards · ${level}`;
+    : `${s.cards.length} everyday cards`;
 }
 
 function updateStudyProgress() {
@@ -5410,8 +5570,9 @@ function pathItems(){
   });
 }
 function pathLevelCounts(items){const c={N5:0,N4:0,N3:0,N2:0,N1:0};for(const x of items)c[pathLevelOf(x.kanji)]++;return c}
-function loadPathProgress(){try{const raw=JSON.parse(localStorage.getItem('kanjiMnemonicPath')||'{}');if(!raw||typeof raw!=='object')return{};const out={};for(const[k,v]of Object.entries(raw)){if(v===true)out[k]={stage:3,ease:2.5,interval:4,due:Date.now()+4*864e5,reps:3,lapses:0,last:Date.now()};else if(v&&typeof v==='object')out[k]=v}return out}catch(_){return{}}}
-function savePathProgress(x){try{localStorage.setItem('kanjiMnemonicPath',JSON.stringify(x))}catch(_){}}
+function pathStorageKey(){return currentUser?'kanjiMnemonicPath:user:'+currentUser.id:'kanjiMnemonicPath:guest'}
+function loadPathProgress(){try{let raw=localStorage.getItem(pathStorageKey());if(!raw&&!currentUser)raw=localStorage.getItem('kanjiMnemonicPath');if(!raw)return{};const parsed=JSON.parse(raw);if(!parsed||typeof parsed!=='object')return{};const out={};for(const[k,v]of Object.entries(parsed)){if(v===true)out[k]={stage:3,ease:2.5,interval:4,due:Date.now()+4*864e5,reps:3,lapses:0,last:Date.now()};else if(v&&typeof v==='object')out[k]=v}return out}catch(_){return{}}}
+function savePathProgress(x){try{localStorage.setItem(pathStorageKey(),JSON.stringify(x));if(!currentUser)localStorage.setItem('kanjiMnemonicPath',JSON.stringify(x));}catch(_){} if(currentUser)savePathProgressToServer(x); }
 function pathIsLearned(p,k){return!!(p[k]&&p[k].stage>0)}
 function pathIsDue(p,k){const e=p[k];return!!(e&&e.stage>0&&(e.due||0)<=Date.now())}
 function pathDueList(items,p){return items.filter(x=>pathIsDue(p,x.kanji))}
@@ -5525,7 +5686,7 @@ const PATH_WORDS_LOADING=Object.create(null);
 let JOYO_VOCAB_PAGE=0,JOYO_VOCAB_QUERY='',JOYO_VOCAB_TOTAL=0,JOYO_VOCAB_ITEMS=[],JOYO_VOCAB_LOADING=false;
 const JOYO_VOCAB_CACHE_KEY='kanjiPathVocabCacheV1';
 let JOYO_VOCAB_CACHE=Object.create(null); // key -> {items,total,ts}
-function vocabCacheKey(q,page){return (q||'')+'|'+page;}
+function vocabCacheKey(q,page,level){return (q||'')+'|'+page+'|'+(level||'ALL');}
 function loadVocabCacheFromStorage(){
   try{
     const raw=JSON.parse(localStorage.getItem(JOYO_VOCAB_CACHE_KEY)||'{}');
@@ -5609,7 +5770,7 @@ async function fetchVocabPage(opts){
   opts=opts||{};
   const quiet=!!opts.quiet;
   const q=JOYO_VOCAB_QUERY.trim();
-  const key=vocabCacheKey(q,JOYO_VOCAB_PAGE);
+  const key=vocabCacheKey(q,JOYO_VOCAB_PAGE,'ALL');
   const cached=JOYO_VOCAB_CACHE[key];
   const fresh=cached&&(Date.now()-(cached.ts||0)<1000*60*60*24); // 24h
   if(fresh&&Array.isArray(cached.items)){
@@ -5777,6 +5938,7 @@ const writeCount=getKanjiWriteCount(item.kanji);const writesDone=writeCount>=PRA
 function renderPathRoadmap(items,p){const grid=$('pathRoadmap');if(!grid)return;const visible=pathLevelItems(items),counts=pathLevelCounts(items);grid.innerHTML='';for(let vi=0;vi<visible.length;vi++){const x=visible[vi],i=items.indexOf(x),b=document.createElement('button');b.type='button';b.className='path-node';if(pathIsLearned(p,x.kanji))b.classList.add('learned');if(pathIsDue(p,x.kanji))b.classList.add('due');if(i===pathCurrent)b.classList.add('current');const prevInLevel=vi>0?visible[vi-1]:null;const unlocked=vi===0||(prevInLevel&&pathIsLearned(p,prevInLevel.kanji))||pathIsLearned(p,x.kanji);if(!unlocked)b.classList.add('locked');b.disabled=!unlocked;b.innerHTML=`<strong>${esc(x.kanji)}</strong><small>${vi+1} · ${pathLevelOf(x.kanji)}</small>`;b.onclick=()=>{pathReviewMode=false;pathCurrent=i;renderPath()};grid.appendChild(b)}if($('pathRoadmapCount'))$('pathRoadmapCount').textContent=`${visible.length.toLocaleString()} kanji · ${pathLevelFilter}`;if($('pathLevelSummary'))$('pathLevelSummary').innerHTML=`Learning <strong>${pathLevelFilter}</strong> · N5 ${counts.N5} · N4 ${counts.N4} · N3 ${counts.N3} · N2 ${counts.N2} · N1 ${counts.N1}`}
 function pathAnswer(quality){const items=pathItems(),p=loadPathProgress(),x=items[pathCurrent];if(!x)return;const prev=p[x.kanji]||{stage:0,ease:2.5,interval:0,reps:0,lapses:0};p[x.kanji]=srsSchedule(prev,quality);savePathProgress(p);if(quality===0){renderPath();return}pathReviewMode=false;const visible=pathLevelItems(items);const vi=visible.findIndex(v=>v.kanji===x.kanji);if(vi>=0&&vi<visible.length-1){pathCurrent=items.indexOf(visible[vi+1]);}else if(pathCurrent<items.length-1){pathCurrent++;}renderPath()}
 function pathMarkLearned(){
+  if(!requireAuth()) return;
   const btn = $('pathLearnBtn');
   const mode = (btn && btn.dataset && btn.dataset.mode) || 'learn';
   if (mode === 'review-good') { pathAnswer(2); return; }
@@ -5821,11 +5983,14 @@ function showMode(next) {
     const el = $(`${k}Mode`);
     if (el) el.classList.toggle('hidden', k !== mode);
   });
-  document.querySelectorAll('.nav-btn').forEach(b => {
+  bind('startLearningBtn','onclick',()=>{if(!requireAuth()){return;} const due=vocabDueCount(); if(due){state.study.levelFilter='ALL';document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level==='ALL'));showMode('study');}else{showMode('words');}});
+
+document.querySelectorAll('.nav-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === mode);
   });
   if (mode === 'path') renderPath();
-  if (mode === 'words') { renderWords(); ensureVocabularyLoaded(); }
+  if (mode === 'study') { Promise.all([ensureVocabularyLoaded(),loadVocabularyProgress()]).then(() => setupStudyVocabulary()); }
+  if (mode === 'words') { renderWords(); Promise.all([ensureVocabularyLoaded(),loadVocabularyProgress()]).then(()=>renderWords()); }
   if (mode === 'practice') renderPractice();
 }
 
@@ -5847,13 +6012,7 @@ bind('gameSetupStart', 'onclick', startSelectedGame);
 bind('gameQuit', 'onclick', () => askQuit('games'));
 
 
-document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(btn => {
-  btn.onclick = () => {
-    state.study.levelFilter = btn.getAttribute('data-study-level') || 'N5';
-    applyStudyLevelFilter();
-    renderStudy();
-  };
-});
+
 
 bind('studyChooseSets', 'onclick', () => openModal('study'));
 bind('studyKanjiBtn', 'onclick', () => { const x=pathItems()[pathCurrent]; if(x){ setupStudy([x.setId],true); } });
@@ -6041,7 +6200,7 @@ bind('vocabBankHide', 'onclick', ()=>{
 bind('vocabBankShow', 'onclick', ()=>{
   const bank=$('vocabBank'),show=$('vocabBankShow');
   // instant from cache if present
-  const key=vocabCacheKey(JOYO_VOCAB_QUERY.trim(),JOYO_VOCAB_PAGE);
+  const key=vocabCacheKey(JOYO_VOCAB_QUERY.trim(),JOYO_VOCAB_PAGE,'ALL');
   if(JOYO_VOCAB_CACHE[key]&&JOYO_VOCAB_CACHE[key].items){
     JOYO_VOCAB_ITEMS=JOYO_VOCAB_CACHE[key].items;
     JOYO_VOCAB_TOTAL=JOYO_VOCAB_CACHE[key].total||JOYO_VOCAB_ITEMS.length;
@@ -6055,14 +6214,7 @@ bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.valu
 bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
 bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; fetchVocabPage(); });
 
-document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(btn => {
-  btn.onclick = () => {
-    state.words.levelFilter = btn.getAttribute('data-word-level') || 'ALL';
-    document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(b => b.classList.toggle('active', b === btn));
-    renderWords();
-  };
-});
-bind('wordsLoadAll', 'onclick', () => ensureVocabularyLoaded(true));
+
 
 // Prevent clicks inside the practice dialog from being treated as backdrop clicks.
 $('practiceModal').addEventListener('click', e => {
@@ -6152,6 +6304,25 @@ bind('clearHistory', 'onclick', () => {
   renderGameHistoryItems([]);
 });
 
+document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(btn => {
+  btn.onclick = () => {
+    state.study.levelFilter = btn.dataset.level || 'ALL';
+    document.querySelectorAll('#studyLevelFilter .study-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    setupStudyVocabulary();
+  };
+});
+
+document.querySelectorAll('#wordCategoryFilter .vocab-category-btn').forEach(btn=>{btn.onclick=()=>{state.words.category=btn.dataset.category||'ALL';document.querySelectorAll('#wordCategoryFilter .vocab-category-btn').forEach(b=>b.classList.toggle('active',b===btn));renderWords();};});
+document.querySelectorAll('#studyCategoryFilter .vocab-category-btn').forEach(btn=>{btn.onclick=()=>{state.study.category=btn.dataset.category||'ALL';document.querySelectorAll('#studyCategoryFilter .vocab-category-btn').forEach(b=>b.classList.toggle('active',b===btn));setupStudyVocabulary();};});
+
+document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(btn => {
+  btn.onclick = () => {
+    state.words.levelFilter = btn.dataset.level || 'ALL';
+    document.querySelectorAll('#wordLevelFilter .word-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderWords();
+  };
+});
+
 document.querySelectorAll('.nav-btn').forEach(b => {
   b.onclick = () => {
     showMode(b.dataset.mode);
@@ -6181,7 +6352,7 @@ window.addEventListener('resize', () => {
     }, 100);
   }
 });
-// Boot — guest works offline; login optional (admin at /admin.html).
+// Boot — guest works offline; signed-in progress is saved to the database.
 (() => {
   setupStudy([1], true);
   setupPractice([1]);
@@ -6194,5 +6365,6 @@ try{prefetchVocabBank();}catch(e){}
 
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

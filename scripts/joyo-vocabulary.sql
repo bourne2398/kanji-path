@@ -2,7 +2,8 @@
 -- UTF-8 SQL dump; 40,000 vocabulary entries
 -- Columns: id, word, reading, meaning, kanji
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS joyo_vocabulary (id INTEGER PRIMARY KEY, word TEXT NOT NULL, reading TEXT, meaning TEXT, kanji TEXT);
+CREATE TABLE IF NOT EXISTS joyo_vocabulary (id INTEGER PRIMARY KEY, word TEXT NOT NULL, reading TEXT, meaning TEXT, kanji TEXT, everyday BOOLEAN NOT NULL DEFAULT TRUE);
+ALTER TABLE joyo_vocabulary ADD COLUMN IF NOT EXISTS everyday BOOLEAN NOT NULL DEFAULT TRUE;
 CREATE INDEX IF NOT EXISTS idx_joyo_vocabulary_word ON joyo_vocabulary(word);
 CREATE INDEX IF NOT EXISTS idx_joyo_vocabulary_kanji ON joyo_vocabulary(kanji);
 INSERT INTO joyo_vocabulary (id,word,reading,meaning,kanji) VALUES
@@ -40085,4 +40086,11 @@ INSERT INTO joyo_vocabulary (id,word,reading,meaning,kanji) VALUES
 (39998,'龍王','りゅうおう','Dragon King; promoted rook','龍王'),
 (39999,'龕屋','がんや','place to store a body in a coffin before burial (Okinawa)','龕屋'),
 (40000,'𨫤押し坑道','ひおしこうどう','drift (mining); driftway','押坑道');
+UPDATE joyo_vocabulary SET everyday = CASE
+  WHEN length(word) > 14 THEN FALSE
+  WHEN meaning ~* '(physics|chemistry|biology|botany|zoology|anatomy|surgery|medical|medicine|legal|law|linguistics|military|weapon|finance|financial|stock market|economics|geology|astronomy|engineering|mathematics|computer science|software|programming|religion|buddh|shinto|historical|archaeology|political|politics|government|taxation|criminal|disease|pathology|psychiatry|pharmac|agriculture|technical|telecommunication|algorithm|database|game development|adult|porn|sexual)' THEN FALSE
+  WHEN meaning ~* '(loan shark|point-blank|first graduates|research student|student movement|scholarship|terror|suicide|murder|protest|weapon)' THEN FALSE
+  WHEN word ~ '[＠※○〇×\[\]（）(){}<>]' THEN FALSE
+  ELSE TRUE END;
+CREATE INDEX IF NOT EXISTS idx_joyo_vocabulary_everyday ON joyo_vocabulary(everyday);
 COMMIT;

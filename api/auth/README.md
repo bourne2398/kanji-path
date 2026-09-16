@@ -5,7 +5,7 @@ Self-contained Jōyō kanji study app with:
 - Static frontend (`public/index.html`)
 - Serverless API on Vercel (`/api/*`)
 - Neon Postgres (users + 40,000 vocabulary rows)
-- Admin panel at `/admin.html`
+- Admin dashboard at `/admin.html`; administrators sign in through the main app Sign in form.
 
 ---
 
@@ -93,8 +93,9 @@ You can also paste `scripts/joyo-vocabulary.sql` into the Neon SQL Editor, but t
 
 ## 6. Log in as admin
 
-1. Open `https://your-project.vercel.app/admin.html`
-2. Sign in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+1. Open the main app.
+2. Use the normal **Sign in** form with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+3. Admin accounts are redirected to `/admin.html` automatically.
 3. Check health line: vocabulary count should be ~40,000
 4. Create additional students/admins from the panel
 

@@ -94,15 +94,11 @@
   <button class="secondary" id="logoutBtn" style="width:auto;margin:0;padding:8px 14px;margin-left:auto">Log out</button>
 </header>
 <main>
-  <div class="card" id="loginCard">
-    <h1>Admin login</h1>
-    <p class="muted">Sign in with the admin account created by <code>seed-admin</code>.</p>
-    <label>Email</label>
-    <input id="email" type="email" autocomplete="username" placeholder="admin@example.com">
-    <label>Password</label>
-    <input id="password" type="password" autocomplete="current-password">
-    <button id="loginBtn">Sign in</button>
-    <div class="err" id="loginErr"></div>
+  <div class="card" id="accessCard">
+    <h1>Admin dashboard</h1>
+    <p class="muted">Administrator accounts use the same Sign in form as regular users. After an admin signs in, they are sent here automatically.</p>
+    <a class="secondary" href="/">← Return to Kanji Path</a>
+    <div class="err" id="accessErr"></div>
   </div>
 
   <div class="card hidden" id="dashCard">
@@ -152,7 +148,7 @@ async function api(path, opts = {}) {
 }
 
 function showLoggedIn(user) {
-  $('loginCard').classList.add('hidden');
+  $('accessCard').classList.add('hidden');
   $('dashCard').classList.remove('hidden');
   $('usersCard').classList.remove('hidden');
   $('createCard').classList.remove('hidden');
@@ -162,7 +158,7 @@ function showLoggedIn(user) {
 }
 
 function showLoggedOut() {
-  $('loginCard').classList.remove('hidden');
+  $('accessCard').classList.remove('hidden');
   $('dashCard').classList.add('hidden');
   $('usersCard').classList.add('hidden');
   $('createCard').classList.add('hidden');
@@ -173,9 +169,11 @@ async function loadMe() {
   const { data } = await api('/api/auth/me');
   if (data.user && data.user.role === 'admin') {
     showLoggedIn(data.user);
-  } else {
-    showLoggedOut();
+    return;
   }
+  showLoggedOut();
+  if (data.user) $('accessErr').textContent = 'This account does not have administrator access. Sign in with an admin account from the main Sign in form.';
+  else $('accessErr').textContent = 'Please sign in with your administrator account from the main Sign in form first.';
 }
 
 async function loadHealth() {
@@ -208,26 +206,6 @@ async function loadUsers() {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-
-$('loginBtn').onclick = async () => {
-  $('loginErr').textContent = '';
-  const email = $('email').value.trim();
-  const password = $('password').value;
-  const { res, data } = await api('/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) {
-    $('loginErr').textContent = data.error || 'Login failed';
-    return;
-  }
-  if (data.user?.role !== 'admin') {
-    $('loginErr').textContent = 'This account is not an admin.';
-    await api('/api/auth/logout', { method: 'POST' });
-    return;
-  }
-  showLoggedIn(data.user);
-};
 
 $('logoutBtn').onclick = async () => {
   await api('/api/auth/logout', { method: 'POST' });
