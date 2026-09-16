@@ -19,7 +19,7 @@ header p{color:var(--muted);font-size:.88rem;margin-top:.25rem}
 a{color:var(--accent)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1rem}
 label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:.35rem}
-input[type=password]{
+input[type=password],input[type=text]{
   width:100%;padding:.65rem .8rem;border-radius:10px;border:1px solid var(--border);
   background:var(--bg);color:var(--text);font:inherit;min-height:44px;margin-bottom:.7rem;
 }
@@ -29,6 +29,7 @@ button{
 }
 button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
 button.danger{background:var(--bad);color:#fff}
+button:disabled{opacity:.45}
 .row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
 .status{font-size:.85rem;color:var(--muted);margin-top:.5rem;min-height:1.3em}
 .item{
@@ -45,26 +46,29 @@ button.danger{background:var(--bad);color:#fff}
 .item .actions{margin-top:.5rem}
 .empty{text-align:center;padding:1.5rem;color:var(--muted)}
 #adminPanel{display:none}
+#loginPanel{display:block}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <h1>Admin · History</h1>
-    <p><a href="/">← Flashcards</a> · History is public on the main app. Only admins can delete.</p>
+    <p><a href="/">← Back to flashcards</a> · Only admins can delete. Everyone can view history on the main app.</p>
   </header>
 
   <div class="card" id="loginPanel">
     <label for="pw">Admin password</label>
     <input type="password" id="pw" placeholder="Password" autocomplete="current-password"/>
-    <div class="row"><button type="button" id="loginBtn">Log in</button></div>
+    <div class="row">
+      <button type="button" id="loginBtn">Log in</button>
+    </div>
     <div class="status" id="loginStatus"></div>
   </div>
 
   <div id="adminPanel">
     <div class="card">
       <div class="row" style="justify-content:space-between">
-        <strong>Admin</strong>
+        <strong>Logged in as admin</strong>
         <div class="row">
           <button type="button" class="secondary" id="refreshBtn">Refresh</button>
           <button type="button" class="danger" id="clearAllBtn">Delete all</button>
@@ -94,10 +98,6 @@ function showLoggedIn(on){
   document.getElementById("adminPanel").style.display=on?"block":"none";
 }
 
-function escapeHtml(s){
-  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-
 async function login(){
   const pw=document.getElementById("pw").value;
   const st=document.getElementById("loginStatus");
@@ -114,7 +114,8 @@ async function login(){
   }
 }
 
-function logout(){
+async function logout(){
+  try{await api("/api/admin/logout",{method:"POST"});}catch(e){}
   token="";
   sessionStorage.removeItem(TOKEN_KEY);
   showLoggedIn(false);
@@ -136,12 +137,12 @@ async function loadList(){
       const when=h.when?new Date(h.when).toLocaleString():"";
       const lessons=h.lessons==="all"?"All lessons":(h.lessons||"—");
       const dir=h.dir==="en-jp"?"EN → JP":"JP → EN";
-      return `<div class="item">
+      return `<div class="item" data-id="${h.id}">
         <div class="top">
           <span class="nick">${escapeHtml(h.nick)}</span>
           <span class="pct ${cls}">Grade ${escapeHtml(h.grade||"—")}</span>
         </div>
-        <div class="meta">Grade ${escapeHtml(h.grade||"—")} · Attempt ${h.attempts||1} · Score ${h.pct||0}%<br/>✅ ${h.right||0} · ❌ ${h.wrong||0} · ${h.total||0} cards · ${escapeHtml(String(lessons))} · ${dir}<br/>${escapeHtml(when)} · #${h.id}</div>
+        <div class="meta">Grade ${escapeHtml(h.grade||"—")} · Attempt ${h.attempts||1} · Score ${h.pct||0}%<br/>✅ ${h.right||0} · ❌ ${h.wrong||0} · ${h.total||0} cards · ${escapeHtml(String(lessons))} · ${dir}<br/>${escapeHtml(when)} · id #${h.id}</div>
         <div class="actions"><button type="button" class="danger del-one" data-id="${h.id}">Delete</button></div>
       </div>`;
     }).join("");
@@ -150,7 +151,9 @@ async function loadList(){
     });
   }catch(e){
     st.textContent=e.message;
-    if(/unauthorized/i.test(String(e.message))) logout();
+    if(String(e.message).toLowerCase().includes("unauthorized")){
+      logout();
+    }
   }
 }
 
@@ -159,7 +162,9 @@ async function deleteOne(id){
   try{
     await api("/api/scores/"+id,{method:"DELETE"});
     loadList();
-  }catch(e){ alert(e.message); }
+  }catch(e){
+    alert(e.message);
+  }
 }
 
 async function clearAll(){
@@ -167,7 +172,13 @@ async function clearAll(){
   try{
     await api("/api/scores",{method:"DELETE"});
     loadList();
-  }catch(e){ alert(e.message); }
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+function escapeHtml(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
 document.getElementById("loginBtn").addEventListener("click",login);
@@ -176,7 +187,10 @@ document.getElementById("logoutBtn").addEventListener("click",logout);
 document.getElementById("refreshBtn").addEventListener("click",loadList);
 document.getElementById("clearAllBtn").addEventListener("click",clearAll);
 
-if(token){ showLoggedIn(true); loadList(); }
+if(token){
+  showLoggedIn(true);
+  loadList();
+}
 </script>
 </body>
 </html>
