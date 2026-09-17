@@ -291,3 +291,190 @@ html[data-theme="dark"] .modal-backdrop .modal .btn:not(.primary):not(.good):not
 html[data-theme="dark"] .modal-backdrop .modal .btn:not(.primary):not(.good):not(.bad):hover {
   background: #164866;
 }
+
+/* Complete shared component layer for the remaining app controls. */
+.toolbar, .controls, .words-toolbar, .path-map-controls, .path-roadmap-head,
+.path-lesson-top, .path-explanation-head, .vocab-bank-head, .vocab-bank-pages,
+.modal-head, .modal-foot, .modal-actions, .practice-modal-actions,
+.practice-secondary-row, .radio-row, .set-actions, .game-direction {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.toolbar, .controls, .words-toolbar { margin: 1rem 0; padding: .85rem; }
+.toolbar .spacer, .words-toolbar .spacer { flex: 1; }
+.controls { justify-content: center; }
+.path-roadmap-head, .path-lesson-top, .path-explanation-head,
+.vocab-bank-head { justify-content: space-between; flex-wrap: wrap; }
+.path-level-summary, .selection-note, .vocab-bank-status, .result-meta-line,
+.result-date, .practice-modal-meta, .game-step-note, .search-help {
+  color: var(--kp-muted);
+  font-size: .9rem;
+}
+.badge { font-weight: 700; }
+.progress {
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  padding: .5rem .75rem;
+  border-radius: .65rem;
+  color: var(--kp-blue-900);
+  background: var(--kp-blue-100);
+  font-size: .9rem;
+}
+.study-grid, .vocab-bank-grid, .match-grid, .game-menu-grid,
+.history-list, .result-stats { display: grid; gap: 1rem; }
+.study-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); }
+.study-card { min-height: 14rem; perspective: 1000px; cursor: pointer; }
+.card-inner { position: relative; min-height: 12rem; transform-style: preserve-3d; transition: transform .35s ease; }
+.study-card.flipped .card-inner { transform: rotateY(180deg); }
+.study-card .face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  border-radius: .75rem;
+  backface-visibility: hidden;
+  text-align: center;
+}
+.study-card .front { background: #f5fbff; }
+.study-card .back { transform: rotateY(180deg); color: #fff; background: linear-gradient(135deg, var(--kp-blue-700), #2563eb); }
+.card-kanji, .big-kanji, .big-reading { font-size: clamp(2.75rem, 8vw, 5rem); font-weight: 800; }
+.card-reading, .card-meaning, .big-meaning { font-size: 1.2rem; font-weight: 700; }
+.speak-btn { color: var(--kp-blue-700); text-decoration: none; }
+.practice-grid { margin-top: 1rem; }
+.practice-tile { min-height: 8rem; text-align: center; }
+.practice-tile .tile-kanji, .practice-tile .kanji { font-size: 3rem; font-weight: 800; color: var(--kp-blue-900); }
+.practice-tile .tile-reading, .practice-tile .tile-meaning, .practice-tile small { color: var(--kp-muted); }
+.practice-tile.practice-complete { border-color: #198754; background: #effbf4; }
+.practice-level-filter, .anime-filter { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.practice-level-btn { border: 1px solid var(--kp-border); border-radius: 99px; padding: .45rem .8rem; color: var(--kp-blue-700); background: #fff; font-weight: 700; }
+.practice-level-btn.active { color: #fff; border-color: var(--kp-blue-700); background: var(--kp-blue-700); }
+.vocab-bank { margin-top: 1rem; padding: 1rem; border: 1px solid var(--kp-border); border-radius: 1rem; background: var(--kp-surface); box-shadow: var(--kp-shadow); }
+.vocab-bank-search, .set-search { min-width: min(100%, 20rem); padding: .65rem .8rem; border: 1px solid #b9d6e7; border-radius: .65rem; color: var(--kp-ink); background: #fff; }
+.vocab-bank-grid { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); margin-top: 1rem; }
+.vocab-card { padding: .85rem; border: 1px solid var(--kp-border); border-radius: .75rem; background: #f8fcff; }
+.vocab-card .word, .word-kanji { font-size: 1.5rem; font-weight: 800; color: var(--kp-blue-900); }
+.vocab-bank-pages { justify-content: center; margin-top: 1rem; }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(3, 30, 52, .68);
+}
+.modal-backdrop.center { align-items: center; }
+.modal-head { justify-content: space-between; align-items: flex-start; }
+.modal-head > div:first-child { flex: 1; }
+.modal-head h2 { margin: 0; font-size: 1.35rem; }
+.modal-foot { justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--kp-border); }
+.modal-actions { justify-content: flex-end; flex-wrap: wrap; }
+.modal-close-x { border: 0; font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.modal-body { margin-top: 1rem; }
+.modal .btn { min-height: 2.6rem; border: 1px solid #b9d6e7; border-radius: .65rem; padding: .55rem .85rem; color: var(--kp-blue-700); background: #fff; font-weight: 700; }
+.modal .btn.primary, .modal .btn.good { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--kp-blue-700), #2563eb); }
+.modal .btn.bad { color: #842029; border-color: #f1aeb5; background: #fff5f5; }
+.modal .btn.subtle, .modal .btn.linkish { border-color: transparent; background: transparent; }
+.modal .btn.linkish { color: var(--kp-blue-700); }
+.config-label { display: block; margin-bottom: .5rem; color: var(--kp-blue-900); font-weight: 800; }
+.radio-row, .game-setup-radio-grid { flex-wrap: wrap; }
+.game-setup-radio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .5rem; }
+.game-setup-radio { display: flex; align-items: center; gap: .5rem; padding: .7rem; border: 1px solid var(--kp-border); border-radius: .65rem; cursor: pointer; }
+.game-setup-radio:has(input:checked), .radio-option:has(input:checked) { border-color: var(--kp-blue-500); background: var(--kp-blue-100); }
+.radio-option { padding: .45rem .65rem; border: 1px solid var(--kp-border); border-radius: .5rem; }
+.set-actions { margin: .5rem 0; }
+.set-actions button { border: 0; color: var(--kp-blue-700); background: transparent; font-weight: 700; cursor: pointer; }
+.set-list { display: grid; gap: .45rem; max-height: 18rem; overflow-y: auto; margin-top: .75rem; }
+.set-row { display: flex; align-items: center; gap: .7rem; padding: .7rem; border: 1px solid var(--kp-border); border-radius: .65rem; cursor: pointer; }
+.set-row.selected { border-color: var(--kp-blue-500); background: var(--kp-blue-100); }
+.set-row .info { flex: 1; }
+.set-row .title { display: flex; gap: .7rem; font-weight: 700; }
+.set-row .kj { font-size: 1.25rem; }
+.set-row .meta, .set-row small { color: var(--kp-muted); font-size: .8rem; }
+.set-empty, .empty-state { padding: 1.5rem; color: var(--kp-muted); text-align: center; }
+.choice { width: 100%; min-height: 3rem; padding: .75rem; border: 1px solid var(--kp-border); border-radius: .7rem; color: var(--kp-blue-900); background: #fff; font-weight: 700; }
+.choice:hover { border-color: var(--kp-blue-500); background: var(--kp-blue-100); }
+.choice.correct, .match-card.matched { color: #146c43; border-color: #75b798; background: #d1e7dd; }
+.choice.wrong { color: #842029; border-color: #ea868f; background: #f8d7da; }
+.match-grid { grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+.match-card { min-height: 5rem; border: 1px solid var(--kp-border); border-radius: .75rem; color: var(--kp-blue-900); background: #f8fcff; font-size: 1.2rem; font-weight: 800; }
+.match-card.revealed { border-color: var(--kp-blue-500); background: var(--kp-blue-100); }
+.result-stats { grid-template-columns: repeat(3, 1fr); margin: 1rem 0; }
+.result-stat { padding: .9rem; border: 1px solid var(--kp-border); border-radius: .7rem; text-align: center; background: #f8fcff; }
+.result-stat strong { display: block; color: var(--kp-blue-700); font-size: 1.6rem; }
+.mistake-item, .history-detail-item { margin-top: .6rem; padding: .75rem; border-left: .3rem solid #dc3545; border-radius: .5rem; background: #fff5f5; }
+.m-kanji, .hd-kanji { font-size: 1.6rem; font-weight: 800; }
+.m-reading, .hd-reading, .m-answer, .hd-line { color: var(--kp-muted); }
+.history-detail-summary { padding: .8rem; border-radius: .65rem; background: var(--kp-blue-100); }
+.practice-hw-wrap { display: grid; place-items: center; }
+.practice-hw-box { width: min(100%, 24rem); min-height: 20rem; padding: 1rem; border: 2px dashed var(--kp-border); border-radius: 1rem; background: #f8fcff; }
+.practice-slots { display: flex; justify-content: center; gap: .4rem; margin: .75rem 0; }
+.practice-slot { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; border: 1px solid var(--kp-border); border-radius: .4rem; color: var(--kp-blue-700); background: #f8fcff; font-weight: 800; }
+.practice-slot.current { border-color: var(--kp-blue-500); background: var(--kp-blue-100); }
+.practice-foot-clean { display: block; }
+.practice-modal-actions, .practice-secondary-row { justify-content: center; flex-wrap: wrap; }
+.practice-secondary-row { margin-top: .5rem; }
+.timer-bar { height: .5rem; overflow: hidden; border-radius: 99px; background: #dbeafe; }
+.timer-bar-fill { height: 100%; transform-origin: left; background: #0ea5e9; transition: transform .1s linear; }
+.timer-bar.warn .timer-bar-fill { background: #ffc107; }
+.timer-bar.danger .timer-bar-fill { background: #dc3545; }
+html[data-theme="dark"] .toolbar,
+html[data-theme="dark"] .controls,
+html[data-theme="dark"] .vocab-bank,
+html[data-theme="dark"] .study-card .front,
+html[data-theme="dark"] .vocab-card,
+html[data-theme="dark"] .practice-tile,
+html[data-theme="dark"] .result-stat,
+html[data-theme="dark"] .match-card,
+html[data-theme="dark"] .practice-hw-box {
+  color: #e1f3ff;
+  background: #10334b;
+  border-color: #28617f;
+}
+html[data-theme="dark"] .set-search,
+html[data-theme="dark"] .vocab-bank-search,
+html[data-theme="dark"] .modal .btn,
+html[data-theme="dark"] .choice,
+html[data-theme="dark"] .path-level-btn,
+html[data-theme="dark"] .practice-level-btn,
+html[data-theme="dark"] .word-level-btn,
+html[data-theme="dark"] .radio-option,
+html[data-theme="dark"] .set-row {
+  color: #e1f3ff;
+  background: #071827;
+  border-color: #28617f;
+}
+html[data-theme="dark"] .path-level-btn.active,
+html[data-theme="dark"] .practice-level-btn.active,
+html[data-theme="dark"] .word-level-btn.active,
+html[data-theme="dark"] .modal .btn.primary,
+html[data-theme="dark"] .modal .btn.good { color: #fff; background: linear-gradient(135deg, #075985, #2563eb); }
+html[data-theme="dark"] .config-label,
+html[data-theme="dark"] .practice-tile .tile-kanji,
+html[data-theme="dark"] .vocab-card .word,
+html[data-theme="dark"] .word-kanji,
+html[data-theme="dark"] .card-kanji,
+html[data-theme="dark"] .big-kanji,
+html[data-theme="dark"] .big-reading,
+html[data-theme="dark"] .choice,
+html[data-theme="dark"] .match-card { color: #bae6fd; }
+html[data-theme="dark"] .set-row.selected,
+html[data-theme="dark"] .game-setup-radio:has(input:checked),
+html[data-theme="dark"] .radio-option:has(input:checked),
+html[data-theme="dark"] .choice:hover,
+html[data-theme="dark"] .match-card.revealed { background: #164866; }
+html[data-theme="dark"] .m-reading,
+html[data-theme="dark"] .hd-reading,
+html[data-theme="dark"] .m-answer,
+html[data-theme="dark"] .hd-line,
+html[data-theme="dark"] .path-level-summary,
+html[data-theme="dark"] .selection-note,
+html[data-theme="dark"] .vocab-bank-status,
+html[data-theme="dark"] .result-date,
+html[data-theme="dark"] .result-meta-line,
+html[data-theme="dark"] .practice-modal-meta,
+html[data-theme="dark"] .search-help { color: #a9c8d9; }
