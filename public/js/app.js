@@ -346,6 +346,13 @@ function normalizeVocabRow(r) {
 }
 function filteredVocabularyItems(){return (Array.isArray(state.words.allItems)?state.words.allItems:[]).filter(x=>x.everyday!==false);}
 
+function bundledVocabularyItems() {
+  const fallback = SETS.flatMap(set => (Array.isArray(set.cards) ? set.cards : [])
+    .map(card => normalizeVocabRow({ word: card[0], reading: card[1], meaning: card[2] }))
+    .filter(item => item && [...item.word].filter(isKanjiChar).length >= 2));
+  return [...new Map(fallback.map(item => [item.word, item])).values()];
+}
+
 function renderWords() {
   const s = state.words;
   const grid = $('wordsGrid');
@@ -428,11 +435,16 @@ async function ensureVocabularyLoaded(force = false) {
       if (!force && cached.ts && Date.now() - cached.ts < 86400000) return state.words.allItems;
     }
 
-    const first = await fetch('/api/vocab?page=0&limit=300', { credentials:'include', cache:'no-store' });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const first = await fetch('/api/vocab?page=0&limit=300', {
+      credentials:'include', cache:'no-store', signal: controller.signal
+    }).finally(() => clearTimeout(timeout));
     if (!first.ok) throw new Error('Vocabulary API ' + first.status);
     const firstData = await first.json();
     const total = Number(firstData.total || 0);
     let items = (firstData.items || []).map(normalizeVocabRow).filter(Boolean);
+    if (!items.length) throw new Error('Vocabulary API returned no entries');
     state.words.allItems = items;
     renderWords();
 
@@ -463,10 +475,7 @@ async function ensureVocabularyLoaded(force = false) {
     console.error('Vocabulary load failed:', e);
     // Keep Words usable when the optional vocabulary database is unavailable.
     // The bundled kanji cards still provide reliable review material.
-    const fallback = SETS.flatMap(set => (Array.isArray(set.cards) ? set.cards : [])
-      .map(card => normalizeVocabRow({ word: card[0], reading: card[1], meaning: card[2] }))
-      .filter(item => item && [...item.word].filter(isKanjiChar).length >= 2));
-    state.words.allItems = [...new Map(fallback.map(item => [item.word, item])).values()];
+    state.words.allItems = bundledVocabularyItems();
     renderWords();
     if ($('wordsProgress')) $('wordsProgress').textContent = 'Vocabulary service unavailable. Showing bundled kanji examples instead.';
     if (button) button.textContent = 'Retry Vocabulary Load';
@@ -3058,7 +3067,12 @@ bind('pathStartBtn', 'onclick', () => {
   document.getElementById('pathLesson')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 bind('pathBrowseBtn', 'onclick', () => {
-  document.getElementById('pathRoadmap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  showMode('path');
+  renderPath();
+  setTimeout(() => {
+    const roadmap = document.getElementById('pathRoadmap');
+    if (roadmap) roadmap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
 });
 bind('pathAgainBtn', 'onclick', () => pathAnswer(0));
 
@@ -3363,11 +3377,14 @@ document.querySelectorAll('.nav-btn').forEach(b => {
     toggle?.setAttribute('aria-expanded', 'false');
   };
 });
-bind('menuToggle', 'onclick', () => {
-  const nav = document.querySelector('header nav');
-  const toggle = $('menuToggle');
-  if (!nav || !toggle) return;
-  const open = nav.classList.toggle('nav-open');
+document.addEventListener('click', event => {
+  const toggle = event.target.closest?.('#menuToggle');
+  if (!toggle) return;
+  const nav = document.getElementById('mainNav');
+  if (!nav) return;
+  const open = !nav.classList.contains('nav-open');
+  nav.classList.toggle('nav-open', open);
+  document.body.classList.toggle('menu-open', open);
   toggle.setAttribute('aria-expanded', String(open));
   toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
 });
