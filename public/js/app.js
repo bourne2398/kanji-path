@@ -3377,11 +3377,14 @@ document.querySelectorAll('.nav-btn').forEach(b => {
     toggle?.setAttribute('aria-expanded', 'false');
   };
 });
-bind('menuToggle', 'onclick', () => {
-  const nav = document.querySelector('header nav');
-  const toggle = $('menuToggle');
-  if (!nav || !toggle) return;
-  const open = nav.classList.toggle('nav-open');
+document.addEventListener('click', event => {
+  const toggle = event.target.closest?.('#menuToggle');
+  if (!toggle) return;
+  const nav = document.getElementById('mainNav');
+  if (!nav) return;
+  const open = !nav.classList.contains('nav-open');
+  nav.classList.toggle('nav-open', open);
+  document.body.classList.toggle('menu-open', open);
   toggle.setAttribute('aria-expanded', String(open));
   toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
 });
