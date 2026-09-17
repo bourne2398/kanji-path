@@ -79,6 +79,26 @@ async function fetchAndCacheKanjiData() {
 const $ = id => document.getElementById(id);
 const bind = (id, event, fn) => { const el = $(id); if (el) el[event] = fn; };
 
+function setMenuOpen(open) {
+  const nav = $('mainNav');
+  const toggle = $('menuToggle');
+  if (!nav || !toggle) return;
+  nav.classList.toggle('nav-open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+}
+
+// Bind directly during startup so the menu still works if a later optional
+// initializer fails.
+const menuToggle = $('menuToggle');
+if (menuToggle) {
+  menuToggle.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setMenuOpen(!$('mainNav')?.classList.contains('nav-open'));
+  });
+}
+
 const esc = x => String(x).replace(/[&<>"']/g, m =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const shuffled = a => [...a].sort(() => Math.random() - 0.5);
@@ -3371,22 +3391,8 @@ bind('clearHistory', 'onclick', () => {
 document.querySelectorAll('.nav-btn').forEach(b => {
   b.onclick = () => {
     showMode(b.dataset.mode);
-    const nav = document.querySelector('header nav');
-    const toggle = $('menuToggle');
-    nav?.classList.remove('nav-open');
-    toggle?.setAttribute('aria-expanded', 'false');
+    setMenuOpen(false);
   };
-});
-document.addEventListener('click', event => {
-  const toggle = event.target.closest?.('#menuToggle');
-  if (!toggle) return;
-  const nav = document.getElementById('mainNav');
-  if (!nav) return;
-  const open = !nav.classList.contains('nav-open');
-  nav.classList.toggle('nav-open', open);
-  document.body.classList.toggle('menu-open', open);
-  toggle.setAttribute('aria-expanded', String(open));
-  toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
 });
 
 document.addEventListener('keydown', e => {

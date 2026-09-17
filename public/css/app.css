@@ -2716,6 +2716,7 @@ body { background: #eff8ff !important; }
 header { background: linear-gradient(135deg, #075985, #0284c7 48%, #2563eb) !important; }
 .header-inner nav.nav-open { display: grid !important; }
 .menu-toggle { background: rgba(3, 105, 161, .55); color: #fff !important; }
+.menu-toggle { position: relative; z-index: 2; }
 html[data-theme="dark"] body { background: #071827 !important; }
 html[data-theme="dark"] header { background: linear-gradient(135deg, #0c4a6e, #075985 48%, #1e40af) !important; }
 html[data-theme="dark"] .course-hero { border-color: rgba(56,189,248,.24); }
