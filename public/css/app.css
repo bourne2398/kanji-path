@@ -2395,6 +2395,7 @@ html[data-theme="dark"] .play-modal-backdrop {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
   gap: 7px;
+  scroll-margin-top: 88px;
 }
 .path-node {
   min-width: 64px;
