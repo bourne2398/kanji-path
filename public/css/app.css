@@ -161,6 +161,64 @@ main { max-width: 1120px; }
 .modal-backdrop.hidden { display: none !important; }
 .modal-backdrop .modal { display: block; position: relative; width: min(100% - 2rem, 32rem); max-height: calc(100dvh - 2rem); overflow: auto; padding: 1.25rem; border-radius: 1rem; background: #fff; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.25); }
 .modal-open { overflow: hidden; }
+.modal-content, .modal-backdrop .modal, .anime-modal {
+  color: #17324d;
+  background-color: #fff;
+  border-color: #cfe4f2;
+}
+.modal-content .modal-title,
+.modal-content .form-label,
+.modal-content .modal-body,
+.modal-content .modal-footer,
+.modal-backdrop .modal-head,
+.modal-backdrop .modal-body,
+.modal-backdrop .modal-foot,
+.modal-backdrop .modal h2,
+.modal-backdrop .modal h3,
+.modal-backdrop .modal p,
+.modal-backdrop .modal label {
+  color: inherit;
+}
+.modal-content .text-secondary,
+.modal-backdrop .modal .subtitle,
+.modal-backdrop .modal .start-hint {
+  color: #587089 !important;
+}
+.modal-content .form-control,
+.modal-content .form-select,
+.modal-backdrop .modal input,
+.modal-backdrop .modal select {
+  color: #17324d;
+  background-color: #fff;
+  border-color: #b9d6e7;
+}
+.modal-content .form-control::placeholder,
+.modal-backdrop .modal input::placeholder { color: #6b8498; opacity: 1; }
+.modal-content .form-control:focus,
+.modal-content .form-select:focus,
+.modal-backdrop .modal input:focus,
+.modal-backdrop .modal select:focus {
+  color: #17324d;
+  background-color: #fff;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 .25rem rgba(14,165,233,.2);
+}
+.modal-content .btn-close,
+.modal-backdrop .modal-close-x { opacity: .75; }
+.modal-content .btn-close:hover,
+.modal-backdrop .modal-close-x:hover { opacity: 1; }
+.modal-backdrop .modal-close-x {
+  color: #17324d;
+  background: transparent;
+}
+.modal-backdrop .modal .btn:not(.primary):not(.good):not(.bad) {
+  color: #075985;
+  border-color: #b9d6e7;
+  background: #fff;
+}
+.modal-backdrop .modal .btn:not(.primary):not(.good):not(.bad):hover {
+  background: #e0f2fe;
+}
 .anime-modal { border: 0; border-radius: 1rem; }
 .anime-icon-circle { display: grid; width: 3.25rem; height: 3.25rem; place-items: center; border-radius: 1rem; background: var(--kp-blue-100); font-size: 1.4rem; }
 
@@ -187,4 +245,49 @@ html[data-theme="dark"] .game-menu-card,
 html[data-theme="dark"] .history-card { color: #e1f3ff; background: #0c263b; border-color: #1f5472; }
 html[data-theme="dark"] .path-node { color: #e1f3ff; background: #10334b; border-color: #28617f; }
 html[data-theme="dark"] .modal-backdrop .modal,
-html[data-theme="dark"] .anime-modal { color: #e1f3ff; background: #0c263b; }
+html[data-theme="dark"] .anime-modal,
+html[data-theme="dark"] .modal-content {
+  color: #e1f3ff;
+  background-color: #0c263b;
+  border-color: #28617f;
+}
+html[data-theme="dark"] .modal-content .text-secondary,
+html[data-theme="dark"] .modal-backdrop .modal .subtitle,
+html[data-theme="dark"] .modal-backdrop .modal .start-hint {
+  color: #a9c8d9 !important;
+}
+html[data-theme="dark"] .modal-content .form-control,
+html[data-theme="dark"] .modal-content .form-select,
+html[data-theme="dark"] .modal-backdrop .modal input,
+html[data-theme="dark"] .modal-backdrop .modal select {
+  color: #e1f3ff;
+  background-color: #071827;
+  border-color: #28617f;
+}
+html[data-theme="dark"] .modal-content .form-control::placeholder,
+html[data-theme="dark"] .modal-backdrop .modal input::placeholder {
+  color: #8fb2c5;
+}
+html[data-theme="dark"] .modal-content .form-control:focus,
+html[data-theme="dark"] .modal-content .form-select:focus,
+html[data-theme="dark"] .modal-backdrop .modal input:focus,
+html[data-theme="dark"] .modal-backdrop .modal select:focus {
+  color: #e1f3ff;
+  background-color: #071827;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 .25rem rgba(56,189,248,.2);
+}
+html[data-theme="dark"] .modal-content .btn-close {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+html[data-theme="dark"] .modal-backdrop .modal-close-x {
+  color: #e1f3ff;
+}
+html[data-theme="dark"] .modal-backdrop .modal .btn:not(.primary):not(.good):not(.bad) {
+  color: #bae6fd;
+  border-color: #28617f;
+  background: #10334b;
+}
+html[data-theme="dark"] .modal-backdrop .modal .btn:not(.primary):not(.good):not(.bad):hover {
+  background: #164866;
+}
