@@ -150,6 +150,15 @@ nav {
   color: #9f1239;
   border-color: #fff;
 }
+.menu-toggle {
+  display: none;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.45);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 1.15rem;
+  line-height: 1;
+}
 
 main {
   width: 100%;
@@ -1145,6 +1154,34 @@ html:not([data-theme="dark"]) .modal-foot { border-top-color: var(--border); }
 }
 
 .hidden { display: none !important; }
+
+.path-map-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--muted);
+  font-size: .84rem;
+  margin: 10px 0;
+}
+.path-map-controls select { width: auto; min-width: 170px; }
+.path-explanation {
+  margin: 16px 0;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+}
+.path-explanation-head { display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+.path-explanation h3 { margin: 0; font-size: 1rem; }
+.path-explanation p { margin: 8px 0 12px; color: var(--muted); }
+.path-explanation-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.path-explanation-grid div { display:flex; flex-direction:column; gap:3px; padding:8px; border-radius:10px; background: var(--accent-soft); }
+.path-explanation-grid strong { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+.path-explanation-grid span { font-size:.86rem; }
+.practice-level-filter { display:flex; gap:4px; flex-wrap:wrap; }
+.practice-level-btn { border:1px solid var(--border); border-radius:999px; padding:6px 10px; color:var(--muted); font-weight:700; }
+.practice-level-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 .study-audio {
   display: flex;
   gap: 6px;
@@ -2375,6 +2412,11 @@ html[data-theme="dark"] .path-node.due {
   .path-memory-grid { grid-template-columns: 1fr !important; }
   main { padding: 12px 12px calc(20px + var(--safe-b)); }
   .path-roadmap-card { padding: 12px; }
+  .menu-toggle { display: inline-flex; align-items:center; justify-content:center; }
+  .header-inner nav { display:none; grid-template-columns: repeat(2, 1fr); width:100%; }
+  .header-inner nav.nav-open { display:grid; }
+  .path-map-controls { justify-content:space-between; }
+  .path-explanation-grid { grid-template-columns: 1fr; }
   .practice-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
   #wordsGrid.practice-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
