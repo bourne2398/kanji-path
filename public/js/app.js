@@ -2945,6 +2945,8 @@ function reviewForgot(){
 }
 
 function renderPath(){const items=pathItems(),p=loadPathProgress(),due=pathDueList(items,p),learned=items.filter(x=>pathIsLearned(p,x.kanji)).length;if(!items.length)return;if(pathReviewMode&&due.length){const idx=items.findIndex(x=>x.kanji===due[0].kanji);pathCurrent=idx>=0?idx:pathCurrent}else{pathCurrent=Math.max(0,Math.min(pathCurrent,items.length-1));if(!PATH_JOYO_READY&&pathCurrent===0){const first=items.findIndex(x=>!pathIsLearned(p,x.kanji));if(first>=0)pathCurrent=first}}const item=items[pathCurrent];if(!item)return;const info=pathInfo(item),isDue=pathIsDue(p,item.kanji),isLearned=pathIsLearned(p,item.kanji);if($('pathLearnedCount'))$('pathLearnedCount').textContent=learned;if($('pathCurrentNumber'))$('pathCurrentNumber').textContent=pathCurrent+1;if($('pathDueCount'))$('pathDueCount').textContent=due.length;if($('pathProgressLabel'))$('pathProgressLabel').textContent=`${learned.toLocaleString()} of 2,136 learned`+(due.length?` · ${due.length} due`:'');if($('pathProgressFill'))$('pathProgressFill').style.width=Math.min(100,(learned/2136)*100)+'%';if($('pathSetBadge'))$('pathSetBadge').textContent=`Kanji ${pathCurrent+1}`;if($('pathLessonNumber'))$('pathLessonNumber').textContent=`Lesson ${pathCurrent+1} · ${pathLevelOf(item.kanji)}`+(isDue?' · REVIEW':'');if($('pathKanji'))$('pathKanji').textContent=item.kanji;if($('pathMeaning'))$('pathMeaning').textContent=item.english||'Loading English meaning…';if($('pathReading'))$('pathReading').textContent=item.reading||'Loading Japanese reading…';if($('pathStory'))$('pathStory').textContent=info.story;if($('pathHook'))$('pathHook').textContent=info.hook;
+if($('coursePreviewKanji'))$('coursePreviewKanji').textContent=item.kanji;
+if($('coursePreviewReading'))$('coursePreviewReading').textContent=(item.reading||'Reading loading')+' · '+(item.english||'meaning loading');
 const explanation = `${item.kanji} means “${item.english||'meaning loading'}”. Learn it in three passes: recognize its components, say the reading aloud, then connect it to the example words below.`;
 if($('pathExplanation'))$('pathExplanation').textContent=explanation;
 if($('pathReadingsDetail'))$('pathReadingsDetail').textContent=item.reading||'Loading…';
@@ -3052,6 +3054,12 @@ bind('practiceChooseSets', 'onclick', () => openModal('practice'));
 bind('pathLearnBtn', 'onclick', () => pathMarkLearned());
 bind('pathStudyBtn', 'onclick', () => pathStudy());
 bind('pathWriteBtn', 'onclick', () => pathWrite());
+bind('pathStartBtn', 'onclick', () => {
+  document.getElementById('pathLesson')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+bind('pathBrowseBtn', 'onclick', () => {
+  document.getElementById('pathRoadmap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 bind('pathAgainBtn', 'onclick', () => pathAnswer(0));
 
 bind('reviewNotifBtn', 'onclick', openReviewReminder);
