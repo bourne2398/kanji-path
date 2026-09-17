@@ -355,7 +355,7 @@ function renderWords() {
   s.items = filtered;
   grid.innerHTML = '';
   if (!all.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Click <b>Load Everyday Vocabulary</b>. The vocabulary is cached in your browser after the first load, so future opens are instant.</div>';
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Loading everyday vocabulary…</div>';
     if ($('wordsCount')) $('wordsCount').textContent = '0 words';
     return;
   }
@@ -461,7 +461,14 @@ async function ensureVocabularyLoaded(force = false) {
     if (button) button.textContent = state.words.allItems.length >= 40000 ? 'Refresh Vocabulary' : 'Retry Vocabulary Load';
   } catch (e) {
     console.error('Vocabulary load failed:', e);
-    if ($('wordsProgress')) $('wordsProgress').textContent = 'Could not load vocabulary. Make sure /api/vocab is deployed and the database contains the vocabulary table.';
+    // Keep Words usable when the optional vocabulary database is unavailable.
+    // The bundled kanji cards still provide reliable review material.
+    const fallback = SETS.flatMap(set => (Array.isArray(set.cards) ? set.cards : [])
+      .map(card => normalizeVocabRow({ word: card[0], reading: card[1], meaning: card[2] }))
+      .filter(item => item && [...item.word].filter(isKanjiChar).length >= 2));
+    state.words.allItems = [...new Map(fallback.map(item => [item.word, item])).values()];
+    renderWords();
+    if ($('wordsProgress')) $('wordsProgress').textContent = 'Vocabulary service unavailable. Showing bundled kanji examples instead.';
     if (button) button.textContent = 'Retry Vocabulary Load';
   } finally {
     state.words.vocabLoading = false;
@@ -3399,7 +3406,9 @@ window.addEventListener('resize', () => {
   setupWords([]);
   showMode('path');
   if (typeof loadFullJoyoPath === 'function') loadFullJoyoPath();
-  setupPracticeLevel('N5');
+  // The full map is loaded asynchronously after the seed data. Refresh the
+  // level practice list once it is available.
+  setTimeout(() => setupPracticeLevel('N5'), 0);
   if (typeof bindAuthUi === 'function') bindAuthUi();
   if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
   try { if (typeof prefetchVocabBank === 'function') prefetchVocabBank(); } catch (e) {}
