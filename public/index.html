@@ -31,6 +31,7 @@
     <div class="brand" style="justify-content:space-between;width:100%">
       <span class="brand-text"><span class="jp">墨道</span> Kanji Path</span>
       <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
         <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
           🔔
           <span class="notif-badge" id="reviewNotifBadge">0</span>
@@ -203,6 +204,18 @@
         <div id="pathRadicalsList" class="path-radicals-list"></div>
         <p class="path-radicals-note" id="pathRadicalsNote"></p>
       </div>
+      <article class="path-explanation">
+        <div class="path-explanation-head">
+          <h3>Kanji map</h3>
+          <span class="badge" id="pathUsageRank"></span>
+        </div>
+        <p id="pathExplanation"></p>
+        <div class="path-explanation-grid">
+          <div><strong>Readings</strong><span id="pathReadingsDetail"></span></div>
+          <div><strong>JLPT</strong><span id="pathJlptDetail"></span></div>
+          <div><strong>Writing</strong><span id="pathStrokeDetail"></span></div>
+        </div>
+      </article>
       <div class="path-memory-grid">
         <article class="path-memory-card">
           <div class="path-card-icon">🧠</div>
@@ -240,6 +253,13 @@
         <button type="button" class="path-level-btn" data-level="N2">N2</button>
         <button type="button" class="path-level-btn" data-level="N1">N1</button>
       </div>
+      <div class="path-map-controls">
+        <label for="pathSortSelect">Review order</label>
+        <select id="pathSortSelect" class="form-select form-select-sm">
+          <option value="usage">Most used first</option>
+          <option value="jlpt">JLPT progression</option>
+        </select>
+      </div>
       <div class="path-level-summary" id="pathLevelSummary"></div>
       <div class="path-roadmap" id="pathRoadmap"></div>
     </div>
@@ -270,9 +290,16 @@
   <!-- PRACTICE (single kanji) -->
   <section id="practiceMode" class="hidden">
     <h1>Kanji Practice</h1>
-    <p class="subtitle">Single-character stroke practice. Animate the order, then write. Goal: 30 writings per kanji.</p>
+    <p class="subtitle">Practice stroke order by JLPT level. Choose a level, open a kanji, and write it ten times to build muscle memory.</p>
     <div class="toolbar">
       <button class="btn primary" id="practiceChooseSets">Choose sets</button>
+      <div class="practice-level-filter" id="practiceLevelFilter" aria-label="Practice JLPT level">
+        <button type="button" class="practice-level-btn active" data-level="N5">N5</button>
+        <button type="button" class="practice-level-btn" data-level="N4">N4</button>
+        <button type="button" class="practice-level-btn" data-level="N3">N3</button>
+        <button type="button" class="practice-level-btn" data-level="N2">N2</button>
+        <button type="button" class="practice-level-btn" data-level="N1">N1</button>
+      </div>
       <div class="spacer"></div>
       <span class="badge" id="practiceSetSummary"></span>
       <span class="badge" id="practiceCount"></span>
@@ -293,7 +320,7 @@
       <span class="badge" id="wordsSetSummary">Vocabulary database</span>
       <span class="badge" id="wordsCount">0 words</span>
     </div>
-    <div class="progress" id="wordsProgress">Everyday vocabulary is loaded from the database and cached on this device for instant future opens.</div>
+    <div class="progress" id="wordsLoadStatus">Everyday vocabulary is loaded from the database and cached on this device for instant future opens.</div>
     <div class="practice-grid" id="wordsGrid"></div>
     <div class="progress" id="wordsProgress"></div>
     <div class="vocab-bank hidden" id="vocabBank">

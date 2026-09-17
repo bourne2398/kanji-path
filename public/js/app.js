@@ -261,6 +261,26 @@ function getPracticeItems(ids) {
   }).filter(Boolean);
 }
 
+function getPracticeItemsForLevel(level) {
+  return pathItems().filter(item => pathLevelOf(item.kanji) === level).map(item => ({
+    setId: item.setId || `Jōyō ${PATH_JOYO_ORDER.indexOf(item.kanji) + 1}`,
+    word: item.kanji,
+    kanji: item.kanji,
+    chars: [item.kanji],
+    charIndex: 0,
+    reading: item.reading || '',
+    english: item.english || ''
+  }));
+}
+
+function setupPracticeLevel(level) {
+  practiceLevelFilter = level;
+  state.practice.sets = [];
+  state.practice.items = getPracticeItemsForLevel(level);
+  state.practice.i = 0;
+  renderPractice();
+}
+
 /** Multi-character compound words for Words tab */
 function getWordPracticeItems(ids) {
   const items = [];
@@ -725,8 +745,8 @@ function renderPractice() {
     grid.appendChild(tile);
   });
 
-  $('practiceProgress').textContent = 'Write each kanji 10 times. You can pause and practice another kanji anytime.';
-  $('practiceSetSummary').textContent = setSummary(s.sets);
+  $('practiceProgress').textContent = `Write each ${practiceLevelFilter} kanji 10 times. You can pause and practice another kanji anytime.`;
+  $('practiceSetSummary').textContent = s.sets.length ? setSummary(s.sets) : `${practiceLevelFilter} level`;
   $('practiceCount').textContent = s.items.length + ' kanji';
 }
 
@@ -2522,9 +2542,25 @@ const PATH_MEMORY={
 const JLPT_LEVEL_MAP=Object.create(null);
 const JLPT_LEVELS={N5:"日一国人年大十二本中長出三時行見月後前生五間上東四今金九入学高円子外八六下来気小七山話女北午百書先名川千水半男西電校語土木聞食車何南万毎白天母火右読友左休父雨",N4:"会同事自社発者地業方新場員立開手力問代明動京目通言理体田主題意不作用度強公持野以思家世多正安院心界教文元重近考画海売知道集別物使品計死特私始朝運終台広住真有口少町料工建空急止送切転研足究楽起着店病質待試族銀早映親験英医仕去味写字答夜音注帰古歌買悪図週室歩風紙黒花春赤青館屋色走秋夏習駅洋旅服夕借曜飲肉貸堂鳥飯勉冬昼茶弟牛魚兄犬妹姉漢",N3:"政議民連対部合市内相定回選米実関決全表戦経最現調化当約首法性要制治務成期取都和機平加受続進数記初指権支産点報済活原共得解交資予向際勝面告反判認参利組信在件側任引求所次昨論官増係感情投示変打直両式確果容必演歳争談能位置流格疑過局放常状球職与供役構割費付由説難優夫収断石違消神番規術備宅害配警育席訪乗残想声念助労例然限追商葉伝働形景落好退頭負渡失差末守若種美命福望非観察段横深申様財港識呼達良候程満敗値突光路科積他処太客否師登易速存飛殺号単座破除完降責捕危給苦迎園具辞因馬愛富彼未舞亡冷適婦寄込顔類余王返妻背熱宿薬険頼覚船途許抜便留罪努精散静婚喜浮絶幸押倒等老曲払庭徒勤遅居雑招困欠更刻賛抱犯恐息遠戻願絵越欲痛笑互束似列探逃遊迷夢君閉緒折草暮酒悲晴掛到寝暗盗吸陽御歯忘雪吹娘誤洗慣礼窓昔貧怒泳祖杯疲皆鳴腹煙眠怖耳頂箱晩寒髪忙才靴恥偶偉猫幾",N2:"党協総区領県設改府査委軍団各島革村勢減再税営比防補境導副算輸述線農州武象域額欧担準賞辺造被技低復移個門課脳極含蔵量型況針専谷史階管兵接細効丸湾録省旧橋岸周材戸央券編捜竹超並療採森競介根販歴将幅般貿講林装諸劇河航鉄児禁印逆換久短油暴輪占植清倍均億圧芸署伸停爆陸玉波帯延羽固則乱普測豊厚齢囲卒略承順岩練軽了庁城患層版令角絡損募裏仏績築貨混昇池血温季星永著誌庫刊像香坂底布寺宇巨震希触依籍汚枚複郵仲栄札板骨傾届巻燃跡包駐弱紹雇替預焼簡章臓律贈照薄群秒奥詰双刺純翌快片敬悩泉皮漁荒貯硬埋柱祭袋筆訓浴童宝封胸砂塩賢腕兆床毛緑尊祝柔殿濃液衣肩零幼荷泊黄甘臣浅掃雲掘捨軟沈凍乳恋紅郊腰炭踊冊勇械菜珍卵湖喫干虫刷湯溶鉱涙匹孫鋭枝塗軒毒叫拝氷乾棒祈拾粉糸綿汗銅湿瓶咲召缶隻脂蒸肌耕鈍泥隅灯辛磨麦姓筒鼻粒詞胃畳机膚濯塔沸灰菓帽枯涼舟貝符憎皿肯燥畜挟曇滴伺"};
 for(const[l,c]of Object.entries(JLPT_LEVELS))for(const ch of[...c])if(!JLPT_LEVEL_MAP[ch])JLPT_LEVEL_MAP[ch]=l;
-let pathLevelFilter='N5',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false;
+let pathLevelFilter='N5',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false,pathSort='usage';
+let practiceLevelFilter='N5';
 function pathLevelOf(k){return JLPT_LEVEL_MAP[k]||'N1'}
-function pathLevelItems(items){return items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter)}
+function kanjiUsageScore(item) {
+  const cards = Array.isArray(item.cards) ? item.cards : [];
+  const words = cards.map(c => String(c && c[0] || ''));
+  const appearances = words.reduce((total, word) => total + [...word].filter(ch => ch === item.kanji).length, 0);
+  const direct = words.some(word => word === item.kanji) ? 8 : 0;
+  return appearances * 4 + direct + Math.max(0, 2136 - (PATH_JOYO_ORDER.indexOf(item.kanji) + 1)) / 10000;
+}
+function pathUsageRank(items, item) {
+  const levelItems = items.filter(x => pathLevelOf(x.kanji) === pathLevelOf(item.kanji));
+  return 1 + [...levelItems].sort((a, b) => kanjiUsageScore(b) - kanjiUsageScore(a)).findIndex(x => x.kanji === item.kanji);
+}
+function pathLevelItems(items){
+  const visible = items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter);
+  if (pathSort === 'usage') return visible.sort((a,b)=>kanjiUsageScore(b)-kanjiUsageScore(a));
+  return visible;
+}
 function pathItems(){
   const byKanji=new Map(SETS.map(s=>[s.kanji,s]));
   return PATH_JOYO_ORDER.map((kanji,i)=>{
@@ -2901,7 +2937,14 @@ function reviewForgot(){
   updateReviewNotifBadge();
 }
 
-function renderPath(){const items=pathItems(),p=loadPathProgress(),due=pathDueList(items,p),learned=items.filter(x=>pathIsLearned(p,x.kanji)).length;if(!items.length)return;if(pathReviewMode&&due.length){const idx=items.findIndex(x=>x.kanji===due[0].kanji);pathCurrent=idx>=0?idx:pathCurrent}else{pathCurrent=Math.max(0,Math.min(pathCurrent,items.length-1));if(!PATH_JOYO_READY&&pathCurrent===0){const first=items.findIndex(x=>!pathIsLearned(p,x.kanji));if(first>=0)pathCurrent=first}}const item=items[pathCurrent];if(!item)return;const info=pathInfo(item),isDue=pathIsDue(p,item.kanji),isLearned=pathIsLearned(p,item.kanji);if($('pathLearnedCount'))$('pathLearnedCount').textContent=learned;if($('pathCurrentNumber'))$('pathCurrentNumber').textContent=pathCurrent+1;if($('pathDueCount'))$('pathDueCount').textContent=due.length;if($('pathProgressLabel'))$('pathProgressLabel').textContent=`${learned.toLocaleString()} of 2,136 learned`+(due.length?` · ${due.length} due`:'');if($('pathProgressFill'))$('pathProgressFill').style.width=Math.min(100,(learned/2136)*100)+'%';if($('pathSetBadge'))$('pathSetBadge').textContent=`Kanji ${pathCurrent+1}`;if($('pathLessonNumber'))$('pathLessonNumber').textContent=`Lesson ${pathCurrent+1} · ${pathLevelOf(item.kanji)}`+(isDue?' · REVIEW':'');if($('pathKanji'))$('pathKanji').textContent=item.kanji;if($('pathMeaning'))$('pathMeaning').textContent=item.english||'Loading English meaning…';if($('pathReading'))$('pathReading').textContent=item.reading||'Loading Japanese reading…';if($('pathStory'))$('pathStory').textContent=info.story;if($('pathHook'))$('pathHook').textContent=info.hook;renderPathVocabulary(item,info);
+function renderPath(){const items=pathItems(),p=loadPathProgress(),due=pathDueList(items,p),learned=items.filter(x=>pathIsLearned(p,x.kanji)).length;if(!items.length)return;if(pathReviewMode&&due.length){const idx=items.findIndex(x=>x.kanji===due[0].kanji);pathCurrent=idx>=0?idx:pathCurrent}else{pathCurrent=Math.max(0,Math.min(pathCurrent,items.length-1));if(!PATH_JOYO_READY&&pathCurrent===0){const first=items.findIndex(x=>!pathIsLearned(p,x.kanji));if(first>=0)pathCurrent=first}}const item=items[pathCurrent];if(!item)return;const info=pathInfo(item),isDue=pathIsDue(p,item.kanji),isLearned=pathIsLearned(p,item.kanji);if($('pathLearnedCount'))$('pathLearnedCount').textContent=learned;if($('pathCurrentNumber'))$('pathCurrentNumber').textContent=pathCurrent+1;if($('pathDueCount'))$('pathDueCount').textContent=due.length;if($('pathProgressLabel'))$('pathProgressLabel').textContent=`${learned.toLocaleString()} of 2,136 learned`+(due.length?` · ${due.length} due`:'');if($('pathProgressFill'))$('pathProgressFill').style.width=Math.min(100,(learned/2136)*100)+'%';if($('pathSetBadge'))$('pathSetBadge').textContent=`Kanji ${pathCurrent+1}`;if($('pathLessonNumber'))$('pathLessonNumber').textContent=`Lesson ${pathCurrent+1} · ${pathLevelOf(item.kanji)}`+(isDue?' · REVIEW':'');if($('pathKanji'))$('pathKanji').textContent=item.kanji;if($('pathMeaning'))$('pathMeaning').textContent=item.english||'Loading English meaning…';if($('pathReading'))$('pathReading').textContent=item.reading||'Loading Japanese reading…';if($('pathStory'))$('pathStory').textContent=info.story;if($('pathHook'))$('pathHook').textContent=info.hook;
+const explanation = `${item.kanji} means “${item.english||'meaning loading'}”. Learn it in three passes: recognize its components, say the reading aloud, then connect it to the example words below.`;
+if($('pathExplanation'))$('pathExplanation').textContent=explanation;
+if($('pathReadingsDetail'))$('pathReadingsDetail').textContent=item.reading||'Loading…';
+if($('pathJlptDetail'))$('pathJlptDetail').textContent=pathLevelOf(item.kanji);
+if($('pathUsageRank'))$('pathUsageRank').textContent=`#${pathUsageRank(items,item)} in ${pathLevelOf(item.kanji)}`;
+if($('pathStrokeDetail'))$('pathStrokeDetail').textContent='Use guided practice below';
+renderPathVocabulary(item,info);
 // Radical-first display
 const rads=info.radicals||[];
 const radWrap=$('pathRadicals'),radList=$('pathRadicalsList'),radNote=$('pathRadicalsNote');
@@ -2947,7 +2990,7 @@ async function pathStudy(){
     console.warn('Unable to load vocabulary for Study:',e);
   }
 }
-function pathWrite(){const x=pathItems()[pathCurrent];if(!x)return;setupPractice([x.setId]);showMode('practice');setTimeout(()=>openPracticeModal(0),80)}
+function pathWrite(){const x=pathItems()[pathCurrent];if(!x)return;state.practice.sets=[];state.practice.items=[{setId:x.setId||`Jōyō ${pathCurrent+1}`,word:x.kanji,kanji:x.kanji,chars:[x.kanji],charIndex:0,reading:x.reading||'',english:x.english||''}];state.practice.i=0;showMode('practice');setTimeout(()=>openPracticeModal(0),80)}
 
 function showMode(next) {
   // Close practice writing modal and other lingering modals when switching modes
@@ -3025,6 +3068,17 @@ document.querySelectorAll('#pathLevelFilter .path-level-btn').forEach(btn => {
     if (idx < 0 && visible.length) idx = items.indexOf(visible[0]);
     if (idx >= 0) pathCurrent = idx;
     renderPath();
+  };
+});
+bind('pathSortSelect', 'onchange', e => {
+  pathSort = e.target.value === 'jlpt' ? 'jlpt' : 'usage';
+  renderPath();
+});
+document.querySelectorAll('#practiceLevelFilter .practice-level-btn').forEach(btn => {
+  btn.onclick = () => {
+    practiceLevelFilter = btn.getAttribute('data-level') || 'N5';
+    document.querySelectorAll('#practiceLevelFilter .practice-level-btn').forEach(b => b.classList.toggle('active', b === btn));
+    setupPracticeLevel(practiceLevelFilter);
   };
 });
 
@@ -3288,7 +3342,19 @@ bind('clearHistory', 'onclick', () => {
 document.querySelectorAll('.nav-btn').forEach(b => {
   b.onclick = () => {
     showMode(b.dataset.mode);
+    const nav = document.querySelector('header nav');
+    const toggle = $('menuToggle');
+    nav?.classList.remove('nav-open');
+    toggle?.setAttribute('aria-expanded', 'false');
   };
+});
+bind('menuToggle', 'onclick', () => {
+  const nav = document.querySelector('header nav');
+  const toggle = $('menuToggle');
+  if (!nav || !toggle) return;
+  const open = nav.classList.toggle('nav-open');
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
 });
 
 document.addEventListener('keydown', e => {
@@ -3329,10 +3395,11 @@ window.addEventListener('resize', () => {
   }
 
   setupStudy([1], true);
-  setupPractice([1]);
+  setupPracticeLevel('N5');
   setupWords([]);
   showMode('path');
   if (typeof loadFullJoyoPath === 'function') loadFullJoyoPath();
+  setupPracticeLevel('N5');
   if (typeof bindAuthUi === 'function') bindAuthUi();
   if (typeof refreshCurrentUser === 'function') refreshCurrentUser();
   try { if (typeof prefetchVocabBank === 'function') prefetchVocabBank(); } catch (e) {}
