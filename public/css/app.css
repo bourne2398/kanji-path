@@ -588,3 +588,134 @@ html[data-theme="dark"] #practiceModal .practice-hw-box {
   .brand-logo .brand-text span:last-child { display: none; }
   .brand-mark { width: 2.5rem; height: 2.5rem; }
 }
+
+
+/* Final Study card + Practice modal polish */
+#studyGrid .study-card .front {
+  display:grid;
+  place-items:center;
+  align-content:center;
+}
+#studyGrid .study-card .front .kanji {
+  font-size:clamp(3.4rem,7vw,5.4rem);
+  font-weight:700;
+}
+#studyGrid .study-card .back {
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:.35rem;
+}
+#studyGrid .study-card .back .reading {
+  font-size:1.35rem;
+  font-weight:800;
+}
+#studyGrid .study-card .back .english {
+  font-size:1.05rem;
+  font-weight:700;
+  max-width:90%;
+}
+
+#practiceModal {
+  padding:1rem;
+  box-sizing:border-box;
+}
+#practiceModal .practice-modal {
+  width:min(94vw, 700px);
+  max-width:700px;
+  max-height:min(92dvh, 820px);
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  padding:0;
+  border:1px solid var(--kp-border);
+  border-radius:1.1rem;
+  overflow:hidden;
+  box-shadow:0 1.5rem 4rem rgba(7,89,133,.25);
+}
+#practiceModal .practice-head-clean {
+  position:relative;
+  flex:0 0 auto;
+  padding:1rem 3.4rem .8rem;
+  background:linear-gradient(135deg,#f8fdff,#e9f7ff);
+}
+#practiceModal .practice-head-clean h2 {
+  margin:0;
+  color:var(--kp-blue-900);
+  font-size:clamp(1.1rem,2.5vw,1.45rem);
+  font-weight:800;
+}
+#practiceModal .practice-modal .modal-close-x {
+  position:absolute;
+  top:.7rem;
+  right:.8rem;
+  z-index:3;
+}
+#practiceModal .practice-reading {
+  min-height:1.4rem;
+  margin:.2rem 0 .45rem;
+  font-size:1.05rem;
+}
+#practiceModal .practice-modal-meta {
+  margin:.45rem 0 0;
+  color:var(--kp-muted);
+  font-size:.82rem;
+}
+#practiceModal .practice-slots {
+  max-width:100%;
+  overflow-x:auto;
+  padding-bottom:2px;
+}
+#practiceModal .modal-body {
+  min-height:0;
+  overflow:auto;
+  padding:.65rem 1rem;
+}
+#practiceModal .practice-hw-wrap {
+  padding:.35rem 0;
+}
+#practiceModal .practice-hw-box {
+  width:min(68vw, 440px);
+  max-width:100%;
+  max-height:52dvh;
+}
+#practiceModal .practice-foot-clean {
+  flex:0 0 auto;
+  padding:.65rem 1rem .8rem;
+  background:var(--kp-surface);
+}
+#practiceModal .practice-modal-actions .btn {
+  min-width:110px;
+}
+#practiceModal .practice-secondary-row .btn {
+  min-height:2.35rem;
+  padding:.4rem .7rem;
+}
+html[data-theme="dark"] #practiceModal .practice-head-clean {
+  background:linear-gradient(135deg,#10334b,#0c263b);
+}
+html[data-theme="dark"] #practiceModal .practice-head-clean h2 {
+  color:#e1f3ff;
+}
+@media (max-width:767.98px) {
+  #practiceModal { padding:.5rem; }
+  #practiceModal .practice-modal {
+    width:96vw;
+    max-height:94dvh;
+    border-radius:.9rem;
+  }
+  #practiceModal .practice-head-clean {
+    padding:.8rem 3rem .65rem;
+  }
+  #practiceModal .modal-body {
+    padding:.45rem .7rem;
+  }
+  #practiceModal .practice-hw-box {
+    width:min(82vw,380px);
+    max-height:48dvh;
+  }
+  #practiceModal .practice-modal-actions .btn {
+    flex:1 1 0;
+    min-width:0;
+  }
+}
