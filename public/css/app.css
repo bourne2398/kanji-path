@@ -188,3 +188,403 @@ html[data-theme="dark"] .history-card { color: #e1f3ff; background: #0c263b; bor
 html[data-theme="dark"] .path-node { color: #e1f3ff; background: #10334b; border-color: #28617f; }
 html[data-theme="dark"] .modal-backdrop .modal,
 html[data-theme="dark"] .anime-modal { color: #e1f3ff; background: #0c263b; }
+
+
+/* =========================================================
+   KANJI PATH — STUDY & PRACTICE UI
+   Focused learning workspace: compact, clear, responsive.
+   ========================================================= */
+#studyMode, #practiceMode {
+  padding: clamp(1rem, 2vw, 1.75rem) 0 2.5rem;
+}
+#studyMode > h1, #practiceMode > h1 {
+  margin-bottom: .25rem;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  letter-spacing: -.025em;
+  color: var(--kp-blue-900);
+}
+#studyMode > .subtitle, #practiceMode > .subtitle {
+  margin-bottom: 1rem;
+  max-width: 760px;
+}
+
+/* Learning toolbar */
+#studyMode .toolbar, #practiceMode .toolbar {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .7rem;
+  margin-bottom: 1rem;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 .5rem 1.5rem rgba(7,89,133,.08);
+}
+#studyMode .toolbar .btn, #practiceMode .toolbar .btn {
+  min-height: 2.65rem;
+  border-radius: .7rem;
+  font-weight: 700;
+}
+#studyMode .toolbar .check {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2.65rem;
+  padding: .4rem .75rem;
+  border: 1px solid var(--kp-border);
+  border-radius: .7rem;
+  background: #f7fcff;
+  font-weight: 700;
+}
+#studyMode .toolbar .spacer, #practiceMode .toolbar .spacer { flex: 1 1 auto; }
+
+/* Study cards */
+#studyGrid.study-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: .9rem;
+  align-items: stretch;
+}
+#studyGrid .study-card {
+  position: relative;
+  min-height: 205px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--kp-border);
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 .55rem 1.35rem rgba(7,89,133,.09);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+#studyGrid .study-card:hover {
+  transform: translateY(-3px);
+  border-color: #7cc8eb;
+  box-shadow: 0 1rem 2rem rgba(7,89,133,.14);
+}
+#studyGrid .study-card:focus-visible {
+  outline: 3px solid rgba(14,165,233,.35);
+  outline-offset: 2px;
+}
+#studyGrid .study-card .face {
+  min-height: 205px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: .35rem;
+  padding: 1rem;
+  text-align: center;
+}
+#studyGrid .study-card .front {
+  background: linear-gradient(145deg, #ffffff, #edf8ff);
+}
+#studyGrid .study-card .back {
+  background: linear-gradient(145deg, #eaf7ff, #dff2ff);
+}
+#studyGrid .study-card .kanji {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3.2rem, 7vw, 5.2rem);
+  line-height: 1;
+  color: var(--kp-blue-900);
+}
+#studyGrid .study-card .reading {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--kp-blue-700);
+}
+#studyGrid .study-card .meaning {
+  max-width: 100%;
+  font-size: .98rem;
+  font-weight: 650;
+  color: var(--kp-ink);
+}
+#studyGrid .study-card .set-label {
+  position: absolute;
+  top: .65rem;
+  left: .65rem;
+  z-index: 2;
+  padding: .25rem .55rem;
+  border-radius: 99px;
+  background: rgba(255,255,255,.86);
+  color: var(--kp-blue-700);
+  font-size: .72rem;
+  font-weight: 800;
+}
+#studyGrid .study-card .flip-hint {
+  position: absolute;
+  right: .65rem;
+  bottom: .6rem;
+  color: var(--kp-muted);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* Study progress / controls */
+#studyProgress {
+  min-height: .35rem;
+  margin: 1rem 0;
+}
+#studyMode > .controls {
+  display: flex;
+  justify-content: center;
+  gap: .55rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+}
+#studyMode > .controls .btn {
+  min-width: 130px;
+  border-radius: .7rem;
+  font-weight: 700;
+}
+
+/* Practice level selector */
+#practiceLevelFilter.practice-level-filter {
+  display: flex;
+  gap: .35rem;
+  flex-wrap: wrap;
+}
+#practiceLevelFilter .practice-level-btn {
+  min-height: 2.5rem;
+  padding: .4rem .8rem;
+  border: 1px solid var(--kp-border);
+  border-radius: 99px;
+  background: #fff;
+  color: var(--kp-blue-700);
+  font-weight: 800;
+  transition: all .15s ease;
+}
+#practiceLevelFilter .practice-level-btn:hover {
+  border-color: var(--kp-blue-500);
+  background: var(--kp-blue-100);
+}
+#practiceLevelFilter .practice-level-btn.active {
+  border-color: var(--kp-blue-700);
+  background: var(--kp-blue-700);
+  color: #fff;
+}
+
+/* Practice kanji tiles */
+#practiceGrid.practice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: .85rem;
+}
+#practiceGrid .practice-tile {
+  position: relative;
+  min-height: 155px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .25rem;
+  padding: 1rem;
+  border: 1px solid var(--kp-border);
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #fff, #eef9ff);
+  box-shadow: 0 .5rem 1.25rem rgba(7,89,133,.08);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+#practiceGrid .practice-tile:hover {
+  transform: translateY(-3px);
+  border-color: #7cc8eb;
+  box-shadow: 0 .9rem 1.7rem rgba(7,89,133,.14);
+}
+#practiceGrid .practice-tile:focus-visible {
+  outline: 3px solid rgba(14,165,233,.35);
+  outline-offset: 2px;
+}
+#practiceGrid .practice-tile .kanji {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  line-height: 1;
+  color: var(--kp-blue-900);
+}
+#practiceGrid .practice-tile .reading {
+  color: var(--kp-blue-700);
+  font-weight: 800;
+}
+#practiceGrid .practice-tile .meaning {
+  color: var(--kp-muted);
+  font-size: .85rem;
+  text-align: center;
+}
+#practiceGrid .practice-tile .status,
+#practiceGrid .practice-tile .badge {
+  margin-top: .25rem;
+}
+
+/* Practice writing modal */
+#practiceModal .practice-modal {
+  width: min(96vw, 680px);
+  padding: 0;
+  overflow: hidden;
+}
+#practiceModal .practice-head-clean {
+  padding: 1rem 1.2rem .75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--kp-border);
+}
+#practiceModal .practice-reading {
+  margin: .2rem 0 .45rem;
+  color: var(--kp-blue-700);
+  font-weight: 800;
+}
+#practiceModal .practice-slots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+#practiceModal .practice-slots > * {
+  border: 1px solid var(--kp-border);
+  border-radius: .5rem;
+}
+#practiceModal .practice-hw-wrap {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+#practiceModal .practice-hw-box {
+  width: min(82vw, 430px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid #b7dced;
+  border-radius: 1rem;
+  background:
+    linear-gradient(rgba(14,165,233,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,165,233,.10) 1px, transparent 1px),
+    #fbfeff;
+  background-size: 25% 25%;
+}
+#hanziTarget {
+  width: 100%;
+  height: 100%;
+}
+#practiceModal .practice-foot-clean {
+  padding: .75rem 1rem 1rem;
+  border-top: 1px solid var(--kp-border);
+}
+#practiceModal .practice-modal-actions,
+#practiceModal .practice-secondary-row {
+  display: flex;
+  justify-content: center;
+  gap: .45rem;
+  flex-wrap: wrap;
+}
+#practiceModal .practice-secondary-row { margin-top: .5rem; }
+#practiceModal .practice-modal-actions .btn { min-width: 105px; }
+#practiceModal .btn { border-radius: .7rem; font-weight: 700; }
+
+/* Dark mode */
+html[data-theme="dark"] #studyMode .toolbar,
+html[data-theme="dark"] #practiceMode .toolbar {
+  background: #0c263b;
+  border-color: #1f5472;
+}
+html[data-theme="dark"] #studyGrid .study-card,
+html[data-theme="dark"] #practiceGrid .practice-tile {
+  background: #0c263b;
+  border-color: #1f5472;
+}
+html[data-theme="dark"] #studyGrid .study-card .front,
+html[data-theme="dark"] #practiceGrid .practice-tile {
+  background: linear-gradient(145deg, #10334b, #0c263b);
+}
+html[data-theme="dark"] #studyGrid .study-card .back {
+  background: linear-gradient(145deg, #123b55, #0e2d43);
+}
+html[data-theme="dark"] #studyGrid .study-card .kanji,
+html[data-theme="dark"] #practiceGrid .practice-tile .kanji,
+html[data-theme="dark"] #studyMode > h1,
+html[data-theme="dark"] #practiceMode > h1 {
+  color: #e1f3ff;
+}
+html[data-theme="dark"] #studyGrid .study-card .meaning,
+html[data-theme="dark"] #practiceGrid .practice-tile .meaning {
+  color: #c5dfed;
+}
+html[data-theme="dark"] #practiceLevelFilter .practice-level-btn {
+  color: #b9e6fb;
+  background: #10334b;
+  border-color: #28617f;
+}
+html[data-theme="dark"] #practiceLevelFilter .practice-level-btn.active {
+  color: #fff;
+  background: #075985;
+  border-color: #0ea5e9;
+}
+html[data-theme="dark"] #practiceModal .practice-head-clean,
+html[data-theme="dark"] #practiceModal .practice-foot-clean {
+  border-color: #1f5472;
+}
+html[data-theme="dark"] #practiceModal .practice-hw-box {
+  border-color: #28617f;
+  background:
+    linear-gradient(rgba(125,211,252,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125,211,252,.10) 1px, transparent 1px),
+    #0b2235;
+}
+
+/* Responsive learning workspace */
+@media (max-width: 767.98px) {
+  #studyMode, #practiceMode { padding-top: .75rem; }
+  #studyMode .toolbar, #practiceMode .toolbar {
+    align-items: stretch;
+  }
+  #studyMode .toolbar > .spacer,
+  #practiceMode .toolbar > .spacer { display: none; }
+  #studyMode .toolbar .btn,
+  #practiceMode .toolbar .btn { flex: 1 1 auto; }
+  #studyGrid.study-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+  }
+  #studyGrid .study-card,
+  #studyGrid .study-card .face { min-height: 175px; }
+  #practiceGrid.practice-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .55rem;
+  }
+  #practiceGrid .practice-tile {
+    min-height: 125px;
+    padding: .65rem .35rem;
+  }
+  #practiceGrid .practice-tile .kanji { font-size: 2.8rem; }
+  #practiceGrid .practice-tile .meaning { font-size: .75rem; }
+  #practiceModal .practice-hw-box { width: min(86vw, 390px); }
+}
+@media (max-width: 430px) {
+  #studyGrid.study-grid { grid-template-columns: 1fr 1fr; }
+  #practiceGrid.practice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #studyMode .toolbar, #practiceMode .toolbar { padding: .55rem; }
+}
+
+
+/* Kanji Path brand mark */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  color: #fff;
+  text-decoration: none;
+}
+.brand-logo:hover { color: #fff; text-decoration: none; }
+.brand-logo .brand-text { display: inline-flex; align-items: baseline; gap: .45rem; }
+.brand-logo .jp { font-size: 1.5rem; line-height: 1; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: .8rem;
+  background: rgba(255,255,255,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 .35rem .9rem rgba(0,0,0,.12);
+}
+.brand-mark svg { width: 1.8rem; height: 1.8rem; }
+.brand-mark rect { fill: none; stroke: currentColor; stroke-width: 2.2; }
+.brand-mark path { fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 480px) {
+  .brand-logo .brand-text span:last-child { display: none; }
+  .brand-mark { width: 2.5rem; height: 2.5rem; }
+}
