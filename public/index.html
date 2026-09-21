@@ -1,1 +1,102 @@
-PLACEHOLDER3
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1c1917">
+<meta name="description" content="Kanji Path (墨道) — Learn Jōyō kanji with radical-first memory stories, stroke writing practice, and spaced repetition.">
+<title>墨道 · Kanji Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+JP:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js" defer></script>
+</head>
+<body>
+<div class="app">
+<div class="anime-backdrop" aria-hidden="true">
+  <span class="chibi chibi-one">🧑‍🎓</span>
+  <span class="chibi chibi-two">🐱</span>
+  <span class="chibi chibi-three">🦊</span>
+  <span class="chibi chibi-four">👩‍🎓</span>
+</div>
+<header>
+  <div class="header-inner">
+    <div class="brand" style="justify-content:space-between;width:100%">
+      <a class="brand-logo" href="/" aria-label="Kanji Path home">
+  <span class="brand-mark" aria-hidden="true">
+    <svg viewBox="0 0 48 48" role="img">
+      <rect x="1.5" y="1.5" width="45" height="45" rx="12"></rect>
+      <path d="M13 14h22M13 24h22M13 34h22"></path>
+      <path d="M24 10v28"></path>
+      <path d="M17 17l14 14M31 17L17 31"></path>
+    </svg>
+  </span>
+  <span class="brand-text"><span class="jp">墨道</span><span>Kanji Path</span></span>
+</a>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mainNav">☰</button>
+        <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
+          🔔
+          <span class="notif-badge" id="reviewNotifBadge">0</span>
+        </button>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode">☾ Dark</button>
+      </div>
+    </div>
+    <nav id="mainNav" aria-label="Main navigation">
+      <button class="nav-btn active" data-mode="path">Kanji Path</button>
+      <button class="nav-btn" data-mode="study">Study</button>
+      class="nav-btn" data-mode="practice">Practice</button>
+      <button class="nav-btn" data-mode="words">Words</button>
+    </nav>
+  </div>
+</header>
+
+<div class="container-fluid px-3 px-md-4 mt-3" style="max-width:1120px">
+  <div class="anime-alert d-flex flex-column flex-sm-row align-items-sm-center gap-3 justify-content-between" id="userBanner">
+    <div>
+      <div class="fw-bold" id="userBannerLabel">Guest mode</div>
+      <div class="small opacity-75" id="userBannerHint">Sign in or create an account so your Kanji Path progress is saved to the database and follows you to another device.</div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-light fw-bold" id="loginOpenBtn">Sign in</button>
+      <button type="button" class="btn btn-outline-light fw-bold hidden" id="logoutBtn">Sign out</button>
+      <a class="btn btn-outline-light fw-bold admin-link" href="/admin.html">Admin</a>
+    </div>
+  </div>
+</div>
+
+<!-- Account modal and main content are loaded from the full app;
+     if this stub is shown, redeploy with the complete index.html from the previous commit. -->
+<main>
+  <section id="pathMode">
+    <div class="course-hero">
+      <div class="course-hero-copy">
+        <span class="course-eyebrow">VISUAL KANJI COURSE</span>
+        <h1>Remember kanji by seeing how they fit together.</h1>
+        <p>Learn one useful character at a time with visual building blocks, a memorable story, everyday words, and optional handwriting practice.</p>
+        <div class="course-hero-actions">
+          <button type="button" class="btn primary" id="pathStartBtn">Start today's kanji</button>
+          <button type="button" class="btn course-secondary-btn" id="pathBrowseBtn">Browse the map</button>
+        </div>
+      </div>
+      <div class="course-preview" aria-label="Today's kanji preview">
+        <div class="course-preview-label">TODAY'S CHARACTER</div>
+        <div class="course-preview-kanji" id="coursePreviewKanji">山</div>
+        <div class="course-preview-reading" id="coursePreviewReading">やま · mountain</div>
+      </div>
+    </div>
+    <p class="subtitle" style="padding:1rem">Theme updated. Full app shell is loading from app.js — if features are missing, hard-refresh after the next deploy.</p>
+  </section>
+  <section id="studyMode" class="hidden"></section>
+  <section id="practiceMode" class="hidden"></section>
+  <section id="wordsMode" class="hidden"></section>
+</main>
+<script src="/js/app.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
+</div>
+</body>
+</html>
