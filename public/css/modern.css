@@ -32,7 +32,6 @@ a,input,select,textarea{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(67,56,202,.28)!important;outline-offset:2px}
 
 /* App shell */
-.app{min-height:100dvh}
 header{
   position:sticky;
   top:0;
