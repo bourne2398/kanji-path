@@ -32,6 +32,7 @@ body{
 }
 button,input,select,textarea{font:inherit}
 button{touch-action:manipulation}
+a,input,select,textarea{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(67,56,202,.28)!important;outline-offset:2px}
 
 /* App shell */
@@ -116,6 +117,8 @@ main{
   padding:1rem 0 4rem;
 }
 main>section{min-width:0}
+.app,main,.header-inner,.container-fluid{min-width:0}
+img,svg,canvas{max-width:100%}
 .container-fluid.px-3.px-md-4.mt-3{
   width:min(1180px,100%);
   margin-left:auto!important;
@@ -273,11 +276,17 @@ main>section{min-width:0}
 }
 
 /* Avoid accidental horizontal overflow from long Japanese strings */
+html,body{min-height:100%;overflow-x:hidden}
 main,.course-hero,.path-lesson,.path-roadmap-card,#studyMode,#practiceMode,
-.path-explanation,.path-memory-card,.study-card,.practice-tile{
-  overflow-wrap:anywhere;
+.path-explanation,.path-memory-card,.study-card,.practice-tile,.word-flashcard{
+  min-width:0;overflow-wrap:anywhere;
 }
 .study-grid,.practice-grid,.path-roadmap{min-width:0}
+#studyMode,#practiceMode{min-height:40vh}
+#studyMode .toolbar,#practiceMode .toolbar{max-width:100%}
+#studyGrid .study-card .face{overflow:hidden}
+#studyGrid .study-card .kanji,#practiceGrid .practice-tile .kanji,
+.path-kanji,.course-preview-kanji{max-width:100%;overflow-wrap:normal;word-break:keep-all}
 
 /* Mobile: hamburger is the navigation, not a bottom bar */
 @media(max-width:767.98px){
@@ -309,6 +318,9 @@ main,.course-hero,.path-lesson,.path-roadmap-card,#studyMode,#practiceMode,
   main{width:calc(100% - 1rem);padding-top:.65rem;padding-bottom:2rem;min-width:0}
   .container-fluid.px-3.px-md-4.mt-3{padding-left:.5rem!important;padding-right:.5rem!important}
   #userBanner{margin-top:.2rem!important}
+  .anime-backdrop{display:none!important}
+  .course-hero,.path-hero,.path-lesson,.path-roadmap-card,
+  #studyGrid .study-card,#practiceGrid .practice-tile{box-shadow:0 4px 16px rgba(28,25,23,.06)}
   .course-hero{grid-template-columns:1fr;gap:1rem;border-radius:20px;padding:1.1rem}
   .course-hero h1{font-size:clamp(1.9rem,9vw,2.65rem)}
   .course-preview{min-height:210px}
@@ -327,6 +339,12 @@ main,.course-hero,.path-lesson,.path-roadmap-card,#studyMode,#practiceMode,
   #studyGrid .study-card .kanji{font-size:clamp(2.5rem,13vw,4.1rem)}
   #practiceGrid .practice-tile{min-height:140px}
   .modal-backdrop .modal{width:calc(100% - 1rem);max-height:calc(100dvh - 1rem)}
+}
+@media(max-width:767.98px) and (orientation:landscape){
+  .path-kanji{font-size:clamp(3.5rem,20vh,6rem);line-height:.9}
+  #studyGrid .study-card,#studyGrid .study-card .face{min-height:145px}
+  #practiceGrid .practice-tile{min-height:125px}
+  .modal-backdrop .modal{max-height:calc(100dvh - 1rem)!important;overflow:auto}
 }
 @media(max-width:390px){
   .theme-toggle{font-size:0;width:42px;padding:0}
@@ -396,30 +414,7 @@ html[data-theme="dark"] .study-card,
 html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
 
 
-/* Small-screen performance and overflow safeguards. */
-html,body{min-height:100%;overflow-x:hidden}
-body{min-width:0}
-.app,main,.header-inner,.container-fluid{min-width:0}
-img,svg,canvas{max-width:100%}
-button,a,input,select,textarea{touch-action:manipulation}
-@media(max-width:767.98px){
-  .anime-backdrop{display:none!important}
-  .course-hero,.path-hero,.path-lesson,.path-roadmap-card,
-  #studyGrid .study-card,#practiceGrid .practice-tile{box-shadow:0 4px 16px rgba(28,25,23,.06)}
-}
-@media(max-width:767.98px) and (orientation:landscape){
-  .path-kanji{font-size:clamp(3.5rem,20vh,6rem);line-height:.9}
-  #studyGrid .study-card,#studyGrid .study-card .face{min-height:145px}
-  #practiceGrid .practice-tile{min-height:125px}
-  .modal-backdrop .modal{max-height:calc(100dvh - 1rem)!important;overflow:auto}
-}
-.path-lesson,.path-roadmap-card,.course-hero,#studyMode,#practiceMode,
-#studyGrid .study-card,#practiceGrid .practice-tile,.word-flashcard{min-width:0;overflow-wrap:anywhere}
-#studyGrid .study-card .face{overflow:hidden}
-#studyGrid .study-card .kanji,#practiceGrid .practice-tile .kanji,
-.path-kanji,.course-preview-kanji{max-width:100%;overflow-wrap:normal;word-break:keep-all}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
-#studyMode,#practiceMode{min-height:40vh}
-#studyMode .toolbar,#practiceMode .toolbar{max-width:100%}
