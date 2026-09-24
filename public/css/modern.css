@@ -418,3 +418,17 @@ html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Markup utility classes: keep presentation out of HTML. */
+.brand-header-row{justify-content:space-between;width:100%}
+.header-actions{display:flex;align-items:center;gap:8px}
+.user-banner-wrap{max-width:1120px}
+.review-modal{max-width:420px;height:auto}
+.review-modal-subtitle{margin:0}
+.review-modal-body{text-align:center}
+.review-modal-hint{margin-top:4px}
+.review-modal-actions{flex-wrap:wrap;gap:8px}
+.study-toolbar{flex-wrap:wrap}
+.vocab-bank-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.practice-done-actions{margin-top:6px}
+.quit-modal{max-width:400px}
