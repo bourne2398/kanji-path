@@ -302,31 +302,6 @@ function setupPracticeLevel(level) {
 }
 
 /** Multi-character compound words for Words tab */
-function getWordPracticeItems(ids) {
-  const items = [];
-  const seen = new Set();
-  for (const id of ids) {
-    const set = SETS[id - 1];
-    if (!set) continue;
-    for (const card of set.cards) {
-      const word = card[0] || '';
-      const chars = [...word].filter(isKanjiChar);
-      if (chars.length < 2) continue;
-      if (seen.has(word)) continue;
-      seen.add(word);
-      items.push({
-        setId: id,
-        word,
-        kanji: chars[0],
-        chars,
-        charIndex: 0,
-        reading: card[1] || '',
-        english: card[2] || ''
-      });
-    }
-  }
-  return items;
-}
 
 function setupPractice(ids) {
   const s = state.practice;
@@ -622,7 +597,6 @@ function loadHanzi(char) {
     box.style.height = size + 'px';
   }
 
-
   try {
     hanziWriter = HanziWriter.create('hanziTarget', char, {
       width: size,
@@ -695,19 +669,11 @@ function savePracticeWritingProgress(progress) {
   } catch (_) {}
 }
 
-async function apiGetKanjiProgress() {
-  return { progress: loadPracticeWritingProgress() };
-}
-
 async function apiSaveKanjiProgress(kanji, count, setId) {
   const progress = loadPracticeWritingProgress();
   progress[kanji] = Math.min(PRACTICE_GOAL, Math.max(0, Math.floor(Number(count) || 0)));
   savePracticeWritingProgress(progress);
   return { ok: true, local: true, count: progress[kanji] };
-}
-
-async function syncPracticeWritingProgress() {
-  renderPractice();
 }
 
 function getKanjiWriteCount(kanji) {
@@ -1038,10 +1004,6 @@ function practiceShow() {
   try { hanziWriter.cancelQuiz(); } catch (_) {}
   hanziWriter.showCharacter();
   hanziWriter.showOutline();
-}
-
-function practiceReset() {
-  practiceRewrite();
 }
 
 function cardFaceHTML(c, isFront, reverse) {
@@ -2034,43 +1996,9 @@ function updateNote() {
 }
 
 /* ---------- THEME ---------- */
-(function initTheme() {
-  const saved = localStorage.getItem('kanjiTheme') || 'light';
-  document.documentElement.dataset.theme = saved;
-  const btn = $('themeToggle');
-  if (!btn) return;
-  const update = () => {
-    const dark = document.documentElement.dataset.theme === 'dark';
-    btn.textContent = dark ? '☀ Light' : '☾ Dark';
-    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-  };
-  update();
-  btn.onclick = () => {
-    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem('kanjiTheme', next);
-    update();
-  };
-})();
+()();
 
-(function setupModalViewport() {
-  const apply = () => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const h = Math.max(320, Math.floor(vv.height));
-    document.documentElement.style.setProperty('--visual-vh', h + 'px');
-    ['gameConfigModal', 'gameSetupModal'].forEach(id => {
-      const modal = $(id)?.querySelector('.modal');
-      if (modal) modal.style.maxHeight = Math.min(h * 0.94, 900) + 'px';
-    });
-  };
-  apply();
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', apply);
-    window.visualViewport.addEventListener('scroll', apply);
-  }
-  window.addEventListener('resize', apply);
-})();
+()();
 
 /* ---------- NAV ---------- */
 
@@ -2793,13 +2721,7 @@ async function ensurePathWords(kanji){
   })().finally(()=>{delete PATH_WORDS_LOADING[kanji]});
   return PATH_WORDS_LOADING[kanji];
 }
-function saveJoyoVocabCache(){ /* vocabulary is stored in Neon; no client export */ }
-function updateSqlExportButton(){ /* removed: SQL export no longer needed */ }
-function sqlQuote(value){return "'"+String(value??'').replace(/'/g,"''")+"'";}
-function exportJoyoVocabularySql(){ alert("Vocabulary is already stored in the database."); }
-function loadJoyoVocabCache(){ /* use API */ }
 
-function vocabBankFiltered(){ return JOYO_VOCAB_ITEMS; }
 function renderVocabBank(){
   const bank=$('vocabBank'),grid=$('vocabBankGrid'),status=$('vocabBankStatus');if(!bank||!grid)return;
   bank.classList.remove('hidden');
@@ -2856,7 +2778,7 @@ async function fetchVocabPage(opts){
     if(!quiet)renderVocabBank();
   }
 }
-async function loadAllJoyoVocabulary(){ await fetchVocabPage(); }
+
 function prefetchVocabBank(){
   // Vocabulary is loaded by ensureVocabularyLoaded() when the Word tab is opened.
   // IndexedDB keeps the full 40,000-entry dataset available for instant future opens.
@@ -3072,9 +2994,6 @@ bind('gameClearAllSets', 'onclick', () => { gameSetupSelected = []; renderGameSe
 bind('gameSetupStart', 'onclick', startSelectedGame);
 bind('gameQuit', 'onclick', () => askQuit('games'));
 
-
-
-
 bind('studyChooseSets', 'onclick', () => openModal('study'));
 bind('studyKanjiBtn', 'onclick', () => { const x=pathItems()[pathCurrent]; if(x){ setupStudy([x.setId],true); } });
 bind('practiceChooseSets', 'onclick', () => openModal('practice'));
@@ -3156,7 +3075,6 @@ bind('studyResetFlips', 'onclick', () => {
   renderStudy();
 });
 
-
 bind('quizStartBtn', 'onclick', () => {
   if (!state.quiz.settingsConfigured || !state.quiz.cards.length) {
     $('quizStartHint').textContent = 'Please open Settings and choose sets first.';
@@ -3237,7 +3155,6 @@ function quitGame() {
   showMode('games');
 }
 
-
 function openPlayModal(id) {
   const el = $(id);
   if (!el) return;
@@ -3296,7 +3213,6 @@ bind('vocabBankShow', 'onclick', ()=>{
 bind('vocabSearch', 'oninput', () => { JOYO_VOCAB_QUERY = $('vocabSearch')?.value || ''; JOYO_VOCAB_PAGE=0; fetchVocabPage(); });
 bind('vocabPrevPage', 'onclick', () => { if(JOYO_VOCAB_PAGE>0){ JOYO_VOCAB_PAGE--; fetchVocabPage(); } });
 bind('vocabNextPage', 'onclick', () => { JOYO_VOCAB_PAGE++; fetchVocabPage(); });
-
 
 bind('wordsLoadAll', 'onclick', () => ensureVocabularyLoaded(true));
 
