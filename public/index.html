@@ -35,7 +35,7 @@
 </div>
 <header>
   <div class="header-inner">
-    <div class="brand" style="justify-content:space-between;width:100%">
+    <div class="brand brand-header-row">
       <a class="brand-logo" href="/" aria-label="Kanji Path home">
   <span class="brand-mark" aria-hidden="true">
     <svg viewBox="0 0 48 48" role="img">
@@ -47,7 +47,7 @@
   </span>
   <span class="brand-text"><span class="jp">墨道</span><span>Kanji Path</span></span>
 </a>
-      <div style="display:flex;align-items:center;gap:8px">
+      <div class="header-actions">
         <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mainNav">☰</button>
         <button type="button" class="notif-btn" id="reviewNotifBtn" aria-label="Review reminders" title="Kanji reviews due">
           🔔
@@ -66,7 +66,7 @@
 
 </header>
 
-<div class="container-fluid px-3 px-md-4 mt-3" style="max-width:1120px">
+<div class="container-fluid px-3 px-md-4 mt-3 user-banner-wrap">
   <div class="anime-alert d-flex flex-column flex-sm-row align-items-sm-center gap-3 justify-content-between" id="userBanner">
     <div>
       <div class="fw-bold" id="userBannerLabel">Guest mode</div>
@@ -172,20 +172,20 @@
 
 <!-- Review reminder modal -->
 <div class="modal-backdrop center hidden" id="reviewModal" aria-hidden="true">
-  <div class="modal" style="max-width:420px;height:auto;" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="modal review-modal"> role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
     <div class="modal-head">
       <button type="button" class="modal-close-x" id="reviewModalClose" aria-label="Close">×</button>
       <h2 id="reviewModalTitle">Review reminder</h2>
-      <p class="subtitle" style="margin:0">Do you still remember this kanji?</p>
+      <p class="subtitle review-modal-subtitle">Do you still remember this kanji?</p>
     </div>
-    <div class="modal-body" style="text-align:center">
+    <div class="modal-body review-modal-body">
       <div class="review-modal-kanji" id="reviewModalKanji">山</div>
       <div class="review-modal-meta" id="reviewModalReading"></div>
       <div class="review-modal-meta" id="reviewModalMeaning"></div>
       <p class="review-modal-q">Still know it?</p>
-      <p class="start-hint" id="reviewModalHint" style="margin-top:4px">If yes, no need to write again. If no, you will practice writing it.</p>
+      <p class="start-hint review-modal-hint" id="reviewModalHint">If yes, no need to write again. If no, you will practice writing it.</p>
     </div>
-    <div class="modal-foot modal-actions" style="flex-wrap:wrap;gap:8px">
+    <div class="modal-foot modal-actions review-modal-actions">
       <button type="button" class="btn bad" id="reviewForgotBtn">❌ I forgot — write again</button>
       <button type="button" class="btn good" id="reviewRememberBtn">✓ I still remember</button>
     </div>
@@ -309,7 +309,7 @@
   <section id="studyMode" class="hidden">
     <h1 id="studyTitle">Study</h1>
     <p class="subtitle" id="studySubtitle">Tap a card to flip. Shuffle or reverse anytime.</p>
-    <div class="toolbar" style="flex-wrap:wrap">
+    <div class="toolbar study-toolbar">
       <button class="btn primary" id="studyChooseSets">Choose sets</button>
       <button class="btn" id="studyShuffle">Shuffle</button>
       <button class="btn" id="studyKanjiBtn" style="display:none">📖 Study Kanji</button>
@@ -366,7 +366,7 @@
     <div class="vocab-bank hidden" id="vocabBank">
       <div class="vocab-bank-head">
         <h2>Jōyō Vocabulary Bank</h2>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="vocab-bank-actions">
           <input class="vocab-bank-search" id="vocabSearch" type="search" placeholder="Search word, reading, meaning, or kanji…" autocomplete="off">
           <button class="btn" id="vocabBankHide" type="button" title="Hide the vocabulary list">Hide</button>
         </div>
@@ -552,7 +552,7 @@
       <p class="practice-reading" id="practiceReading"></p>
       <div class="practice-slots" id="practiceSlots" aria-label="Kanji slots"></div>
       <p class="practice-modal-meta" id="practiceModalMeta"></p>
-      <p class="practice-modal-kanji" id="practiceModalKanji" style="display:none"></p>
+      <p class="practice-modal-kanji hidden" id="practiceModalKanji"></p>
     </div>
     <div class="modal-body">
       <div class="practice-hw-wrap">
@@ -571,7 +571,7 @@
         <button class="btn subtle" id="practiceWrite">✎ Free write</button>
         <button class="btn linkish" id="practiceSkip">Skip</button>
       </div>
-      <div class="modal-actions" style="margin-top:6px">
+      <div class="modal-actions practice-done-actions">
         <button class="btn" id="practiceModalDone">Done</button>
       </div>
     </div>
@@ -580,7 +580,7 @@
 
 <!-- Quit confirm modal -->
 <div class="modal-backdrop center hidden" id="quitModal">
-  <div class="modal" role="dialog" aria-modal="true" style="max-width:400px">
+  <div class="modal quit-modal" role="dialog" aria-modal="true">
     <div class="modal-head">
       <h2>Quit game?</h2>
       <p class="confirm-text">Are you sure you want to quit?</p>
