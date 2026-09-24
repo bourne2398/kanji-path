@@ -1,7 +1,5 @@
 /* =========================================================
-   KANJI PATH — UI/UX OVERHAUL v2
-   Presentation-only layer: preserves existing IDs, JS, data,
-   and learning flows while giving the app one consistent shell.
+   KANJI PATH — consolidated UI theme
    ========================================================= */
 
 :root{
@@ -410,8 +408,6 @@ html[data-theme="dark"] #userBanner .opacity-75{color:#aaa29a!important}
 html[data-theme="dark"] .course-method-grid article,
 html[data-theme="dark"] .study-card,
 html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
-
-
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
