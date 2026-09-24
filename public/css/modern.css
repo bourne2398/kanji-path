@@ -525,3 +525,440 @@ html[data-theme="dark"] #practiceModal .practice-reading { color: #a5b4fc; }
 html[data-theme="dark"] .course-eyebrow,
 html[data-theme="dark"] .path-kicker,
 html[data-theme="dark"] .anime-kicker { color: #a5b4fc; }
+
+
+/* =========================================================
+   KANJI PATH — UI/UX OVERHAUL v2
+   Presentation-only layer: preserves existing IDs, JS, data,
+   and learning flows while giving the app one consistent shell.
+   ========================================================= */
+
+:root{
+  --kp-bg:#f5f1e8;
+  --kp-surface:#fffdf8;
+  --kp-surface-2:#f8f4ec;
+  --kp-ink:#211e1a;
+  --kp-muted:#716b62;
+  --kp-line:#e4ded3;
+  --kp-line-strong:#cfc6b8;
+  --kp-accent:#9f1239;
+  --kp-accent-2:#4338ca;
+  --kp-green:#166534;
+  --kp-radius:18px;
+  --kp-radius-sm:12px;
+  --kp-shadow:0 8px 30px rgba(45,38,28,.07);
+  --kp-shadow-lg:0 20px 60px rgba(45,38,28,.12);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(67,56,202,.055),transparent 30rem),
+    radial-gradient(circle at 100% 35%,rgba(159,18,57,.045),transparent 28rem),
+    var(--kp-bg);
+  color:var(--kp-ink);
+}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+:focus-visible{outline:3px solid rgba(67,56,202,.28)!important;outline-offset:2px}
+
+/* App shell */
+.app{min-height:100dvh}
+header{
+  position:sticky;
+  top:0;
+  z-index:1040;
+  background:rgba(255,253,248,.92);
+  border-bottom:1px solid var(--kp-line);
+  box-shadow:0 4px 22px rgba(45,38,28,.055);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.header-inner{
+  width:min(1180px,100%);
+  margin:auto;
+  padding:.7rem 1rem .55rem;
+}
+.brand{min-height:44px}
+.brand-logo{gap:.7rem}
+.brand-mark{
+  width:42px;height:42px;border-radius:13px;
+  box-shadow:0 7px 18px rgba(33,30,26,.18);
+}
+.brand-text{display:flex;align-items:baseline;gap:.45rem}
+.brand-logo .jp{font-size:1.55rem}
+.brand-logo .brand-text span:last-child{font-size:.9rem}
+
+.menu-toggle,.notif-btn,.theme-toggle{
+  min-width:42px;min-height:42px;
+  border:1px solid var(--kp-line);
+  border-radius:12px;
+  background:var(--kp-surface);
+  box-shadow:0 2px 8px rgba(45,38,28,.04);
+  display:inline-grid;
+  place-items:center;
+}
+.menu-toggle{
+  font-size:0;
+  position:relative;
+}
+.menu-toggle::before,.menu-toggle::after{
+  content:"";
+  position:absolute;
+  width:19px;height:2px;border-radius:4px;
+  background:currentColor;
+  transition:transform .2s,box-shadow .2s;
+}
+.menu-toggle::before{transform:translateY(-5px);box-shadow:0 10px currentColor}
+.menu-toggle::after{transform:translateY(5px)}
+.menu-toggle[aria-expanded="true"]::before{transform:rotate(45deg);box-shadow:none}
+.menu-toggle[aria-expanded="true"]::after{transform:rotate(-45deg)}
+.theme-toggle{padding:.45rem .75rem;font-weight:700}
+.notif-btn{position:relative;font-size:1.05rem}
+.notif-badge{top:-4px!important;right:-4px!important}
+
+nav#mainNav{
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  margin:.55rem 0 0;
+  padding:.25rem;
+}
+.nav-btn{
+  min-height:40px;
+  padding:.55rem .9rem;
+  border-radius:11px;
+  font-weight:700;
+  color:var(--kp-muted);
+}
+.nav-btn.active{
+  background:var(--kp-ink);
+  color:#fff;
+  box-shadow:0 4px 12px rgba(33,30,26,.18);
+}
+
+/* Main layout */
+main{
+  width:min(1180px,calc(100% - 2rem));
+  margin:0 auto;
+  padding:1rem 0 4rem;
+}
+main>section{min-width:0}
+.container-fluid.px-3.px-md-4.mt-3{
+  width:min(1180px,100%);
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+#userBanner{
+  margin-top:.35rem!important;
+  border-radius:16px!important;
+  padding:.8rem 1rem!important;
+}
+
+/* Consistent headings */
+#studyMode>h1,#practiceMode>h1,
+.path-hero h1,.path-roadmap-head h2{
+  margin-bottom:.35rem;
+}
+#studyMode>.subtitle,#practiceMode>.subtitle{max-width:760px}
+
+/* Hero / dashboard */
+.course-hero{
+  margin-top:.35rem;
+  border-radius:24px;
+  padding:clamp(1.25rem,3vw,2.25rem);
+  grid-template-columns:minmax(0,1.5fr) minmax(230px,.7fr);
+  gap:clamp(1rem,4vw,3rem);
+  box-shadow:var(--kp-shadow-lg);
+}
+.course-hero-actions{display:flex;flex-wrap:wrap;gap:.6rem}
+.course-preview{min-height:240px;display:flex;flex-direction:column;justify-content:center}
+.course-method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:.75rem}
+.course-method-grid article{display:flex;gap:.75rem;align-items:flex-start}
+
+/* Learning path */
+.path-hero{
+  border-radius:22px;
+  padding:1.35rem;
+  box-shadow:var(--kp-shadow-lg);
+}
+.path-stats{gap:.65rem}
+.path-stats>div{min-width:0}
+.path-lesson,.path-roadmap-card{
+  border-radius:22px;
+  box-shadow:var(--kp-shadow);
+}
+.path-kanji{
+  font-size:clamp(5rem,12vw,9rem);
+  line-height:.9;
+  margin:.8rem 0 .45rem;
+}
+.path-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+.path-actions .btn{min-width:120px}
+.path-explanation,.path-memory-card{box-shadow:0 3px 12px rgba(45,38,28,.035)}
+.path-roadmap{gap:.55rem}
+.path-node{min-height:82px}
+
+/* Study / practice workspace */
+#studyMode,#practiceMode{padding-top:.5rem}
+#studyMode .toolbar,#practiceMode .toolbar{
+  position:sticky;
+  top:86px;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  margin:.8rem 0 1rem;
+  padding:.55rem;
+  border-radius:16px;
+  background:rgba(255,253,248,.94);
+  backdrop-filter:blur(14px);
+}
+#studyMode .toolbar .spacer{min-width:12px}
+#studyGrid.study-grid{
+  grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
+  gap:.85rem;
+}
+#studyGrid .study-card{
+  min-height:215px;
+  border-radius:18px;
+  box-shadow:0 5px 18px rgba(45,38,28,.055);
+}
+#studyGrid .study-card:hover{transform:translateY(-2px)}
+#practiceGrid.practice-grid{
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:.75rem;
+}
+#practiceGrid .practice-tile{
+  min-height:165px;
+  border-radius:18px;
+}
+#studyMode>.controls{
+  display:flex;
+  justify-content:center;
+  gap:.5rem;
+  margin-top:1rem;
+}
+
+/* Buttons and controls */
+.btn{
+  min-height:42px;
+  border-radius:12px;
+  font-weight:700;
+  transition:transform .16s,box-shadow .16s,background .16s,border-color .16s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.primary,.btn-anime{
+  background:linear-gradient(135deg,#9f1239,#be123c);
+}
+#studyMode .toolbar .btn.primary,#practiceMode .toolbar .btn.primary{
+  background:var(--kp-ink);
+  border-color:var(--kp-ink);
+}
+.form-control,.form-select{
+  min-height:44px;
+  border-radius:12px;
+  border-color:var(--kp-line);
+}
+.check{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.5rem .75rem;
+  border-radius:12px;
+}
+
+/* Modal system */
+.modal-backdrop.center{z-index:1090}
+.modal-backdrop .modal,.anime-modal{
+  border-radius:22px!important;
+  overflow:hidden;
+}
+.modal-head,.modal-header{padding:1.2rem 1.25rem .75rem}
+.modal-body{padding:1rem 1.25rem 1.25rem}
+.modal-foot,.modal-footer{padding:.75rem 1.25rem 1.25rem}
+.account-tabs{padding:.25rem;background:var(--kp-surface-2);border-radius:14px}
+.account-tabs .nav-link{min-height:42px}
+
+/* Empty/loading/error states stay visually intentional */
+#studyGrid:empty,#practiceGrid:empty{
+  min-height:180px;
+}
+#studyGrid:empty::before,#practiceGrid:empty::before{
+  content:"Loading your cards…";
+  min-height:180px;
+  display:grid;
+  place-items:center;
+  color:var(--kp-muted);
+  border:1px dashed var(--kp-line-strong);
+  border-radius:18px;
+}
+
+/* Avoid accidental horizontal overflow from long Japanese strings */
+main,.course-hero,.path-lesson,.path-roadmap-card,#studyMode,#practiceMode,
+.path-explanation,.path-memory-card,.study-card,.practice-tile{
+  overflow-wrap:anywhere;
+}
+.study-grid,.practice-grid,.path-roadmap{min-width:0}
+
+/* Mobile: hamburger is the navigation, not a bottom bar */
+@media(max-width:767.98px){
+  body{padding-bottom:0}
+  header{position:sticky;top:0}
+  .header-inner{padding:.55rem .7rem}
+  .brand-logo .brand-text span:last-child{display:none}
+  .brand-text{gap:0}
+  nav#mainNav{
+    position:fixed;
+    top:70px;
+    left:.65rem;
+    right:.65rem;
+    z-index:1080;
+    display:flex!important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:.35rem;
+    margin:0;
+    padding:.55rem;
+    border:1px solid var(--kp-line);
+    border-radius:18px;
+    background:rgba(255,253,248,.98);
+    box-shadow:0 22px 55px rgba(30,25,18,.18);
+    backdrop-filter:blur(18px);
+    transform:translateY(-10px) scale(.98);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease,visibility .18s;
+  }
+  nav#mainNav.nav-open{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:none;
+  }
+  .nav-btn{
+    width:100%;
+    min-height:46px;
+    text-align:left;
+    padding:.7rem .85rem;
+  }
+  .nav-btn.active{box-shadow:none}
+  main{
+    width:min(100% - 1rem,1180px);
+    padding-top:.65rem;
+    padding-bottom:2rem;
+  }
+  .container-fluid.px-3.px-md-4.mt-3{
+    padding-left:.5rem!important;
+    padding-right:.5rem!important;
+  }
+  #userBanner{margin-top:.2rem!important}
+  .course-hero{
+    grid-template-columns:1fr;
+    gap:1rem;
+    border-radius:20px;
+    padding:1.1rem;
+  }
+  .course-hero h1{font-size:clamp(1.9rem,9vw,2.65rem)}
+  .course-preview{min-height:210px}
+  .course-method-grid{grid-template-columns:1fr}
+  .course-method-grid article{padding:.9rem}
+  .path-stats{grid-template-columns:repeat(2,1fr)}
+  .path-lesson,.path-roadmap-card{padding:1rem;border-radius:18px}
+  .path-actions .btn{flex:1 1 calc(50% - .5rem);min-width:0}
+  .path-kanji{font-size:clamp(4.5rem,24vw,7rem)}
+  #studyMode .toolbar,#practiceMode .toolbar{
+    position:relative;
+    top:auto;
+    flex-wrap:wrap;
+    padding:.5rem;
+  }
+  #studyMode .toolbar>.btn,#practiceMode .toolbar>.btn{
+    flex:1 1 calc(50% - .45rem);
+  }
+  #studyMode .toolbar .check{
+    flex:1 1 auto;
+    justify-content:center;
+  }
+  #studyMode .toolbar .spacer{display:none}
+  #studyGrid.study-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+  #studyGrid .study-card,#studyGrid .study-card .face{min-height:172px}
+  #studyGrid .study-card .kanji{font-size:clamp(2.5rem,13vw,4.1rem)}
+  #practiceGrid.practice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+  #practiceGrid .practice-tile{min-height:140px}
+  .modal-backdrop .modal{width:calc(100% - 1rem);max-height:calc(100dvh - 1rem)}
+}
+@media(max-width:390px){
+  .theme-toggle{font-size:0;width:42px;padding:0}
+  .theme-toggle::before{content:"☾";font-size:1.1rem}
+  .path-actions .btn{flex-basis:100%}
+  #studyGrid .study-card,#studyGrid .study-card .face{min-height:155px}
+  #studyGrid .study-card .kanji{font-size:2.45rem}
+}
+
+/* Desktop: keep content compact and readable */
+@media(min-width:768px){
+  .menu-toggle{display:none}
+  .brand{align-items:center}
+  .course-method-grid article{min-height:92px}
+}
+
+/* Dark mode overhaul */
+html[data-theme="dark"] body{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(99,102,241,.10),transparent 30rem),
+    #0f0d0b;
+  color:#f5f5f4;
+}
+html[data-theme="dark"] header,
+html[data-theme="dark"] nav#mainNav,
+html[data-theme="dark"] #studyMode .toolbar,
+html[data-theme="dark"] #practiceMode .toolbar{
+  background:rgba(28,25,23,.94);
+  border-color:#3a3530;
+}
+html[data-theme="dark"] .course-hero,
+html[data-theme="dark"] .path-lesson,
+html[data-theme="dark"] .path-roadmap-card,
+html[data-theme="dark"] .course-method-grid article,
+html[data-theme="dark"] #userBanner{
+  background:#1c1917!important;
+  border-color:#3a3530!important;
+}
+html[data-theme="dark"] .course-preview,
+html[data-theme="dark"] .path-hero{
+  background:linear-gradient(145deg,#292524,#171311)!important;
+}
+html[data-theme="dark"] .path-explanation,
+html[data-theme="dark"] .path-memory-card,
+html[data-theme="dark"] #studyGrid .study-card,
+html[data-theme="dark"] #practiceGrid .practice-tile{
+  background:#211e1b!important;
+  border-color:#3a3530!important;
+}
+html[data-theme="dark"] .menu-toggle,
+html[data-theme="dark"] .notif-btn,
+html[data-theme="dark"] .theme-toggle,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .check{
+  background:#211e1b;
+  border-color:#49423b;
+  color:#f5f5f4;
+}
+html[data-theme="dark"] .nav-btn{color:#b8b0a7}
+html[data-theme="dark"] .nav-btn:hover{background:#292524;color:#fff}
+html[data-theme="dark"] .nav-btn.active{background:#f5f5f4;color:#1c1917}
+html[data-theme="dark"] .subtitle,
+html[data-theme="dark"] #userBanner .opacity-75{color:#aaa29a!important}
+html[data-theme="dark"] .course-method-grid article,
+html[data-theme="dark"] .study-card,
+html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
