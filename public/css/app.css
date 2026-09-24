@@ -6,7 +6,7 @@
 /* Shared application state used by app.js. */
 .hidden{display:none!important}
 .subtitle{color:var(--kp-muted)}
-.app{position:relative}
+.app{min-height:100dvh;position:relative}
 header,main,.container-fluid{position:relative;z-index:1}
 
 /* Decorative background layer. Hidden on mobile by modern.css for performance. */
