@@ -394,14 +394,18 @@ html[data-theme="dark"] #userBanner .opacity-75{color:#aaa29a!important}
 html[data-theme="dark"] .course-method-grid article,
 html[data-theme="dark"] .study-card,
 html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
-/* Final containment and lightweight safeguards */
+
+
+/* Small-screen performance and overflow safeguards. */
 html,body{min-height:100%;overflow-x:hidden}
 body{min-width:0}
 .app,main,.header-inner,.container-fluid{min-width:0}
 img,svg,canvas{max-width:100%}
 button,a,input,select,textarea{touch-action:manipulation}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(max-width:767.98px){
+  .anime-backdrop{display:none!important}
+  .course-hero,.path-hero,.path-lesson,.path-roadmap-card,
+  #studyGrid .study-card,#practiceGrid .practice-tile{box-shadow:0 4px 16px rgba(28,25,23,.06)}
 }
 @media(max-width:767.98px) and (orientation:landscape){
   .path-kanji{font-size:clamp(3.5rem,20vh,6rem);line-height:.9}
@@ -410,19 +414,12 @@ button,a,input,select,textarea{touch-action:manipulation}
   .modal-backdrop .modal{max-height:calc(100dvh - 1rem)!important;overflow:auto}
 }
 .path-lesson,.path-roadmap-card,.course-hero,#studyMode,#practiceMode,
-#studyGrid .study-card,#practiceGrid .practice-tile,.word-flashcard{
-  min-width:0;overflow-wrap:anywhere
-}
+#studyGrid .study-card,#practiceGrid .practice-tile,.word-flashcard{min-width:0;overflow-wrap:anywhere}
 #studyGrid .study-card .face{overflow:hidden}
 #studyGrid .study-card .kanji,#practiceGrid .practice-tile .kanji,
 .path-kanji,.course-preview-kanji{max-width:100%;overflow-wrap:normal;word-break:keep-all}
-@media(max-width:767.98px){
-  .anime-backdrop{display:none!important}
-  .course-hero,.path-hero,.path-lesson,.path-roadmap-card,
-  #studyGrid .study-card,#practiceGrid .practice-tile{box-shadow:0 4px 16px rgba(28,25,23,.06)}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
-html[data-theme=dark] nav#mainNav{background:rgba(28,25,23,.98)!important;border-color:#44403c!important}
-html[data-theme=dark] nav#mainNav .nav-btn{color:#b8b0a7!important}
-html[data-theme=dark] nav#mainNav .nav-btn.active{background:#f5f5f4!important;color:#1c1917!important}
 #studyMode,#practiceMode{min-height:40vh}
 #studyMode .toolbar,#practiceMode .toolbar{max-width:100%}
