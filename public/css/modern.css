@@ -425,3 +425,37 @@ html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .vocab-bank-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .practice-done-actions{margin-top:6px}
 .quit-modal{max-width:400px}
+
+
+/* === Final UI polish layer === */
+:root{--kp-content-max:1180px;--kp-control-h:44px}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button,.btn,.nav-link{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.app{min-height:100dvh}
+.container-fluid{width:100%;max-width:var(--kp-content-max);margin-inline:auto}
+
+/* Consistent compact controls */
+.btn{min-height:var(--kp-control-h);border-radius:12px;transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}
+.btn-sm{min-height:38px}
+.btn:active{transform:translateY(1px)}
+.form-control,.form-select{min-height:var(--kp-control-h);border-radius:12px}
+
+/* Mobile-first navigation */
+#menuToggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.14);border-radius:12px}
+#mainNav{min-width:0}
+@media (max-width:767.98px){
+  .container-fluid{padding-inline:14px}
+  #mainNav{display:none;width:100%}
+  #mainNav.nav-open{display:block}
+  #mainNav .nav{display:flex;flex-direction:column;gap:6px}
+  #mainNav .nav-link{width:100%;min-height:44px;display:flex;align-items:center;border-radius:12px}
+}
+@media (min-width:768px){#menuToggle{display:none!important}#mainNav{display:block!important}}
+
+/* Reduce accidental overflow on cards/grids */
+.card,.modal-content,.word-flashcard,.game-menu-card,.history-card{max-width:100%;overflow-wrap:anywhere}
+img,svg,video,canvas{max-width:100%;height:auto}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
