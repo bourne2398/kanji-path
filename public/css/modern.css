@@ -962,3 +962,165 @@ html[data-theme="dark"] #userBanner .opacity-75{color:#aaa29a!important}
 html[data-theme="dark"] .course-method-grid article,
 html[data-theme="dark"] .study-card,
 html[data-theme="dark"] .practice-tile{box-shadow:0 8px 28px rgba(0,0,0,.22)}
+
+
+/* =========================================================
+   KANJI PATH — FINAL UI/UX CONSOLIDATION
+   One authoritative responsive shell. Presentation only.
+   ========================================================= */
+
+/* Layout containment + mobile performance */
+html,body{min-height:100%;overflow-x:hidden}
+body{min-width:0}
+.app,main,.header-inner,.container-fluid{min-width:0}
+main{width:min(1120px,calc(100% - 2rem));margin-inline:auto}
+main>section{min-width:0}
+img,svg,canvas{max-width:100%}
+button,a,input,select,textarea{touch-action:manipulation}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* Header: compact, predictable, no layout jumps */
+header{position:sticky!important;top:0!important;z-index:1040!important}
+.header-inner{width:min(1120px,100%);margin-inline:auto;padding:.65rem 1rem .55rem}
+.brand{min-height:44px}
+.brand-logo{min-width:0}
+.brand-text{min-width:0}
+.menu-toggle,.notif-btn,.theme-toggle{
+  flex:0 0 auto;width:auto;min-width:42px;min-height:42px;
+  display:inline-grid;place-items:center;
+}
+.menu-toggle{position:relative;font-size:0!important;line-height:0;overflow:hidden}
+.menu-toggle::before,.menu-toggle::after{
+  content:"";position:absolute;width:20px;height:2px;border-radius:2px;
+  background:currentColor;transition:transform .18s ease,box-shadow .18s ease
+}
+.menu-toggle::before{transform:translateY(-6px);box-shadow:0 6px currentColor,0 12px currentColor}
+.menu-toggle::after{display:none}
+.menu-toggle[aria-expanded=true]::before{
+  transform:rotate(45deg);box-shadow:0 0 currentColor
+}
+.menu-toggle[aria-expanded=true]::after{
+  display:block;transform:rotate(-45deg)
+}
+
+/* Desktop navigation is always visible; hamburger is mobile-only. */
+@media (min-width:768px){
+  .menu-toggle{display:none!important}
+  nav#mainNav{
+    position:static!important;display:flex!important;visibility:visible!important;
+    opacity:1!important;pointer-events:auto!important;transform:none!important;
+    width:auto;margin:.55rem 0 0;padding:.2rem;
+    border:0;background:transparent;box-shadow:none;
+  }
+  nav#mainNav .nav-btn{flex:0 0 auto}
+}
+
+/* Mobile navigation: ONLY the hamburger opens this panel.
+   No bottom navigation and no hidden grid fighting the menu. */
+@media (max-width:767.98px){
+  body{padding-bottom:0!important}
+  main{width:calc(100% - 1rem);padding-bottom:2rem!important}
+  .header-inner{padding:.55rem .7rem .5rem}
+  .brand-logo .brand-text span:last-child{display:none!important}
+  nav#mainNav{
+    position:fixed!important;
+    top:calc(58px + env(safe-area-inset-top,0px))!important;
+    left:.65rem!important;right:.65rem!important;bottom:auto!important;
+    z-index:1085!important;
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:.35rem!important;margin:0!important;padding:.5rem!important;
+    border:1px solid var(--kp-line)!important;border-radius:18px!important;
+    background:rgba(255,252,247,.98)!important;
+    box-shadow:0 20px 50px rgba(28,25,23,.20)!important;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+    transform:translateY(-8px) scale(.985)!important;
+    transform-origin:top center;
+    transition:opacity .16s ease,transform .16s ease,visibility .16s!important;
+  }
+  nav#mainNav.nav-open{
+    visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+    transform:none!important;
+  }
+  nav#mainNav .nav-btn{
+    width:100%!important;min-height:46px!important;flex:0 0 auto!important;
+    display:flex;align-items:center;justify-content:flex-start;
+    padding:.7rem .85rem!important;border:0!important;border-radius:12px!important;
+    font-size:.92rem!important;text-align:left;
+  }
+  nav#mainNav .nav-btn.active{box-shadow:none!important}
+  .menu-toggle:focus-visible{outline:3px solid rgba(67,56,202,.35)!important}
+  .course-hero{grid-template-columns:1fr!important}
+  .course-method-grid{grid-template-columns:1fr!important}
+  .path-memory-grid,.path-explanation-grid{grid-template-columns:1fr!important}
+  .path-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .path-roadmap-head{flex-direction:column}
+  #studyMode .toolbar,#practiceMode .toolbar{
+    position:relative!important;top:auto!important;
+    flex-wrap:wrap;z-index:20
+  }
+  #studyGrid.study-grid,#practiceGrid.practice-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important
+  }
+}
+
+/* Small phones: preserve readable Japanese and tappable controls */
+@media (max-width:420px){
+  .header-inner{padding-inline:.55rem}
+  .brand-mark{width:40px;height:40px}
+  .brand-logo .jp{font-size:1.35rem}
+  .theme-toggle{width:42px;padding:0;font-size:0}
+  .theme-toggle::before{content:"☾";font-size:1.05rem}
+  .notif-btn,.menu-toggle{width:40px;min-width:40px;min-height:40px}
+  #userBanner{padding:.75rem!important}
+  .course-hero{padding:1rem!important}
+  .course-hero h1{font-size:clamp(1.75rem,9vw,2.25rem)}
+  .path-kanji{font-size:clamp(4rem,23vw,6.3rem)}
+  .path-actions .btn{flex:1 1 100%;min-width:0}
+  #studyGrid .study-card,#studyGrid .study-card .face{min-height:154px}
+  #studyGrid .study-card .kanji{font-size:clamp(2.3rem,14vw,3.4rem)}
+  #practiceGrid .practice-tile{min-height:132px}
+}
+
+/* Landscape phones: never clip the kanji or modal workspace */
+@media (max-width:767.98px) and (orientation:landscape){
+  main{padding-bottom:1rem!important}
+  .path-kanji{font-size:clamp(3.5rem,20vh,6rem);line-height:.9}
+  #studyGrid .study-card,#studyGrid .study-card .face{min-height:145px}
+  #practiceGrid .practice-tile{min-height:125px}
+  .modal-backdrop .modal{max-height:calc(100dvh - 1rem)!important;overflow:auto}
+}
+
+/* Prevent accidental text/card clipping */
+.path-lesson,.path-roadmap-card,.course-hero,#studyMode,#practiceMode,
+#studyGrid .study-card,#practiceGrid .practice-tile,.word-flashcard{
+  min-width:0;overflow-wrap:anywhere
+}
+#studyGrid .study-card .face{overflow:hidden}
+#studyGrid .study-card .kanji,#practiceGrid .practice-tile .kanji,
+.path-kanji,.course-preview-kanji{
+  max-width:100%;overflow-wrap:normal;word-break:keep-all
+}
+
+/* Dark mobile menu must follow the same single implementation. */
+html[data-theme=dark] nav#mainNav{
+  background:rgba(28,25,23,.98)!important;border-color:#44403c!important;
+}
+html[data-theme=dark] nav#mainNav .nav-btn{color:#b8b0a7!important}
+html[data-theme=dark] nav#mainNav .nav-btn.active{background:#f5f5f4!important;color:#1c1917!important}
+
+/* Keep the visual layer lightweight on low-RAM devices. */
+.anime-backdrop{pointer-events:none}
+@media (max-width:767.98px){
+  .anime-backdrop{display:none!important}
+  .course-hero,.path-hero,.path-lesson,.path-roadmap-card,
+  #studyGrid .study-card,#practiceGrid .practice-tile{
+    box-shadow:0 4px 16px rgba(28,25,23,.06)
+  }
+}
+
+/* Clear visual separation for the main workspaces */
+#studyMode,#practiceMode{min-height:40vh}
+#studyMode .toolbar,#practiceMode .toolbar{max-width:100%}
