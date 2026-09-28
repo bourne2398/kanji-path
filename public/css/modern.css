@@ -459,3 +459,555 @@ button,.btn,.nav-link{touch-action:manipulation;-webkit-tap-highlight-color:tran
 img,svg,video,canvas{max-width:100%;height:auto}
 
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+
+/* =========================================================
+   2026 PROFESSIONAL UX PASS
+   Focus: hierarchy, calm learning flow, touch-first controls,
+   stronger kanji focus, consistent surfaces, less visual noise.
+   ========================================================= */
+
+:root{
+  --kp-content-max:1160px;
+  --kp-reading-max:720px;
+  --kp-radius-sm:12px;
+  --kp-radius-md:18px;
+  --kp-radius-lg:26px;
+  --kp-border:1px solid var(--kp-line);
+  --kp-ease:cubic-bezier(.2,.7,.2,1);
+}
+
+body{
+  font-family:"Source Sans 3",system-ui,sans-serif;
+  letter-spacing:-.008em;
+}
+
+h1,h2,h3,h4{
+  letter-spacing:-.025em;
+  line-height:1.12;
+}
+
+header{
+  box-shadow:0 1px 0 rgba(33,30,26,.04);
+}
+
+.header-inner{
+  max-width:var(--kp-content-max);
+  padding:.7rem 1.1rem;
+}
+
+.brand-mark{
+  border-radius:12px;
+  box-shadow:none;
+}
+
+nav#mainNav{
+  max-width:760px;
+  margin:.45rem auto 0;
+  justify-content:center;
+}
+
+.nav-btn{
+  position:relative;
+  min-width:112px;
+  border:0;
+  background:transparent;
+  transition:background-color .18s var(--kp-ease),color .18s var(--kp-ease);
+}
+
+.nav-btn.active{
+  background:var(--kp-ink);
+  box-shadow:none;
+}
+
+main{
+  max-width:var(--kp-content-max);
+  padding-top:1.4rem;
+}
+
+#userBanner{
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 8px 24px rgba(45,38,28,.06);
+}
+
+/* The opening hero becomes an introduction, not a second dashboard. */
+.course-hero{
+  border:var(--kp-border);
+  box-shadow:0 14px 42px rgba(45,38,28,.075);
+  background:linear-gradient(135deg,#fffdf8 0%,#f8f1e6 100%);
+}
+
+.course-eyebrow,
+.path-kicker{
+  letter-spacing:.14em;
+  font-size:.72rem;
+  font-weight:800;
+}
+
+.course-hero h1{
+  max-width:720px;
+  font-size:clamp(2.15rem,5vw,4rem);
+}
+
+.course-hero p{
+  max-width:650px;
+  font-size:1.05rem;
+  line-height:1.65;
+}
+
+.course-preview{
+  border:1px solid rgba(159,18,57,.10);
+  border-radius:22px;
+  background:#fffdf8;
+  min-height:270px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.course-preview-kanji{
+  font-size:clamp(7rem,12vw,10rem);
+  line-height:.85;
+  font-family:"Source Sans 3",sans-serif;
+  font-weight:500;
+}
+
+.course-preview-reading{
+  font-size:1rem;
+  font-weight:700;
+}
+
+.course-method-grid{
+  border:var(--kp-border);
+  border-radius:18px;
+  background:rgba(255,253,248,.72);
+  padding:.35rem;
+  gap:.35rem;
+}
+
+.course-method-grid article{
+  padding:1rem;
+  border-radius:14px;
+}
+
+.course-method-grid article+article{
+  border-left:1px solid var(--kp-line);
+}
+
+/* Learning dashboard: quieter than the lesson itself. */
+.path-hero{
+  margin-top:1.25rem;
+  border:var(--kp-border);
+  background:linear-gradient(145deg,#2a2521,#171411);
+  color:#fff;
+}
+
+.path-hero .subtitle{
+  max-width:760px;
+  color:rgba(255,255,255,.72);
+}
+
+.path-stats{
+  margin-top:1.2rem;
+}
+
+.path-stats>div{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:.75rem .8rem;
+}
+
+.path-stats strong{
+  font-size:1.35rem;
+}
+
+/* Main learning card: the character is unmistakably the focal point. */
+.path-lesson{
+  margin-top:1rem;
+  padding:clamp(1.1rem,3vw,2rem);
+  border:var(--kp-border);
+  background:var(--kp-surface);
+  box-shadow:0 14px 42px rgba(45,38,28,.08);
+}
+
+.path-lesson-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:.5rem;
+}
+
+.path-lesson-top .badge{
+  background:var(--kp-surface-2);
+  color:var(--kp-muted);
+  border:1px solid var(--kp-line);
+  font-weight:700;
+}
+
+.path-kanji{
+  display:block;
+  width:100%;
+  margin:1.25rem auto .2rem;
+  text-align:center;
+  font-size:clamp(7rem,18vw,12rem);
+  font-weight:500;
+  line-height:.84;
+  color:var(--kp-ink);
+}
+
+.path-meaning{
+  text-align:center;
+  font-size:clamp(1.2rem,2.5vw,1.65rem);
+  font-weight:800;
+  color:var(--kp-ink);
+}
+
+.path-reading{
+  text-align:center;
+  margin-top:.15rem;
+  font-size:1.2rem;
+  color:var(--kp-accent);
+  font-weight:700;
+}
+
+.path-explanation{
+  max-width:var(--kp-reading-max);
+  margin:1.5rem auto 0;
+  border:var(--kp-border);
+  border-radius:18px;
+  background:var(--kp-surface-2);
+  padding:1.1rem;
+}
+
+.path-explanation-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+}
+
+.path-explanation-grid{
+  border-top:1px solid var(--kp-line);
+  margin-top:1rem;
+  padding-top:.8rem;
+}
+
+.path-memory-grid{
+  max-width:var(--kp-reading-max);
+  margin:1rem auto 0;
+  gap:.75rem;
+}
+
+.path-memory-card{
+  border:var(--kp-border);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:none;
+  padding:1.1rem;
+}
+
+.path-actions{
+  max-width:var(--kp-reading-max);
+  margin:1.25rem auto 0;
+}
+
+.path-actions .btn{
+  flex:1 1 180px;
+  min-height:48px;
+}
+
+.path-actions .btn.primary{
+  box-shadow:0 8px 20px rgba(159,18,57,.18);
+}
+
+.path-write-hint{
+  text-align:center;
+  color:var(--kp-muted);
+  margin:.9rem auto 0;
+}
+
+/* Roadmap becomes a secondary planning tool. */
+.path-roadmap-card{
+  margin-top:1rem;
+  border:var(--kp-border);
+  background:var(--kp-surface);
+  box-shadow:none;
+}
+
+.path-roadmap-head{
+  align-items:flex-start;
+}
+
+.path-roadmap-head p{
+  max-width:650px;
+  color:var(--kp-muted);
+}
+
+.path-level-filter{
+  padding:.25rem;
+  border:1px solid var(--kp-line);
+  border-radius:14px;
+  background:var(--kp-surface-2);
+}
+
+.path-level-btn{
+  border:0;
+  background:transparent;
+  color:var(--kp-muted);
+  min-height:40px;
+}
+
+.path-level-btn.active{
+  background:var(--kp-ink);
+  color:#fff;
+  box-shadow:0 3px 10px rgba(33,30,26,.12);
+}
+
+.path-map-controls{
+  max-width:280px;
+}
+
+/* Study and Practice are workspaces, not dashboards. */
+#studyMode>h1,#practiceMode>h1{
+  font-size:clamp(2rem,4vw,3rem);
+}
+
+#studyMode .toolbar,#practiceMode .toolbar{
+  border:var(--kp-border);
+  box-shadow:0 6px 22px rgba(45,38,28,.06);
+}
+
+#studyGrid.study-grid{
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:1rem;
+}
+
+#studyGrid .study-card{
+  min-height:240px;
+  border:var(--kp-border);
+  box-shadow:0 5px 20px rgba(45,38,28,.055);
+}
+
+#practiceGrid.practice-grid{
+  grid-template-columns:repeat(auto-fill,minmax(175px,1fr));
+  gap:.9rem;
+}
+
+#practiceGrid .practice-tile{
+  min-height:180px;
+  border:var(--kp-border);
+  box-shadow:0 5px 20px rgba(45,38,28,.05);
+}
+
+/* Stronger touch targets and cleaner controls. */
+.btn,
+.nav-btn,
+.menu-toggle,
+.notif-btn,
+.theme-toggle,
+.form-select,
+.form-control{
+  -webkit-tap-highlight-color:transparent;
+}
+
+.btn:focus-visible,
+.nav-btn:focus-visible,
+.menu-toggle:focus-visible,
+.notif-btn:focus-visible,
+.theme-toggle:focus-visible{
+  outline:3px solid rgba(67,56,202,.24)!important;
+  outline-offset:2px;
+}
+
+/* Mobile learning experience */
+@media(max-width:767.98px){
+  .header-inner{
+    padding:.55rem .7rem;
+  }
+
+  .header-actions{
+    gap:6px;
+  }
+
+  main{
+    width:calc(100% - 1rem);
+    padding-top:.8rem;
+  }
+
+  .course-hero{
+    margin-top:.1rem;
+    padding:1rem;
+    border-radius:20px;
+  }
+
+  .course-hero h1{
+    font-size:clamp(2rem,9vw,2.7rem);
+  }
+
+  .course-hero p{
+    font-size:1rem;
+  }
+
+  .course-preview{
+    min-height:225px;
+  }
+
+  .course-preview-kanji{
+    font-size:clamp(6rem,30vw,8rem);
+  }
+
+  .course-method-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    margin-top:.65rem;
+  }
+
+  .course-method-grid article+article{
+    border-left:0;
+    border-top:1px solid var(--kp-line);
+  }
+
+  .path-hero{
+    margin-top:.8rem;
+    padding:1rem;
+  }
+
+  .path-stats{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .path-lesson{
+    padding:1rem;
+    border-radius:20px;
+  }
+
+  .path-kanji{
+    margin-top:1.1rem;
+    font-size:clamp(6rem,29vw,9rem);
+  }
+
+  .path-explanation{
+    padding:.95rem;
+  }
+
+  .path-memory-grid{
+    grid-template-columns:1fr;
+  }
+
+  .path-actions .btn{
+    flex:1 1 100%;
+  }
+
+  .path-level-filter{
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:none;
+  }
+
+  .path-level-filter::-webkit-scrollbar{
+    display:none;
+  }
+
+  .path-level-btn{
+    flex:0 0 auto;
+  }
+
+  #studyMode .toolbar,#practiceMode .toolbar{
+    box-shadow:none;
+    background:var(--kp-surface);
+  }
+
+  #studyGrid.study-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:.6rem;
+  }
+
+  #studyGrid .study-card{
+    min-height:185px;
+    border-radius:16px;
+  }
+
+  #practiceGrid.practice-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:.6rem;
+  }
+
+  #practiceGrid .practice-tile{
+    min-height:155px;
+    border-radius:16px;
+  }
+}
+
+@media(max-width:390px){
+  .path-stats{
+    gap:.45rem;
+  }
+
+  .path-stats>div{
+    padding:.65rem;
+  }
+
+  #studyGrid .study-card{
+    min-height:165px;
+  }
+
+  #practiceGrid .practice-tile{
+    min-height:140px;
+  }
+}
+
+/* Dark-mode equivalents for the new surfaces */
+html[data-theme="dark"] .course-hero,
+html[data-theme="dark"] .course-preview,
+html[data-theme="dark"] .course-method-grid,
+html[data-theme="dark"] .path-lesson,
+html[data-theme="dark"] .path-explanation,
+html[data-theme="dark"] .path-memory-card,
+html[data-theme="dark"] .path-roadmap-card{
+  background:#1c1917;
+  border-color:#3a3530;
+}
+
+html[data-theme="dark"] .course-preview{
+  background:linear-gradient(145deg,#292524,#171311);
+}
+
+html[data-theme="dark"] .course-method-grid article+article{
+  border-color:#3a3530;
+}
+
+html[data-theme="dark"] .path-kanji,
+html[data-theme="dark"] .path-meaning{
+  color:#fafaf9;
+}
+
+html[data-theme="dark"] .path-reading{
+  color:#fda4af;
+}
+
+html[data-theme="dark"] .path-explanation{
+  background:#211e1b;
+}
+
+html[data-theme="dark"] .path-memory-card{
+  background:#211e1b;
+}
+
+html[data-theme="dark"] .path-level-filter{
+  background:#211e1b;
+  border-color:#3a3530;
+}
+
+html[data-theme="dark"] .path-level-btn{
+  color:#b8b0a7;
+}
+
+html[data-theme="dark"] .path-level-btn.active{
+  background:#f5f5f4;
+  color:#1c1917;
+}
+
+html[data-theme="dark"] #studyMode .toolbar,
+html[data-theme="dark"] #practiceMode .toolbar{
+  background:#1c1917;
+  border-color:#3a3530;
+}
