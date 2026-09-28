@@ -2506,7 +2506,7 @@ const PATH_MEMORY={
 const JLPT_LEVEL_MAP=Object.create(null);
 const JLPT_LEVELS={N5:"日一国人年大十二本中長出三時行見月後前生五間上東四今金九入学高円子外八六下来気小七山話女北午百書先名川千水半男西電校語土木聞食車何南万毎白天母火右読友左休父雨",N4:"会同事自社発者地業方新場員立開手力問代明動京目通言理体田主題意不作用度強公持野以思家世多正安院心界教文元重近考画海売知道集別物使品計死特私始朝運終台広住真有口少町料工建空急止送切転研足究楽起着店病質待試族銀早映親験英医仕去味写字答夜音注帰古歌買悪図週室歩風紙黒花春赤青館屋色走秋夏習駅洋旅服夕借曜飲肉貸堂鳥飯勉冬昼茶弟牛魚兄犬妹姉漢",N3:"政議民連対部合市内相定回選米実関決全表戦経最現調化当約首法性要制治務成期取都和機平加受続進数記初指権支産点報済活原共得解交資予向際勝面告反判認参利組信在件側任引求所次昨論官増係感情投示変打直両式確果容必演歳争談能位置流格疑過局放常状球職与供役構割費付由説難優夫収断石違消神番規術備宅害配警育席訪乗残想声念助労例然限追商葉伝働形景落好退頭負渡失差末守若種美命福望非観察段横深申様財港識呼達良候程満敗値突光路科積他処太客否師登易速存飛殺号単座破除完降責捕危給苦迎園具辞因馬愛富彼未舞亡冷適婦寄込顔類余王返妻背熱宿薬険頼覚船途許抜便留罪努精散静婚喜浮絶幸押倒等老曲払庭徒勤遅居雑招困欠更刻賛抱犯恐息遠戻願絵越欲痛笑互束似列探逃遊迷夢君閉緒折草暮酒悲晴掛到寝暗盗吸陽御歯忘雪吹娘誤洗慣礼窓昔貧怒泳祖杯疲皆鳴腹煙眠怖耳頂箱晩寒髪忙才靴恥偶偉猫幾",N2:"党協総区領県設改府査委軍団各島革村勢減再税営比防補境導副算輸述線農州武象域額欧担準賞辺造被技低復移個門課脳極含蔵量型況針専谷史階管兵接細効丸湾録省旧橋岸周材戸央券編捜竹超並療採森競介根販歴将幅般貿講林装諸劇河航鉄児禁印逆換久短油暴輪占植清倍均億圧芸署伸停爆陸玉波帯延羽固則乱普測豊厚齢囲卒略承順岩練軽了庁城患層版令角絡損募裏仏績築貨混昇池血温季星永著誌庫刊像香坂底布寺宇巨震希触依籍汚枚複郵仲栄札板骨傾届巻燃跡包駐弱紹雇替預焼簡章臓律贈照薄群秒奥詰双刺純翌快片敬悩泉皮漁荒貯硬埋柱祭袋筆訓浴童宝封胸砂塩賢腕兆床毛緑尊祝柔殿濃液衣肩零幼荷泊黄甘臣浅掃雲掘捨軟沈凍乳恋紅郊腰炭踊冊勇械菜珍卵湖喫干虫刷湯溶鉱涙匹孫鋭枝塗軒毒叫拝氷乾棒祈拾粉糸綿汗銅湿瓶咲召缶隻脂蒸肌耕鈍泥隅灯辛磨麦姓筒鼻粒詞胃畳机膚濯塔沸灰菓帽枯涼舟貝符憎皿肯燥畜挟曇滴伺"};
 for(const[l,c]of Object.entries(JLPT_LEVELS))for(const ch of[...c])if(!JLPT_LEVEL_MAP[ch])JLPT_LEVEL_MAP[ch]=l;
-let pathLevelFilter='N5',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false,pathSort='usage';
+let pathLevelFilter='JOYO',pathCurrent=0,PATH_JOYO_ORDER=[],PATH_META={},PATH_JOYO_READY=false,pathReviewMode=false,pathSort='usage';
 let practiceLevelFilter='N5';
 function pathLevelOf(k){return JLPT_LEVEL_MAP[k]||'N1'}
 function kanjiUsageScore(item) {
@@ -2521,7 +2521,7 @@ function pathUsageRank(items, item) {
   return 1 + [...levelItems].sort((a, b) => kanjiUsageScore(b) - kanjiUsageScore(a)).findIndex(x => x.kanji === item.kanji);
 }
 function pathLevelItems(items){
-  const visible = items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter);
+  const visible = pathLevelFilter === 'JOYO' ? [...items] : items.filter(x=>pathLevelOf(x.kanji)===pathLevelFilter);
   if (pathSort === 'usage') return visible.sort((a,b)=>kanjiUsageScore(b)-kanjiUsageScore(a));
   return visible;
 }
@@ -3023,7 +3023,7 @@ bind('reviewForgotBtn', 'onclick', reviewForgot);
 bind('pathReviewToggle', 'onclick', () => { pathReviewMode = !pathReviewMode; renderPath(); });
 document.querySelectorAll('#pathLevelFilter .path-level-btn').forEach(btn => {
   btn.onclick = () => {
-    pathLevelFilter = btn.getAttribute('data-level') || 'N5';
+    pathLevelFilter = btn.getAttribute('data-level') || 'JOYO';
     document.querySelectorAll('#pathLevelFilter .path-level-btn').forEach(b => b.classList.toggle('active', b === btn));
     pathReviewMode = false;
     const items = pathItems();
